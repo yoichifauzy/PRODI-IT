@@ -27,30 +27,28 @@
 
         <div class="announcement-marquee mb-8">
             <div class="announcement-marquee-track">
-                @for ($lane = 0; $lane < ($announcements->isNotEmpty() ? 2 : 1); $lane++)
-                    <div class="announcement-marquee-lane" @if ($lane === 1) aria-hidden="true" @endif>
-                        @foreach ($announcements as $announcement)
-                            @php
-                                $cover = $announcement->cover_image;
-                                $coverUrl = '';
-                                $statusLabel = $announcement->status === 'draft' ? __('public.announcements.status_published') : strtoupper($announcement->status);
-                                if ($cover) {
-                                    $coverUrl = \Illuminate\Support\Str::startsWith($cover, ['http://', 'https://']) ? $cover : asset('storage/' . $cover);
-                                }
-                            @endphp
-                            <button type="button" class="announcement-card" data-announcement-card data-announcement-target="announcement-{{ $announcement->id }}" data-announcement-detail="announcement-detail-{{ $announcement->id }}">
-                                @if ($coverUrl !== '')
-                                    <img src="{{ $coverUrl }}" alt="{{ $announcement->title }}" class="announcement-card-image" />
-                                @endif
-                                <div class="p-3 text-left">
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">{{ $statusLabel }}</p>
-                                    <h3 class="mt-1 text-sm font-bold text-[var(--text-main)]">{{ $announcement->title }}</h3>
-                                    <p class="mt-1 text-xs text-[var(--text-soft)]">{{ optional($announcement->published_at)->format('d M Y H:i') ?: '-' }}</p>
-                                </div>
-                            </button>
-                        @endforeach
-                    </div>
-                @endfor
+                <div class="announcement-marquee-lane">
+                    @foreach ($announcements as $announcement)
+                        @php
+                            $cover = $announcement->cover_image;
+                            $coverUrl = '';
+                            $statusLabel = $announcement->status === 'draft' ? __('public.announcements.status_published') : strtoupper($announcement->status);
+                            if ($cover) {
+                                $coverUrl = \Illuminate\Support\Str::startsWith($cover, ['http://', 'https://']) ? $cover : asset('storage/' . $cover);
+                            }
+                        @endphp
+                        <button type="button" class="announcement-card" data-announcement-card data-announcement-target="announcement-{{ $announcement->id }}" data-announcement-detail="announcement-detail-{{ $announcement->id }}">
+                            @if ($coverUrl !== '')
+                                <img src="{{ $coverUrl }}" alt="{{ $announcement->title }}" class="announcement-card-image" />
+                            @endif
+                            <div class="p-3 text-left">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">{{ $statusLabel }}</p>
+                                <h3 class="mt-1 text-sm font-bold text-[var(--text-main)]">{{ $announcement->title }}</h3>
+                                <p class="mt-1 text-xs text-[var(--text-soft)]">{{ optional($announcement->published_at)->format('d M Y H:i') ?: '-' }}</p>
+                            </div>
+                        </button>
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -94,10 +92,51 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const toggleButtons = Array.from(document.querySelectorAll('[data-announcement-toggle]'));
-            const cardButtons = Array.from(document.querySelectorAll('[data-announcement-card]'));
+
+            // Keep marquee moving without duplicating source announcement cards.
+            (function initAnnouncementMarquee() {
+                const marqueeWrap = document.querySelector('.announcement-marquee');
+                const marqueeTrack = document.querySelector('.announcement-marquee-track');
+                const marqueeLane = marqueeTrack?.querySelector('.announcement-marquee-lane');
+
+                if (!marqueeWrap || !marqueeTrack || !marqueeLane) return;
+                if (!marqueeLane.querySelector('[data-announcement-card]')) {
+                    return;
+                }
+
+                const syncMarquee = () => {
+                    marqueeTrack.classList.remove('is-overflowing', 'is-compact');
+                    marqueeTrack.style.removeProperty('--marquee-shift');
+
+                    const overflow = marqueeLane.scrollWidth - marqueeWrap.clientWidth;
+                    if (overflow > 10) {
+                        marqueeTrack.classList.add('is-overflowing');
+                        marqueeTrack.style.setProperty('--marquee-shift', `-${Math.ceil(overflow)}px`);
+                        return;
+                    }
+
+                    marqueeTrack.classList.add('is-compact');
+                };
+
+                syncMarquee();
+
+                let resizeTimer = null;
+                window.addEventListener('resize', () => {
+                    window.clearTimeout(resizeTimer);
+                    resizeTimer = window.setTimeout(syncMarquee, 120);
+                });
+
+                marqueeTrack.querySelectorAll('img').forEach((img) => {
+                    if (!img.complete) {
+                        img.addEventListener('load', syncMarquee, { once: true });
+                    }
+                });
+            })();
 
             const clearCardActive = () => {
-                cardButtons.forEach((card) => card.classList.remove('is-active'));
+                document.querySelectorAll('[data-announcement-card]').forEach((card) => {
+                    card.classList.remove('is-active');
+                });
             };
 
             const clearSummaryHighlight = () => {
@@ -151,30 +190,33 @@
                 });
             });
 
-            cardButtons.forEach((card) => {
-                card.addEventListener('click', () => {
-                    const summaryId = card.getAttribute('data-announcement-target');
-                    const detailId = card.getAttribute('data-announcement-detail');
-                    if (!summaryId || !detailId) {
-                        return;
-                    }
+            document.addEventListener('click', (event) => {
+                const card = event.target.closest('[data-announcement-card]');
+                if (!card) {
+                    return;
+                }
 
-                    const summaryRow = document.getElementById(summaryId);
-                    if (!summaryRow) {
-                        return;
-                    }
+                const summaryId = card.getAttribute('data-announcement-target');
+                const detailId = card.getAttribute('data-announcement-detail');
+                if (!summaryId || !detailId) {
+                    return;
+                }
 
-                    clearCardActive();
-                    card.classList.add('is-active');
+                const summaryRow = document.getElementById(summaryId);
+                if (!summaryRow) {
+                    return;
+                }
 
-                    openDetailByRowId(detailId, summaryId);
+                clearCardActive();
+                card.classList.add('is-active');
 
-                    summaryRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    summaryRow.classList.add('ring-2', 'ring-orange-400');
-                    window.setTimeout(() => {
-                        summaryRow.classList.remove('ring-2', 'ring-orange-400');
-                    }, 1000);
-                });
+                openDetailByRowId(detailId, summaryId);
+
+                summaryRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                summaryRow.classList.add('ring-2', 'ring-orange-400');
+                window.setTimeout(() => {
+                    summaryRow.classList.remove('ring-2', 'ring-orange-400');
+                }, 1000);
             });
         });
     </script>

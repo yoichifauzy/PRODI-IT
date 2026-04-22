@@ -67,8 +67,8 @@
                         <span>{{ $project->student_nim ?: '-' }}</span>
                     </p>
                     <p class="project-detail-meta-item">
-                        <span class="font-semibold">{{ __('public.project_detail.meta_year') }}</span>
-                        <span>{{ $project->year ?: '-' }}</span>
+                        <!-- <span class="font-semibold">{{ __('public.project_detail.meta_year') }}</span> -->
+                        <!-- <span>{{ $project->year ?: '-' }}</span> -->
                     </p>
                     <p class="project-detail-meta-item">
                         <span class="font-semibold">{{ __('public.project_detail.meta_published_at') }}</span>

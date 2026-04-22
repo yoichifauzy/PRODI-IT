@@ -8,10 +8,6 @@
         <input id="name" name="name" required value="{{ old('name', $curriculum->name ?? '') }}" class="w-full rounded-md border border-slate-300 px-3 py-2" placeholder="Kurikulum Merdeka TI" />
     </div>
 
-    <div>
-        <label for="academic_year" class="mb-2 block text-sm font-medium text-slate-700">Tahun Akademik</label>
-        <input id="academic_year" name="academic_year" value="{{ old('academic_year', $curriculum->academic_year ?? '') }}" class="w-full rounded-md border border-slate-300 px-3 py-2" placeholder="2026/2027" />
-    </div>
 
     <div>
         <label for="description" class="mb-2 block text-sm font-medium text-slate-700">Deskripsi</label>

@@ -20,15 +20,15 @@
     </form>
 
     <div class="mt-6 rounded-xl border border-slate-200 bg-white p-4">
-        <div class="mb-3 flex items-center justify-between">
+        <!-- <div class="mb-3 flex items-center justify-between">
             <h2 class="text-lg font-semibold text-slate-900">Mata Kuliah Kurikulum Ini</h2>
             <a href="{{ route('admin.curriculum-courses.create', ['curriculum_id' => $curriculum->id]) }}" class="rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white">+ Tambah Mata Kuliah</a>
-        </div>
+        </div> -->
 
         <div class="space-y-2">
             @forelse ($curriculum->courses as $course)
                 <div class="rounded-md border border-slate-200 px-3 py-2 text-sm">
-                    <p class="font-semibold text-slate-900">S{{ $course->semester }} - {{ $course->code }} - {{ $course->name }} ({{ $course->credits }} SKS)</p>
+                    <p class="font-semibold text-slate-900">S{{ $course->iteration }} - {{ $course->code }} - {{ $course->name }} ({{ $course->credits }} SKS)</p>
                     <a href="{{ route('admin.curriculum-courses.edit', $course) }}" class="text-xs text-slate-900 underline">Edit Mata Kuliah</a>
                 </div>
             @empty

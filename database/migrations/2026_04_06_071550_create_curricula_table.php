@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('curricula', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('academic_year', 20)->nullable();
+            $table->string('major_selection', 20)->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(false);
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();

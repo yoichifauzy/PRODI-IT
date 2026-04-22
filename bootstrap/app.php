@@ -19,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => App\Http\Middleware\EnsureAdminRole::class,
             'admin.session' => App\Http\Middleware\EnsureAdminSessionSecurity::class,
         ]);
+        
+        $middleware->redirectGuestsTo(fn () => route('admin.login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

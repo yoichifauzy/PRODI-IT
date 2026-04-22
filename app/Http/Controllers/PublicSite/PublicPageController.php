@@ -63,20 +63,40 @@ class PublicPageController extends Controller
 
     public function curriculum(Request $request): View
     {
-        $curricula = Curriculum::query()
-            ->with(['courses' => fn($query) => $query->orderBy('semester')->orderBy('sort_order')])
+        $allCurricula = Curriculum::query()
+            ->with(['courses' => function ($query) {
+                $query->orderBy('sort_order')->orderBy('code');
+            }])
             ->orderByDesc('is_active')
             ->orderBy('name')
             ->get();
 
+        // Tombol filter utama hanya menampilkan nama yang unik
+        $uniqueCurricula = $allCurricula->unique('name');
+
         $selectedCurriculumId = $request->integer('curriculum');
-        $selectedCurriculum = $curricula->firstWhere('id', $selectedCurriculumId);
+        $selectedCurriculum = $selectedCurriculumId > 0
+            ? $allCurricula->firstWhere('id', $selectedCurriculumId)
+            : $allCurricula->first();
+
+        if ($selectedCurriculum === null) {
+            $selectedCurriculum = $allCurricula->first();
+        }
+
+        $majorOptions = collect();
+        if ($selectedCurriculum) {
+            $majorOptions = $allCurricula->where('name', $selectedCurriculum->name);
+        }
 
         return view('public.curriculum', [
-            'curricula' => $curricula,
+            'curricula' => $uniqueCurricula,
+            'allCurricula' => $allCurricula,
             'selectedCurriculum' => $selectedCurriculum,
+            'majorOptions' => $majorOptions,
         ]);
     }
+
+
 
     public function activities(): View
     {
@@ -219,4 +239,18 @@ class PublicPageController extends Controller
             ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             ->header('Pragma', 'no-cache');
     }
+
+    public function research(): View
+    {
+        // Nantinya kalau ada model Research, tinggal panggil di sini
+        return view('public.research');
+    }
+
+    public function communityService(): View
+    {
+        // Begitu juga buat Pengabdian Masyarakat
+        return view('public.community-service');
+    }
+
+
 }

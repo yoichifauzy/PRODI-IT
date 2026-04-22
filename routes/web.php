@@ -31,6 +31,8 @@ Route::get('/kegiatan/{activity}', [PublicPageController::class, 'activityShow']
 Route::get('/dosen-dan-staff', [PublicPageController::class, 'lecturerStaff'])->name('public.lecturer-staff');
 Route::get('/dosen-dan-staff/{lecturerStaff}', [PublicPageController::class, 'lecturerStaffBlogs'])->name('public.lecturer-staff.blogs');
 Route::get('/kurikulum', [PublicPageController::class, 'curriculum'])->name('public.curriculum');
+Route::get('/penelitian', [PublicPageController::class, 'research'])->name('public.research');
+Route::get('/pengabdian-masyarakat', [PublicPageController::class, 'communityService'])->name('public.community-service');
 Route::get('/project-mahasiswa', [PublicPageController::class, 'projects'])->name('public.projects');
 Route::get('/project-mahasiswa/{project:slug}', [PublicPageController::class, 'projectShow'])->name('public.projects.show');
 Route::get('/tracer-alumni', [PublicPageController::class, 'tracerAlumni'])->name('public.tracer-alumni');

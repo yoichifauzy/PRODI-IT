@@ -88,9 +88,15 @@
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
                     <div id="desktop-dropdown-tridharma" class="nav-dropdown-menu" data-nav-menu role="menu">
-                        <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.research">{{ __('public.nav.research') }}</a>
-                        <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.community_service">{{ __('public.nav.community_service') }}</a>
-                        <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.spmi">{{ __('public.nav.spmi') }}</a>
+                        <a href="{{ route('public.research') }}" class="dropdown-item" data-i18n="nav.research">
+                            {{ __('public.nav.research') }}
+                        </a>
+                        <a href="{{ route('public.community-service') }}" class="dropdown-item" data-i18n="nav.community_service">
+                            {{ __('public.nav.community_service') }}
+                        </a>
+                        <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.spmi">
+                            {{ __('public.nav.spmi') }}
+                        </a>
                     </div>
                 </div>
 

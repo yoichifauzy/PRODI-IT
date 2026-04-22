@@ -10,25 +10,28 @@ class CurriculumCourse extends Model
 
     protected $fillable = [
         'curriculum_id',
-        'semester',
+        'major_selection',
+        // 'semester',
         'code',
         'name',
-        'credits',
-        'short_syllabus',
+        'credits_theory',
+        'credits_practice',
+        // 'short_syllabus',
         'sort_order',
     ];
 
     protected function casts(): array
     {
         return [
-            'semester' => 'integer',
-            'credits' => 'integer',
+            // 'semester' => 'integer',
+            'credits_theory' => 'integer',
+            'credits_practice' => 'integer',
             'sort_order' => 'integer',
         ];
     }
 
     public function curriculum(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Curriculum::class);
+        return $this->belongsTo(Curriculum::class)->orderBy('code');
     }
 }

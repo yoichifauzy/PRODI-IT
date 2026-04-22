@@ -17,8 +17,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('semester');
             $table->string('code', 20);
             $table->string('name');
-            $table->unsignedTinyInteger('credits');
-            $table->text('short_syllabus')->nullable();
+            $table->unsignedTinyInteger('credits_theory');
+            $table->unsignedTinyInteger('credits_practice');
+            // $table->text('short_syllabus')->nullable();
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->timestamps();
 

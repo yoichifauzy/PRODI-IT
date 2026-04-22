@@ -19,15 +19,15 @@ class CurriculumCourseController extends Controller
         $courses = CurriculumCourse::query()
             ->with('curriculum')
             ->when($curriculumId > 0, fn($query) => $query->where('curriculum_id', $curriculumId))
-            ->orderBy('semester')
-            ->orderBy('sort_order')
+            // ->orderBy('curriculum_id')
             ->orderBy('code')
+            ->orderBy('name')
             ->paginate(20)
             ->withQueryString();
 
         return view('admin.curriculum-courses.index', [
             'courses' => $courses,
-            'curricula' => Curriculum::query()->orderByDesc('is_active')->orderBy('name')->get(),
+            'curricula' => Curriculum::query()->orderByDesc('is_active')->orderBy('id')->orderBy('name')->get(),
             'curriculumId' => $curriculumId,
         ]);
     }
@@ -58,7 +58,7 @@ class CurriculumCourseController extends Controller
     {
         return view('admin.curriculum-courses.edit', [
             'curriculumCourse' => $curriculumCourse,
-            'curricula' => Curriculum::query()->orderByDesc('is_active')->orderBy('name')->get(),
+            'curricula' => Curriculum::query()->orderByDesc('is_active')->orderBy('code')->get(),
         ]);
     }
 
@@ -84,30 +84,34 @@ class CurriculumCourseController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatePayload(Request $request, ?CurriculumCourse $curriculumCourse = null): array
+        private function validatePayload(Request $request, ?CurriculumCourse $curriculumCourse = null): array
     {
         $ignoreId = $curriculumCourse?->id;
 
         $validated = $request->validate([
             'curriculum_id' => ['required', 'exists:curricula,id'],
-            'semester' => ['required', 'integer', 'min:1', 'max:14'],
+            // Semester sudah dihapus dari sini sesuai permintaanmu
             'code' => [
                 'required',
                 'string',
                 'max:20',
                 Rule::unique('curriculum_courses', 'code')
                     ->where(fn($query) => $query
-                        ->where('curriculum_id', $request->input('curriculum_id'))
-                        ->where('semester', $request->input('semester')))
+                        ->where('curriculum_id', $request->input('curriculum_id')))
                     ->ignore($ignoreId),
             ],
             'name' => ['required', 'string', 'max:255'],
-            'credits' => ['required', 'integer', 'min:1', 'max:9'],
+            'credits_theory' => ['nullable', 'integer', 'min:0', 'max:9'],
+            'credits_practice' => ['nullable', 'integer', 'min:0', 'max:9'],
+            // WAJIB AKTIF agar data tersimpan ke database:
             'short_syllabus' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
         ]);
 
-        $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
+        // Memberikan nilai default jika user mengosongkan input
+        $validated['credits_practice'] = (int) ($request->input('credits_practice', 0));
+        $validated['sort_order'] = (int) ($request->input('sort_order', 0));
+        $validated['short_syllabus'] = $request->input('short_syllabus');
 
         return $validated;
     }

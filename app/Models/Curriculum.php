@@ -11,7 +11,7 @@ class Curriculum extends Model
 
     protected $fillable = [
         'name',
-        'academic_year',
+        'major_selection',
         'description',
         'is_active',
         'created_by',
@@ -31,6 +31,6 @@ class Curriculum extends Model
 
     public function courses(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(CurriculumCourse::class)->orderBy('semester')->orderBy('sort_order');
+        return $this->hasMany(CurriculumCourse::class)->orderBy('code')->orderBy('name');
     }
 }

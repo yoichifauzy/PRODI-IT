@@ -13,15 +13,17 @@ class CurriculumController extends Controller
     public function index(): View
     {
         $curricula = Curriculum::query()
-            ->withCount('courses')
-            ->orderByDesc('is_active')
-            ->latest()
-            ->paginate(12)
-            ->withQueryString();
+        ->with(['courses' => function($q) {
+            // Urutin biar pas tampil di tabel udah rapi per semester
+            $q->orderBy('code'); 
+        }])
+        ->orderByDesc('is_active')
+        ->orderBy('name')
+        ->get();
 
-        return view('admin.curricula.index', [
-            'curricula' => $curricula,
-        ]);
+    return view('public.curriculum', [
+        'curricula' => $curricula,
+    ]);
     }
 
     public function create(): View
@@ -52,7 +54,7 @@ class CurriculumController extends Controller
 
     public function edit(Curriculum $curriculum): View
     {
-        $curriculum->load(['courses' => fn($query) => $query->orderBy('semester')->orderBy('sort_order')]);
+        $curriculum->load(['courses' => fn($query) => $query->orderBy('code')]);
 
         return view('admin.curricula.edit', [
             'curriculum' => $curriculum,
@@ -92,7 +94,7 @@ class CurriculumController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'academic_year' => ['nullable', 'string', 'max:20'],
+            'major_selection' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
         ]);

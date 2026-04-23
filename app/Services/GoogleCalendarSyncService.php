@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AcademicEvent;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -44,6 +45,14 @@ class GoogleCalendarSyncService
             }
 
             $this->authorizedRequest()->delete($this->calendarBaseUrl() . '/events/' . rawurlencode($eventId))->throw();
+        } catch (RequestException $exception) {
+            $responseBody = $exception->response?->body();
+            Log::warning('Failed deleting event from Google Calendar (HTTP error).', [
+                'academic_event_id' => $event->id,
+                'status' => $exception->response?->status(),
+                'response' => $responseBody,
+                'message' => $exception->getMessage(),
+            ]);
         } catch (\Throwable $exception) {
             Log::warning('Failed deleting event from Google Calendar.', [
                 'academic_event_id' => $event->id,
@@ -76,6 +85,16 @@ class GoogleCalendarSyncService
                 ->json();
 
             return (string) ($response['htmlLink'] ?? '');
+        } catch (RequestException $exception) {
+            $responseBody = $exception->response?->body();
+            Log::warning('Failed syncing academic event to Google Calendar (HTTP error).', [
+                'academic_event_id' => $event->id,
+                'status' => $exception->response?->status(),
+                'response' => $responseBody,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return null;
         } catch (\Throwable $exception) {
             Log::warning('Failed syncing academic event to Google Calendar.', [
                 'academic_event_id' => $event->id,
@@ -84,6 +103,8 @@ class GoogleCalendarSyncService
 
             return null;
         }
+
+        return null;
     }
 
     /**

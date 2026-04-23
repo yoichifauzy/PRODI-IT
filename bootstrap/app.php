@@ -10,6 +10,9 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        __DIR__ . '/../app/Console/Commands',
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             App\Http\Middleware\SetPublicLocale::class,
@@ -19,8 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => App\Http\Middleware\EnsureAdminRole::class,
             'admin.session' => App\Http\Middleware\EnsureAdminSessionSecurity::class,
         ]);
-        
-        $middleware->redirectGuestsTo(fn () => route('admin.login'));
+
+        $middleware->redirectGuestsTo(fn() => route('admin.login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -1383,22 +1383,18 @@ html {
     width: max-content;
     padding-block: 1rem;
     will-change: transform;
-    transform: translateX(0);
-    animation: announcement-marquee-overflow 18s linear infinite alternate;
+    transform: translateX(var(--marquee-start, 100%));
+    animation: announcement-marquee-pass var(--marquee-duration, 18s) linear
+        infinite;
 }
 
 .announcement-marquee-track.is-overflowing {
     width: max-content;
-    animation-duration: 22s;
     animation-timing-function: linear;
 }
 
 .announcement-marquee-track.is-compact {
-    width: 100%;
-    justify-content: center;
-    animation-name: announcement-marquee-compact;
-    animation-duration: 7s;
-    animation-timing-function: ease-in-out;
+    width: max-content;
 }
 
 .announcement-marquee-lane {
@@ -1525,21 +1521,12 @@ html {
     }
 }
 
-@keyframes announcement-marquee-overflow {
+@keyframes announcement-marquee-pass {
     from {
-        transform: translateX(0);
+        transform: translateX(var(--marquee-start, 100%));
     }
     to {
-        transform: translateX(var(--marquee-shift, -6rem));
-    }
-}
-
-@keyframes announcement-marquee-compact {
-    from {
-        transform: translateX(-0.85rem);
-    }
-    to {
-        transform: translateX(0.85rem);
+        transform: translateX(var(--marquee-end, -100%));
     }
 }
 

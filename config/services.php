@@ -36,9 +36,12 @@ return [
     ],
 
     'google_calendar' => [
-        'enabled' => env('GOOGLE_CALENDAR_SYNC_ENABLED', false),
+        // Backward-compatible: support both GOOGLE_CALENDAR_SYNC_ENABLED and GOOGLE_CALENDAR_ENABLED.
+        'enabled' => env('GOOGLE_CALENDAR_SYNC_ENABLED', env('GOOGLE_CALENDAR_ENABLED', false)),
         'calendar_id' => env('GOOGLE_CALENDAR_ID', ''),
-        'embed_id' => env('GOOGLE_CALENDAR_EMBED_ID', env('GOOGLE_CALENDAR_ID', 'id.indonesian#holiday@group.v.calendar.google.com')),
+        'embed_id' => env('GOOGLE_CALENDAR_EMBED_ID', env('GOOGLE_CALENDAR_ID', '')),
+        'holiday_calendar_id' => env('GOOGLE_CALENDAR_HOLIDAY_ID', 'id.indonesian#holiday@group.v.calendar.google.com'),
+        'include_holidays_in_embed' => env('GOOGLE_CALENDAR_INCLUDE_HOLIDAYS', true),
         'service_account_json' => env('GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON', ''),
     ],
 

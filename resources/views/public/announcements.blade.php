@@ -106,16 +106,29 @@
 
                 const syncMarquee = () => {
                     marqueeTrack.classList.remove('is-overflowing', 'is-compact');
-                    marqueeTrack.style.removeProperty('--marquee-shift');
+                    marqueeTrack.style.removeProperty('--marquee-start');
+                    marqueeTrack.style.removeProperty('--marquee-end');
+                    marqueeTrack.style.removeProperty('--marquee-duration');
 
-                    const overflow = marqueeLane.scrollWidth - marqueeWrap.clientWidth;
-                    if (overflow > 10) {
-                        marqueeTrack.classList.add('is-overflowing');
-                        marqueeTrack.style.setProperty('--marquee-shift', `-${Math.ceil(overflow)}px`);
+                    const wrapWidth = marqueeWrap.clientWidth;
+                    const laneWidth = marqueeLane.scrollWidth;
+                    if (!wrapWidth || !laneWidth) {
+                        marqueeTrack.classList.add('is-compact');
                         return;
                     }
 
-                    marqueeTrack.classList.add('is-compact');
+                    // Start completely outside right edge and end completely outside left edge.
+                    const startShift = Math.ceil(wrapWidth);
+                    const endShift = -Math.ceil(laneWidth);
+                    const travelDistance = startShift + laneWidth;
+                    const pixelsPerSecond = 90;
+                    const durationSeconds = Math.max(10, Math.min(40, travelDistance / pixelsPerSecond));
+
+                    marqueeTrack.style.setProperty('--marquee-start', `${startShift}px`);
+                    marqueeTrack.style.setProperty('--marquee-end', `${endShift}px`);
+                    marqueeTrack.style.setProperty('--marquee-duration', `${durationSeconds.toFixed(2)}s`);
+
+                    marqueeTrack.classList.add(laneWidth > wrapWidth + 10 ? 'is-overflowing' : 'is-compact');
                 };
 
                 syncMarquee();

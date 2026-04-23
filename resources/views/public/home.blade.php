@@ -100,7 +100,30 @@
             ? $galleryItemsFromDb->values()->all()
             : $defaultGalleryItems;
 
-        $googleCalendarEmbedSrc = rawurlencode((string) config('services.google_calendar.embed_id'));
+        $calendarEmbedIds = array_values(array_unique(array_filter([
+            (string) config('services.google_calendar.embed_id'),
+            (bool) config('services.google_calendar.include_holidays_in_embed', true)
+                ? (string) config('services.google_calendar.holiday_calendar_id')
+                : '',
+        ], fn($value) => $value !== '')));
+
+        if ($calendarEmbedIds === []) {
+            $calendarEmbedIds = ['id.indonesian#holiday@group.v.calendar.google.com'];
+        }
+
+        $googleCalendarEmbedQuery = 'height=700&wkst=1&bgcolor=%23ffffff&ctz=Asia%2FJakarta&showTitle=0&showPrint=0&showTabs=1&showCalendars=0&showTz=1';
+
+        foreach ($calendarEmbedIds as $embedId) {
+            $googleCalendarEmbedQuery .= '&src=' . rawurlencode($embedId);
+        }
+
+        // First color for Prodi calendar, second for holidays if present.
+        $googleCalendarEmbedQuery .= '&color=%23D97706';
+        if (count($calendarEmbedIds) > 1) {
+            $googleCalendarEmbedQuery .= '&color=%230B8043';
+        }
+
+        $googleCalendarEmbedUrl = 'https://calendar.google.com/calendar/embed?' . $googleCalendarEmbedQuery;
 
         $akreditasiArticles = [
             [
@@ -341,7 +364,7 @@
         <div class="overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-white shadow-md">
             <iframe
                 title="{{ __('public.home.calendar.iframe_title') }}"
-                src="https://calendar.google.com/calendar/embed?height=700&wkst=1&bgcolor=%23ffffff&ctz=Asia%2FJakarta&showTitle=0&showPrint=0&showTabs=1&showCalendars=0&showTz=1&src={{ $googleCalendarEmbedSrc }}&color=%230B8043"
+                src="{{ $googleCalendarEmbedUrl }}"
                 style="border: 0"
                 width="100%"
                 height="700"

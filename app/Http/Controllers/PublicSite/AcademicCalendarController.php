@@ -36,6 +36,15 @@ class AcademicCalendarController extends Controller
         ]);
     }
 
+    public function show(AcademicEvent $academicEvent): View
+    {
+        abort_unless($academicEvent->is_published, 404);
+
+        return view('public.calendar-event-detail', [
+            'event' => $academicEvent,
+        ]);
+    }
+
     private function resolveMonth(string $month): CarbonImmutable
     {
         if (preg_match('/^\d{4}-\d{2}$/', $month) === 1) {

@@ -25,8 +25,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/kalender-akademik', [AcademicCalendarController::class, 'index'])->name('calendar.index');
+Route::get('/kalender-akademik/event/{academicEvent:slug}', [AcademicCalendarController::class, 'show'])->name('calendar.events.show');
 Route::post('/aspirations', [PublicAspirationController::class, 'store'])->name('aspirations.store');
 Route::get('/kegiatan', [PublicPageController::class, 'activities'])->name('public.activities');
+Route::get('/galeri', [PublicPageController::class, 'galleries'])->name('public.galleries');
 Route::get('/kegiatan/{activity}', [PublicPageController::class, 'activityShow'])->name('public.activities.show');
 Route::get('/dosen-dan-staff', [PublicPageController::class, 'lecturerStaff'])->name('public.lecturer-staff');
 Route::get('/dosen-dan-staff/{lecturerStaff}', [PublicPageController::class, 'lecturerStaffBlogs'])->name('public.lecturer-staff.blogs');

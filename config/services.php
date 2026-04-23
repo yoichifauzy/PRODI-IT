@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'google_calendar' => [
+        'enabled' => env('GOOGLE_CALENDAR_SYNC_ENABLED', false),
+        'calendar_id' => env('GOOGLE_CALENDAR_ID', ''),
+        'embed_id' => env('GOOGLE_CALENDAR_EMBED_ID', env('GOOGLE_CALENDAR_ID', 'id.indonesian#holiday@group.v.calendar.google.com')),
+        'service_account_json' => env('GOOGLE_CALENDAR_SERVICE_ACCOUNT_JSON', ''),
+    ],
+
 ];

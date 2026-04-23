@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreAcademicEventRequest;
 use App\Http\Requests\Admin\UpdateAcademicEventRequest;
 use App\Models\AcademicEvent;
+use App\Services\GoogleCalendarSyncService;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -14,6 +15,8 @@ use Illuminate\Support\Str;
 
 class AcademicEventController extends Controller
 {
+    public function __construct(private readonly GoogleCalendarSyncService $googleCalendarSyncService) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -68,7 +71,8 @@ class AcademicEventController extends Controller
         $payload = $this->normalizePayload($request->validated());
         $payload['created_by'] = $request->user()?->id;
 
-        AcademicEvent::query()->create($payload);
+        $academicEvent = AcademicEvent::query()->create($payload);
+        $this->syncGoogleCalendarEvent($academicEvent);
 
         return redirect()
             ->route('admin.academic-events.index')
@@ -101,6 +105,8 @@ class AcademicEventController extends Controller
     {
         $payload = $this->normalizePayload($request->validated(), $academicEvent->id);
         $academicEvent->update($payload);
+        $academicEvent->refresh();
+        $this->syncGoogleCalendarEvent($academicEvent);
 
         return redirect()
             ->route('admin.academic-events.index')
@@ -112,6 +118,7 @@ class AcademicEventController extends Controller
      */
     public function destroy(AcademicEvent $academicEvent): RedirectResponse
     {
+        $this->googleCalendarSyncService->deleteAcademicEvent($academicEvent);
         $academicEvent->delete();
 
         return redirect()
@@ -149,7 +156,18 @@ class AcademicEventController extends Controller
         $validated['slug'] = $this->generateUniqueSlug($slugSeed, $ignoreId);
         $validated['is_published'] = (bool) ($validated['is_published'] ?? false);
 
+        $googleEventUrl = trim((string) ($validated['google_event_url'] ?? ''));
+        $validated['google_event_url'] = $googleEventUrl === '' ? null : $googleEventUrl;
+
         return $validated;
+    }
+
+    private function syncGoogleCalendarEvent(AcademicEvent $academicEvent): void
+    {
+        $googleUrl = $this->googleCalendarSyncService->syncOrDeleteAcademicEvent($academicEvent);
+        if ($googleUrl !== null && $googleUrl !== '') {
+            $academicEvent->forceFill(['google_event_url' => $googleUrl])->save();
+        }
     }
 
     private function generateUniqueSlug(string $value, ?int $ignoreId = null): string

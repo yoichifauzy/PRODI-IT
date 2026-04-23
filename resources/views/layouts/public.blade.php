@@ -207,7 +207,7 @@
         <div class="mx-auto max-w-7xl px-6 py-12">
             <div class="grid grid-cols-1 gap-10 md:grid-cols-4">
                 <div>
-                    <h3 class="mb-4 text-xl font-bold text-[var(--accent)]">PRODI TI</h3>
+                    <h3 class="mb-4 text-xl font-bold text-[var(--accent)]">PRODI IT</h3>
                     <p class="leading-relaxed text-[var(--text-soft)]">
                         {{ __('public.footer.description') }}
                     </p>
@@ -262,7 +262,7 @@
             </div>
 
             <div class="mt-10 border-t pt-6 text-center text-sm text-[var(--text-soft)]">
-                <p>© 2026 <span class="font-semibold text-[var(--accent)]">PRODI TI</span>. {{ __('public.footer.rights') }}</p>
+                <p>© 2026 <span class="font-semibold text-[var(--accent)]">PRODI IT</span>. {{ __('public.footer.rights') }}</p>
             </div>
         </div>
     </footer>

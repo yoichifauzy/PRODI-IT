@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PublicSite;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Gallery;
+use App\Models\GalleryItem;
 use App\Models\HeroSlide;
 use App\Models\Setting;
 use App\Models\VisionMission;
@@ -37,8 +38,9 @@ class HomeController extends Controller
 
         $activities = Activity::query()
             ->visibleOnPublic()
+            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
             ->orderByDesc('event_date')
-            ->orderBy('sort_order')
+            ->orderByDesc('id')
             ->take(9)
             ->get();
 
@@ -47,26 +49,33 @@ class HomeController extends Controller
             ->where(function ($query): void {
                 $query->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
-            ->with([
-                'items' => fn($query) => $query
-                    ->visibleOnPublic()
-                    ->orderBy('sort_order')
-                    ->orderByDesc('taken_at'),
-            ])
             ->orderBy('name')
             ->get();
 
-        $galleryItems = $galleries
-            ->flatMap(function (Gallery $gallery) {
-                return $gallery->items->map(function ($item) use ($gallery): array {
-                    return [
-                        'category' => $gallery->slug,
-                        'category_label' => $gallery->name,
-                        'title' => $item->title ?: $gallery->name,
-                        'caption' => $item->caption,
-                        'image' => asset('storage/' . $item->image_path),
-                    ];
-                });
+        $galleryItems = GalleryItem::query()
+            ->with('gallery:id,name,slug,status,published_at')
+            ->visibleOnPublic()
+            ->whereHas('gallery', function ($query): void {
+                $query
+                    ->where('status', 'published')
+                    ->where(function ($inner): void {
+                        $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
+                    });
+            })
+            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
+            ->orderByDesc('taken_at')
+            ->orderByDesc('id')
+            ->get()
+            ->map(function (GalleryItem $item): array {
+                $gallery = $item->gallery;
+
+                return [
+                    'category' => $gallery?->slug ?? 'all',
+                    'category_label' => $gallery?->name ?? 'Galeri',
+                    'title' => $item->title ?: ($gallery?->name ?? 'Galeri'),
+                    'caption' => $item->caption,
+                    'image' => asset('storage/' . $item->image_path),
+                ];
             })
             ->values();
 

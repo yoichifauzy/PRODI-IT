@@ -40,7 +40,11 @@
                         <span class="rounded-full px-2 py-1 text-xs font-semibold {{ $typeStyle }}">{{ strtoupper($event->event_type) }}</span>
                         <span class="text-xs text-slate-500">{{ $event->start_date->format('d M Y') }}@if($event->end_date) - {{ $event->end_date->format('d M Y') }}@endif</span>
                     </div>
-                    <h2 class="mb-2 text-xl font-semibold text-slate-900">{{ $event->title }}</h2>
+                    <h2 class="mb-2 text-xl font-semibold text-slate-900">
+                        <a href="{{ route('calendar.events.show', ['academicEvent' => $event->slug]) }}" class="hover:text-[var(--accent)] hover:underline">
+                            {{ $event->title }}
+                        </a>
+                    </h2>
                     @if ($event->description)
                         <p class="mb-3 whitespace-pre-line text-slate-700">{{ $event->description }}</p>
                     @endif
@@ -48,8 +52,8 @@
                         @if ($event->location)
                             <span>{{ __('public.calendar_page.location_prefix') }}: {{ $event->location }}</span>
                         @endif
-                        @if ($event->google_event_url)
-                            <a href="{{ $event->google_event_url }}" target="_blank" rel="noopener noreferrer" class="text-slate-900 underline">{{ __('public.calendar_page.open_google') }}</a>
+                        @if ($event->googleCalendarUrl() !== '')
+                            <a href="{{ $event->googleCalendarUrl() }}" target="_blank" rel="noopener noreferrer" class="text-slate-900 underline">{{ __('public.calendar_page.open_google') }}</a>
                         @endif
                     </div>
                 </article>

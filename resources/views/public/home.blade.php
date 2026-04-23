@@ -100,6 +100,8 @@
             ? $galleryItemsFromDb->values()->all()
             : $defaultGalleryItems;
 
+        $googleCalendarEmbedSrc = rawurlencode((string) config('services.google_calendar.embed_id'));
+
         $akreditasiArticles = [
             [
                 'title' => __('public.home.accreditation.article_1_title'),
@@ -322,7 +324,7 @@
         </div>
 
         <div class="mt-10 text-center">
-            <a href="{{ route('public.announcements') }}" class="solid-cta gallery-more-btn gap-2">
+            <a href="{{ route('public.galleries') }}" class="solid-cta gallery-more-btn gap-2">
                 <span data-i18n="section.gallery.view_all">{{ __('public.home.gallery.view_all') }}</span>
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
@@ -339,7 +341,7 @@
         <div class="overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-white shadow-md">
             <iframe
                 title="{{ __('public.home.calendar.iframe_title') }}"
-                src="https://calendar.google.com/calendar/embed?height=700&wkst=1&bgcolor=%23ffffff&ctz=Asia%2FJakarta&showTitle=0&showPrint=0&showTabs=1&showCalendars=0&showTz=1&src=aWQuaW5kb25lc2lhbiNob2xpZGF5QGdyb3VwLnYuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%230B8043"
+                src="https://calendar.google.com/calendar/embed?height=700&wkst=1&bgcolor=%23ffffff&ctz=Asia%2FJakarta&showTitle=0&showPrint=0&showTabs=1&showCalendars=0&showTz=1&src={{ $googleCalendarEmbedSrc }}&color=%230B8043"
                 style="border: 0"
                 width="100%"
                 height="700"

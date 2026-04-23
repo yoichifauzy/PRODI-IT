@@ -43,6 +43,7 @@
     <div>
         <label for="google_event_url" class="mb-2 block text-sm font-medium text-slate-700">URL Google Calendar (Opsional)</label>
         <input id="google_event_url" name="google_event_url" value="{{ old('google_event_url', $academicEvent->google_event_url ?? '') }}" class="w-full rounded-md border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none" placeholder="https://calendar.google.com/..." />
+        <p class="mt-2 text-xs text-slate-500">Jika dikosongkan, URL akan diisi otomatis setelah sinkronisasi Google Calendar aktif.</p>
     </div>
 
     <div>

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Announcement;
 use App\Models\Curriculum;
+use App\Models\Gallery;
+use App\Models\GalleryItem;
 use App\Models\LecturerStaff;
 use App\Models\Project;
 use App\Models\TracerAlumni;
@@ -102,8 +104,8 @@ class PublicPageController extends Controller
     {
         $activities = Activity::query()
             ->visibleOnPublic()
+            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
             ->orderByDesc('event_date')
-            ->orderBy('sort_order')
             ->orderByDesc('id')
             ->paginate(12)
             ->withQueryString();
@@ -125,8 +127,8 @@ class PublicPageController extends Controller
         $relatedActivities = Activity::query()
             ->visibleOnPublic()
             ->where('id', '!=', $activity->id)
+            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
             ->orderByDesc('event_date')
-            ->orderBy('sort_order')
             ->orderByDesc('id')
             ->take(6)
             ->get();
@@ -134,6 +136,48 @@ class PublicPageController extends Controller
         return view('public.activity-detail', [
             'activity' => $activity,
             'relatedActivities' => $relatedActivities,
+        ]);
+    }
+
+    public function galleries(Request $request): View
+    {
+        $selectedGallery = trim((string) $request->query('gallery', ''));
+
+        $galleries = Gallery::query()
+            ->where('status', 'published')
+            ->where(function ($query): void {
+                $query->whereNull('published_at')->orWhere('published_at', '<=', now());
+            })
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
+        if ($selectedGallery !== '' && !$galleries->contains('slug', $selectedGallery)) {
+            $selectedGallery = '';
+        }
+
+        $galleryItems = GalleryItem::query()
+            ->with('gallery:id,name,slug,status,published_at')
+            ->visibleOnPublic()
+            ->whereHas('gallery', function ($query): void {
+                $query
+                    ->where('status', 'published')
+                    ->where(function ($inner): void {
+                        $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
+                    });
+            })
+            ->when($selectedGallery !== '', function ($query) use ($selectedGallery): void {
+                $query->whereHas('gallery', fn($gallery) => $gallery->where('slug', $selectedGallery));
+            })
+            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
+            ->orderByDesc('taken_at')
+            ->orderByDesc('id')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('public.galleries', [
+            'galleryItems' => $galleryItems,
+            'galleries' => $galleries,
+            'selectedGallery' => $selectedGallery,
         ]);
     }
 
@@ -251,6 +295,4 @@ class PublicPageController extends Controller
         // Begitu juga buat Pengabdian Masyarakat
         return view('public.community-service');
     }
-
-
 }

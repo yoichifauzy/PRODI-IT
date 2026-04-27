@@ -181,6 +181,47 @@ class PublicPageController extends Controller
         ]);
     }
 
+    public function galleryShow(GalleryItem $galleryItem): View
+    {
+        $isVisible = GalleryItem::query()
+            ->with('gallery:id,name,slug,status,published_at')
+            ->visibleOnPublic()
+            ->whereKey($galleryItem->id)
+            ->whereHas('gallery', function ($query): void {
+                $query
+                    ->where('status', 'published')
+                    ->where(function ($inner): void {
+                        $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
+                    });
+            })
+            ->exists();
+
+        abort_unless($isVisible, 404);
+
+        $relatedGalleryItems = GalleryItem::query()
+            ->with('gallery:id,name,slug,status,published_at')
+            ->visibleOnPublic()
+            ->where('gallery_id', $galleryItem->gallery_id)
+            ->whereKeyNot($galleryItem->id)
+            ->whereHas('gallery', function ($query): void {
+                $query
+                    ->where('status', 'published')
+                    ->where(function ($inner): void {
+                        $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
+                    });
+            })
+            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
+            ->orderByDesc('taken_at')
+            ->orderByDesc('id')
+            ->take(6)
+            ->get();
+
+        return view('public.gallery-detail', [
+            'galleryItem' => $galleryItem,
+            'relatedGalleryItems' => $relatedGalleryItems,
+        ]);
+    }
+
     public function projects(): View
     {
         $featured = Project::query()

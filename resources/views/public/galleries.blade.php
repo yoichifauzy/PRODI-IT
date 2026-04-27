@@ -36,7 +36,7 @@
                     $categoryName = $item->gallery?->name ?? __('public.galleries.fallback_category');
                     $title = $item->title ?: $categoryName;
                 @endphp
-                <article class="activities-grid-card group">
+                <a href="{{ route('public.galleries.show', $item) }}" class="activities-grid-card group block h-full overflow-hidden transition-transform duration-200 hover:-translate-y-1 focus-visible:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400">
                     <div class="activities-grid-media">
                         <img src="{{ $image }}" alt="{{ $title }}" class="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-110" />
                         <span class="activities-type-badge">{{ strtoupper($categoryName) }}</span>
@@ -53,7 +53,7 @@
                             {{ \Illuminate\Support\Str::limit($item->caption ?: __('public.galleries.caption_empty'), 160) }}
                         </p>
                     </div>
-                </article>
+                </a>
             @empty
                 <div class="rounded-xl border border-dashed border-[var(--border-soft)] bg-white p-8 text-center text-[var(--text-soft)] md:col-span-2 xl:col-span-3">
                     {{ __('public.galleries.empty') }}

@@ -18,6 +18,7 @@
     <div>
         <label for="image" class="mb-2 block text-sm font-medium text-slate-700">Gambar Hero {{ isset($heroSlide) ? '(Opsional jika tidak diubah)' : '' }}</label>
         <input id="image" type="file" name="image" accept="image/*" {{ isset($heroSlide) ? '' : 'required' }} class="w-full rounded-md border border-slate-300 px-3 py-2" />
+        <p class="mt-1 text-xs text-slate-500">Ukuran maksimum file gambar: 10MB.</p>
 
         @if (isset($heroSlide) && $heroSlide->image_path)
             <img src="{{ asset('storage/' . $heroSlide->image_path) }}" alt="Preview Hero" class="mt-3 h-36 w-full rounded-lg object-cover" />

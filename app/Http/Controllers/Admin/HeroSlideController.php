@@ -34,7 +34,7 @@ class HeroSlideController extends Controller
         $validated = $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
-            'image' => ['required', 'image', 'max:5120'],
+            'image' => ['required', 'image', 'max:10240'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'is_active' => ['nullable', 'boolean'],
             'start_at' => ['nullable', 'date'],
@@ -71,7 +71,7 @@ class HeroSlideController extends Controller
         $validated = $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
-            'image' => ['nullable', 'image', 'max:5120'],
+            'image' => ['nullable', 'image', 'max:10240'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'is_active' => ['nullable', 'boolean'],
             'start_at' => ['nullable', 'date'],

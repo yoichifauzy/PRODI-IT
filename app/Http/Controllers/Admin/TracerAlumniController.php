@@ -13,25 +13,48 @@ class TracerAlumniController extends Controller
 {
     public function index(Request $request): View
     {
-        $search = (string) $request->query('q', '');
+        $filters = [
+            'q' => trim((string) $request->query('q', '')),
+            'nim' => trim((string) $request->query('nim', '')),
+            'graduation_year' => trim((string) $request->query('graduation_year', '')),
+            'company_name' => trim((string) $request->query('company_name', '')),
+            'company_level' => trim((string) $request->query('company_level', '')),
+            'department' => trim((string) $request->query('department', '')),
+            'relevance' => trim((string) $request->query('relevance', '')),
+            'notes' => trim((string) $request->query('notes', '')),
+            'is_active' => trim((string) $request->query('is_active', '')),
+        ];
+
+        $search = $filters['q'];
 
         $alumni = TracerAlumni::query()
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($inner) use ($search): void {
                     $inner
                         ->where('nim', 'like', "%{$search}%")
+                        ->orWhere('graduation_year', 'like', "%{$search}%")
                         ->orWhere('company_name', 'like', "%{$search}%")
+                        ->orWhere('company_level', 'like', "%{$search}%")
                         ->orWhere('department', 'like', "%{$search}%")
-                        ->orWhere('relevance', 'like', "%{$search}%");
+                        ->orWhere('relevance', 'like', "%{$search}%")
+                        ->orWhere('notes', 'like', "%{$search}%");
                 });
             })
+            ->when($filters['nim'] !== '', fn($query) => $query->where('nim', 'like', "%{$filters['nim']}%"))
+            ->when($filters['graduation_year'] !== '', fn($query) => $query->where('graduation_year', $filters['graduation_year']))
+            ->when($filters['company_name'] !== '', fn($query) => $query->where('company_name', 'like', "%{$filters['company_name']}%"))
+            ->when($filters['company_level'] !== '', fn($query) => $query->where('company_level', 'like', "%{$filters['company_level']}%"))
+            ->when($filters['department'] !== '', fn($query) => $query->where('department', 'like', "%{$filters['department']}%"))
+            ->when($filters['relevance'] !== '', fn($query) => $query->where('relevance', 'like', "%{$filters['relevance']}%"))
+            ->when($filters['notes'] !== '', fn($query) => $query->where('notes', 'like', "%{$filters['notes']}%"))
+            ->when($filters['is_active'] !== '', fn($query) => $query->where('is_active', $filters['is_active'] === '1'))
             ->orderBy('nim')
             ->paginate(20)
             ->withQueryString();
 
         return view('admin.tracer-alumni.index', [
             'alumni' => $alumni,
-            'search' => $search,
+            'filters' => $filters,
         ]);
     }
 

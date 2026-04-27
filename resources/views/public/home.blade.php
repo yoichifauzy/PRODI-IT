@@ -180,9 +180,9 @@
                 </h1>
                 <p class="mx-auto mb-8 max-w-3xl text-xl italic md:text-2xl">{{ __('public.home.hero.motto') }}</p>
 
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="#tentang" class="hero-btn hero-btn-primary" data-i18n="hero.cta.about">{{ __('public.home.about.section_title') }}</a>
-                    <a href="#aspirasi" class="hero-btn hero-btn-primary" data-i18n="hero.cta.aspiration">{{ __('public.home.aspiration.section_title') }}</a>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-600">
+                    <a href="#tentang" class="border-4 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-8 py-3 rounded-lg font-bold text-xl transition-colors duration-200 shadow-lg hover:shadow-xl" data-i18n="hero.cta.about">{{ __('public.home.about.section_title') }}</a>
+                    <a href="#aspirasi" class="border-4 border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white px-8 py-3 rounded-lg font-bold text-xl transition-colors duration-200 shadow-lg hover:shadow-xl" data-i18n="hero.cta.aspiration">{{ __('public.home.aspiration.section_title') }}</a>
                 </div>
             </div>
         </div>
@@ -242,14 +242,14 @@
         </div>
 
         <div class="grid gap-6 lg:grid-cols-2">
-            <article class="rounded-2xl border border-[var(--border-soft)] bg-white p-6 shadow-md">
+            <article class="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 text-[var(--text-main)] shadow-md">
                 <h3 class="mb-4 text-3xl font-bold text-[var(--accent)]">{{ $visionMission?->vision_title ?? __('public.home.vision.vision_title') }}</h3>
                 <p class="leading-relaxed text-[var(--text-soft)]">
                     {{ $visionMission?->vision_text ?: $defaultVision }}
                 </p>
             </article>
 
-            <article class="rounded-2xl border border-[var(--border-soft)] bg-white p-6 shadow-md">
+            <article class="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 text-[var(--text-main)] shadow-md">
                 <h3 class="mb-4 text-3xl font-bold text-[var(--accent)]">{{ $visionMission?->mission_title ?? __('public.home.vision.mission_title') }}</h3>
                 <ul class="space-y-3 text-[var(--text-soft)]">
                     @foreach ($missionItems as $item)
@@ -265,7 +265,7 @@
         </div>
     </section>
 
-    <section id="acara" data-nav-theme="soft" class="reveal-section section-wrap section-alt">
+    <section id="kegiatan" data-nav-theme="soft" class="reveal-section section-wrap section-alt">
         <div class="section-head">
             <h2 class="section-title" data-i18n="section.activities.title">{{ __('public.home.activities.section_title') }}</h2>
             <p class="section-subtitle" data-i18n="section.activities.subtitle">{{ __('public.home.activities.section_subtitle') }}</p>
@@ -361,7 +361,7 @@
             <span class="section-line"></span>
         </div>
 
-        <div class="overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-white shadow-md">
+        <div class="overflow-hidden rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] shadow-md">
             <iframe
                 title="{{ __('public.home.calendar.iframe_title') }}"
                 src="{{ $googleCalendarEmbedUrl }}"
@@ -397,31 +397,31 @@
             </div>
         @endif
 
-        <form action="{{ route('aspirations.store') }}" method="POST" class="mx-auto max-w-5xl rounded-2xl border border-[var(--border-soft)] bg-white p-6 shadow-lg md:p-8">
+        <form action="{{ route('aspirations.store') }}" method="POST" class="mx-auto max-w-5xl rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 text-[var(--text-main)] shadow-lg md:p-8">
             @csrf
             <div class="mb-6 grid gap-6 md:grid-cols-2">
                 <div>
-                    <label for="full_name" class="mb-2 block text-sm font-semibold">{{ __('public.home.aspiration.field_full_name') }}</label>
+                    <label for="full_name" class="mb-2 block text-sm font-semibold text-[var(--text-main)]">{{ __('public.home.aspiration.field_full_name') }}</label>
                     <input id="full_name" name="full_name" value="{{ old('full_name') }}" required class="form-input" />
                 </div>
                 <div>
-                    <label for="email" class="mb-2 block text-sm font-semibold">{{ __('public.home.aspiration.field_email') }}</label>
+                    <label for="email" class="mb-2 block text-sm font-semibold text-[var(--text-main)]">{{ __('public.home.aspiration.field_email') }}</label>
                     <input id="email" name="email" type="email" value="{{ old('email') }}" required class="form-input" />
                 </div>
             </div>
             <div class="mb-6 grid gap-6 md:grid-cols-2">
                 <div>
-                    <label for="nim" class="mb-2 block text-sm font-semibold">{{ __('public.home.aspiration.field_nim') }}</label>
+                    <label for="nim" class="mb-2 block text-sm font-semibold text-[var(--text-main)]">{{ __('public.home.aspiration.field_nim') }}</label>
                     <input id="nim" name="nim" value="{{ old('nim') }}" class="form-input" />
                 </div>
                 <div>
-                    <label for="subject" class="mb-2 block text-sm font-semibold">{{ __('public.home.aspiration.field_subject') }}</label>
+                    <label for="subject" class="mb-2 block text-sm font-semibold text-[var(--text-main)]">{{ __('public.home.aspiration.field_subject') }}</label>
                     <input id="subject" name="subject" value="{{ old('subject') }}" required class="form-input" />
                 </div>
             </div>
             <div class="grid gap-5">
                 <div class="md:col-span-2">
-                    <label for="message" class="mb-2 block text-sm font-semibold">{{ __('public.home.aspiration.field_message') }}</label>
+                    <label for="message" class="mb-2 block text-sm font-semibold text-[var(--text-main)]">{{ __('public.home.aspiration.field_message') }}</label>
                     <textarea id="message" name="message" rows="6" required class="form-input">{{ old('message') }}</textarea>
                 </div>
                 <div class="md:col-span-2">
@@ -441,7 +441,7 @@
         <div class="grid gap-8 lg:grid-cols-2">
             <div class="space-y-4">
                 @foreach ($akreditasiArticles as $article)
-                    <article class="rounded-xl border border-[var(--border-soft)] bg-white p-5 shadow-sm">
+                    <article class="rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] p-5 text-[var(--text-main)] shadow-sm">
                         <h3 class="mb-2 text-2xl font-bold">{{ $article['title'] }}</h3>
                         <p class="text-[var(--text-soft)]">{{ $article['excerpt'] }}</p>
                     </article>
@@ -449,19 +449,19 @@
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">
-                <article class="rounded-xl border border-[var(--border-soft)] bg-white p-5 text-center shadow-sm">
+                <article class="rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] p-5 text-center text-[var(--text-main)] shadow-sm">
                     <img src="{{ asset('logo/logo_prodi_it.png') }}" alt="{{ __('public.home.accreditation.cert_prodi_alt') }}" class="mx-auto mb-4 h-28 w-28 object-contain" />
                     <h4 class="font-bold">{{ __('public.home.accreditation.cert_prodi_title') }}</h4>
                     <p class="mt-2 text-sm text-[var(--text-soft)]">{{ __('public.home.accreditation.cert_prodi_excerpt') }}</p>
                 </article>
 
-                <article class="rounded-xl border border-[var(--border-soft)] bg-white p-5 text-center shadow-sm">
+                <article class="rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] p-5 text-center text-[var(--text-main)] shadow-sm">
                     <img src="{{ asset('logo/logo_politeknik.png') }}" alt="{{ __('public.home.accreditation.cert_institution_alt') }}" class="mx-auto mb-4 h-28 w-28 object-contain" />
                     <h4 class="font-bold">{{ __('public.home.accreditation.cert_institution_title') }}</h4>
                     <p class="mt-2 text-sm text-[var(--text-soft)]">{{ __('public.home.accreditation.cert_institution_excerpt') }}</p>
                 </article>
 
-                <article class="rounded-xl border border-[var(--border-soft)] bg-white p-5 text-center shadow-sm sm:col-span-2">
+                <article class="rounded-xl border border-[var(--border-soft)] bg-[var(--surface)] p-5 text-center text-[var(--text-main)] shadow-sm sm:col-span-2">
                     <h4 class="mb-2 font-bold">{{ __('public.home.accreditation.status_title') }}</h4>
                     <p class="text-sm text-[var(--text-soft)]">{{ __('public.home.accreditation.status_excerpt') }}</p>
                 </article>

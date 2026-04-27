@@ -107,7 +107,7 @@
                     </button>
                     <div id="desktop-dropdown-student" class="nav-dropdown-menu" data-nav-menu role="menu">
                         <a href="{{ route('public.projects') }}" class="dropdown-item" data-i18n="nav.student_projects">{{ __('public.nav.student_projects') }}</a>
-                        <a href="{{ route('public.activities') }}" class="dropdown-item" data-i18n="nav.events">{{ __('public.nav.events') }}</a>
+                        <a href="{{ route('home') }}#kegiatan" class="dropdown-item" data-i18n="nav.events">{{ __('public.nav.events') }}</a>
                         <a href="{{ route('home') }}#galeri" class="dropdown-item" data-i18n="nav.gallery">{{ __('public.nav.gallery') }}</a>
                         <a href="{{ route('public.tracer-alumni') }}" class="dropdown-item" data-i18n="nav.tracer_alumni">{{ __('public.nav.tracer_alumni') }}</a>
                     </div>
@@ -182,7 +182,7 @@
                         </summary>
                         <div class="mobile-dropdown-content">
                             <a href="{{ route('public.projects') }}" data-i18n="nav.student_projects">{{ __('public.nav.student_projects') }}</a>
-                            <a href="{{ route('public.activities') }}" data-i18n="nav.events">{{ __('public.nav.events') }}</a>
+                            <a href="{{ route('home') }}#kegiatan" data-i18n="nav.events">{{ __('public.nav.events') }}</a>
                             <a href="{{ route('home') }}#galeri" data-i18n="nav.gallery">{{ __('public.nav.gallery') }}</a>
                             <a href="{{ route('public.tracer-alumni') }}" data-i18n="nav.tracer_alumni">{{ __('public.nav.tracer_alumni') }}</a>
                         </div>

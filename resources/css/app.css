@@ -135,6 +135,21 @@ html[data-motion-level="reduced"] {
     --border-soft: #334155;
 }
 
+.theme-dark .site-body .bg-white {
+    background: var(--surface) !important;
+}
+
+.theme-dark .site-body .text-slate-900,
+.theme-dark .site-body .text-slate-800,
+.theme-dark .site-body .text-slate-700 {
+    color: var(--text-main) !important;
+}
+
+.theme-dark .site-body .text-slate-600,
+.theme-dark .site-body .text-slate-500 {
+    color: var(--text-soft) !important;
+}
+
 html {
     scroll-behavior: smooth;
 }
@@ -582,6 +597,20 @@ html {
 .hero-btn-primary:hover {
     background: var(--accent-strong);
     border-color: var(--accent-strong);
+}
+
+.hero-btn-cta-link {
+    font-weight: 400;
+    border-color: #fff;
+    transition:
+        border-color 0s linear,
+        background-color 0.18s ease,
+        color 0.18s ease;
+}
+
+.hero-btn-cta-link:hover,
+.hero-btn-cta-link:focus-visible {
+    border-color: var(--accent);
 }
 
 .hero-btn-outline {
@@ -1151,6 +1180,40 @@ html {
 
 .project-regular-wrap {
     scroll-margin-top: 6rem;
+}
+
+#galeri {
+    scroll-margin-top: 6.75rem;
+}
+
+#kegiatan {
+    scroll-margin-top: 6.75rem;
+}
+
+#tentang {
+    scroll-margin-top: 6.75rem;
+}
+
+#akreditasi {
+    scroll-margin-top: 6.75rem;
+}
+
+@media (max-width: 768px) {
+    #galeri {
+        scroll-margin-top: 6.1rem;
+    }
+
+    #kegiatan {
+        scroll-margin-top: 6.1rem;
+    }
+
+    #tentang {
+        scroll-margin-top: 6.1rem;
+    }
+
+    #akreditasi {
+        scroll-margin-top: 6.1rem;
+    }
 }
 
 .back-link-btn {

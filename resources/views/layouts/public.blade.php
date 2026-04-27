@@ -130,11 +130,6 @@
                 <button id="mobile-nav-toggle" type="button" class="theme-toggle mobile-nav-toggle md:hidden" aria-expanded="false" aria-controls="mobile-nav-wrap" aria-label="Toggle navigation menu">
                     <i id="mobile-nav-icon" class="fa-solid fa-bars" aria-hidden="true"></i>
                 </button>
-
-                <a href="{{ route('admin.login') }}" class="btn-login px-3 sm:px-5">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    <span class="hidden sm:inline" data-i18n="nav.login">{{ __('public.nav.login') }}</span>
-                </a>
             </div>
         </div>
 

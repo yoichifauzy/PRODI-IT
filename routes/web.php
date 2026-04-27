@@ -42,7 +42,7 @@ Route::get('/tracer-alumni', [PublicPageController::class, 'tracerAlumni'])->nam
 Route::get('/pengumuman', [PublicPageController::class, 'announcements'])->name('public.announcements');
 Route::get('/pengumuman/sync', [PublicPageController::class, 'announcementsSync'])->name('public.announcements.sync');
 
-Route::prefix('admin')->name('admin.')->group(function (): void {
+Route::prefix('adminit')->name('admin.')->group(function (): void {
     Route::middleware('guest')->group(function (): void {
         Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
         Route::post('/login', [AdminAuthController::class, 'login'])->name('login.attempt');

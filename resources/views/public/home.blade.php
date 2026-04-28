@@ -152,6 +152,50 @@
             : $defaultMissionItems;
     @endphp
 
+    <style>
+        .hero-cta-row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            animation: fade-in-up 0.7s ease both;
+            animation-delay: 600ms;
+        }
+
+        @media (max-width: 639px) {
+            .hero-cta-row {
+                flex-direction: column;
+            }
+        }
+
+        .hero-cta-row > a.hero-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            line-height: 1.2;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+            transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .hero-cta-row > a.hero-cta-btn:hover,
+        .hero-cta-row > a.hero-cta-btn:focus-visible {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 16px 28px rgba(255, 77, 0, 0.22);
+            transform: translateY(-1px);
+        }
+    </style>
+
     <section id="hero" data-nav-theme="hero" class="hero-section relative isolate overflow-hidden">
         <div class="absolute inset-0">
             @foreach ($heroSlides as $slide)
@@ -180,9 +224,13 @@
                 </h1>
                 <p class="mx-auto mb-8 max-w-3xl text-xl italic md:text-2xl">{{ __('public.home.hero.motto') }}</p>
 
-                <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-600">
-                    <a href="#tentang" class="border-4 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-8 py-3 rounded-lg font-bold text-xl transition-colors duration-200 shadow-lg hover:shadow-xl" data-i18n="hero.cta.about">{{ __('public.home.about.section_title') }}</a>
-                    <a href="#aspirasi" class="border-4 border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white px-8 py-3 rounded-lg font-bold text-xl transition-colors duration-200 shadow-lg hover:shadow-xl" data-i18n="hero.cta.aspiration">{{ __('public.home.aspiration.section_title') }}</a>
+                <div class="hero-cta-row flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-600">
+                    <a href="#tentang" class="hero-cta-btn border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-8 py-3 rounded-lg  text-xl transition-colors duration-200 shadow-lg hover:shadow-xl" data-i18n="hero.cta.about">
+                        {{ __('public.home.about.section_title') }}
+                    </a>
+                    <a href="#aspirasi" class="hero-cta-btn border-2 border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white px-8 py-3 rounded-lg  text-xl transition-colors duration-200 shadow-lg hover:shadow-xl" data-i18n="hero.cta.aspiration">
+                        {{ __('public.home.aspiration.section_title') }}
+                    </a>
                 </div>
             </div>
         </div>

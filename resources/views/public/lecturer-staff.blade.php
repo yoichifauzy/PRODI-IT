@@ -56,9 +56,9 @@
 
                         @if ($member->email)
                             <a href="mailto:{{ $member->email }}" class="staff-email-link relative z-20">{{ $member->email }}</a>
-                        @endif
 
-                        <p class="staff-card-blog-cta">{{ __('public.lecturer_staff.blog_cta') }}</p>
+                            <p class="staff-card-blog-cta">{{ __('public.lecturer_staff.blog_cta') }}</p>
+                        @endif
                     </div>
                 </article>
             @empty

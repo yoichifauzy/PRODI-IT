@@ -61,7 +61,7 @@
                     <p class="text-sm text-slate-600">Silakan masuk dengan akun admin untuk mengakses dashboard.</p>
                 </div>
 
-                <div class="rounded-2xl border border-orange-100 bg-white/95 p-8 shadow-2xl backdrop-blur">
+                <div class="rounded-2xl border border-orange-100 bg-white bg-white/95 p-8 shadow-2xl backdrop-blur">
                     @if (session('error'))
                         <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
                             {{ session('error') }}
@@ -119,8 +119,8 @@
                             <div class="absolute inset-0 flex items-center">
                                 <div class="w-full border-t border-slate-200"></div>
                             </div>
-                            <div class="relative flex justify-center text-sm">
-                                <span class="bg-white px-2 text-slate-400">Atau</span>
+                                <div class="relative flex justify-center text-sm">
+                                <span class="bg-white px-2 text-slate-500">Atau</span>
                             </div>
                         </div>
 

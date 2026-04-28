@@ -430,8 +430,34 @@
         </div>
 
         @if (session('success'))
-            <div class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-700">
-                {{ session('success') }}
+            <div id="aspiration-alert" role="alert" aria-live="polite" class="mb-6 flex items-start gap-4 rounded-lg border bg-emerald-50 px-4 py-3 text-emerald-700 shadow-sm border-emerald-200 dark:bg-emerald-900 dark:border-emerald-700 dark:text-emerald-200" style="animation: slideDown .18s ease">
+                <svg class="h-6 w-6 flex-shrink-0 text-emerald-600 dark:text-emerald-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 10-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+
+                <div class="flex-1">
+                    <p class="font-medium">{{ session('success') }}</p>
+                </div>
+
+                <button type="button" id="aspiration-alert-close" aria-label="Close" class="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-md text-emerald-700 hover:bg-emerald-100 hover:text-emerald-900 dark:hover:bg-emerald-800">
+                    <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <style>
+                    @keyframes slideDown { from { transform: translateY(-6px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+                </style>
+
+                <script>
+                    (function(){
+                        const el = document.getElementById('aspiration-alert');
+                        if (!el) return;
+                        const btn = document.getElementById('aspiration-alert-close');
+                        let t = setTimeout(()=>{ el.style.transition = 'opacity .25s ease, transform .25s ease'; el.style.opacity = '0'; el.style.transform = 'translateY(-6px)'; setTimeout(()=>el.remove(),260); }, 5000);
+                        btn?.addEventListener('click', function(){ clearTimeout(t); el.style.transition = 'opacity .18s ease, transform .18s ease'; el.style.opacity = '0'; el.style.transform = 'translateY(-6px)'; setTimeout(()=>el.remove(),200); });
+                    })();
+                </script>
             </div>
         @endif
 

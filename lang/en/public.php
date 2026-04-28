@@ -309,7 +309,7 @@ return [
             'section_title' => 'Submit Your Aspiration',
             'section_subtitle' => 'We listen to every student voice and aspiration',
             'field_full_name' => 'Full Name',
-            'field_email' => 'Email',
+            'field_email' => 'Email (Optional)',
             'field_nim' => 'NIM (Optional)',
             'field_subject' => 'Subject',
             'field_message' => 'Aspiration Message',

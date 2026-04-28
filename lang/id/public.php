@@ -331,7 +331,7 @@ return [
             'section_title' => 'Sampaikan Aspirasi Anda',
             'section_subtitle' => 'Kami mendengarkan setiap suara dan aspirasi dari mahasiswa',
             'field_full_name' => 'Nama Lengkap',
-            'field_email' => 'Email',
+            'field_email' => 'Email (Opsional)',
             'field_nim' => 'NIM (Opsional)',
             'field_subject' => 'Subjek',
             'field_message' => 'Pesan Aspirasi',

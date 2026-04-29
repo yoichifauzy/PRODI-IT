@@ -29,7 +29,7 @@
                         'krs' => 'bg-blue-100 text-blue-700',
                         'uts' => 'bg-amber-100 text-amber-700',
                         'uas' => 'bg-rose-100 text-rose-700',
-                        'holiday' => 'bg-emerald-100 text-emerald-700',
+                        'meeting' => 'bg-emerald-100 text-emerald-700',
                         'seminar' => 'bg-violet-100 text-violet-700',
                         default => 'bg-slate-200 text-slate-700',
                     };

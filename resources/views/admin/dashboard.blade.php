@@ -43,7 +43,7 @@
             <table class="min-w-full text-sm">
                 <thead class="bg-slate-50 text-left text-slate-600">
                     <tr>
-                        <th class="px-4 py-3">Nama</th>
+                        <th class="px-4 py-3">Kontak</th>
                         <th class="px-4 py-3">Subjek</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Waktu</th>
@@ -53,7 +53,10 @@
                 <tbody>
                     @forelse ($latestAspirations as $aspiration)
                         <tr class="border-t border-slate-100">
-                            <td class="px-4 py-3">{{ $aspiration->full_name }}</td>
+                            <td class="px-4 py-3">
+                                <p class="font-medium text-slate-900">{{ $aspiration->email ?: '-' }}</p>
+                                <p class="text-xs text-slate-500">NIM: {{ $aspiration->nim ?: '-' }}</p>
+                            </td>
                             <td class="px-4 py-3">{{ $aspiration->subject }}</td>
                             <td class="px-4 py-3">
                                 <span class="rounded-full px-2 py-1 text-xs {{ $aspiration->status === 'unread' ? 'bg-amber-100 text-amber-700' : ($aspiration->status === 'read' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-700') }}">

@@ -10,7 +10,9 @@ use App\Models\Gallery;
 use App\Models\GalleryItem;
 use App\Models\LecturerStaff;
 use App\Models\Project;
+use App\Models\Setting;
 use App\Models\TracerAlumni;
+use App\Models\VisionMission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -43,23 +45,6 @@ class PublicPageController extends Controller
             'search' => $search,
             'type' => $type,
             'types' => LecturerStaff::TYPES,
-        ]);
-    }
-
-    public function lecturerStaffBlogs(LecturerStaff $lecturerStaff): View
-    {
-        abort_unless($lecturerStaff->is_active, 404);
-
-        $blogs = $lecturerStaff->blogs()
-            ->where('is_published', true)
-            ->orderByDesc('activity_date')
-            ->orderBy('sort_order')
-            ->orderByDesc('id')
-            ->get();
-
-        return view('public.lecturer-staff-blogs', [
-            'member' => $lecturerStaff,
-            'blogs' => $blogs,
         ]);
     }
 
@@ -329,6 +314,32 @@ class PublicPageController extends Controller
     {
         // Nantinya kalau ada model Research, tinggal panggil di sini
         return view('public.research');
+    }
+
+    public function about(): View
+    {
+        $visionMission = VisionMission::query()->where('is_active', true)->first();
+
+        $aboutKeys = [
+            'about_section_title',
+            'about_section_subtitle',
+            'about_heading',
+            'about_description_primary',
+            'about_description_secondary',
+            'about_image_one',
+            'about_image_two',
+            'about_video_path',
+        ];
+
+        $aboutSettings = Setting::query()
+            ->whereIn('key', $aboutKeys)
+            ->get()
+            ->pluck('value', 'key');
+
+        return view('public.about', [
+            'visionMission' => $visionMission,
+            'aboutSettings' => $aboutSettings,
+        ]);
     }
 
     public function communityService(): View

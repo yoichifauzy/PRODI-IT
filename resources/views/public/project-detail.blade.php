@@ -74,26 +74,6 @@
                         <span class="font-semibold">{{ __('public.project_detail.meta_published_at') }}</span>
                         <span>{{ optional($project->published_at)->format('d M Y H:i') ?: '-' }}</span>
                     </p>
-                    <p class="project-detail-meta-item">
-                        <span class="font-semibold">{{ __('public.project_detail.meta_demo_url') }}</span>
-                        <span>
-                            @if (filled($project->demo_url))
-                                <a href="{{ $project->demo_url }}" target="_blank" rel="noopener" class="project-detail-link">{{ $project->demo_url }}</a>
-                            @else
-                                -
-                            @endif
-                        </span>
-                    </p>
-                    <p class="project-detail-meta-item">
-                        <span class="font-semibold">{{ __('public.project_detail.meta_repository_url') }}</span>
-                        <span>
-                            @if (filled($project->repository_url))
-                                <a href="{{ $project->repository_url }}" target="_blank" rel="noopener" class="project-detail-link">{{ $project->repository_url }}</a>
-                            @else
-                                -
-                            @endif
-                        </span>
-                    </p>
                 </div>
             </div>
         </article>

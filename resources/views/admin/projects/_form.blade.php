@@ -35,17 +35,6 @@
         <textarea id="summary" name="summary" rows="4" class="w-full rounded-md border border-slate-300 px-3 py-2">{{ old('summary', $project->summary ?? '') }}</textarea>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2">
-        <div>
-            <label for="demo_url" class="mb-2 block text-sm font-medium text-slate-700">Demo URL (Opsional)</label>
-            <input id="demo_url" name="demo_url" type="url" value="{{ old('demo_url', $project->demo_url ?? '') }}" class="w-full rounded-md border border-slate-300 px-3 py-2" />
-        </div>
-        <div>
-            <label for="repository_url" class="mb-2 block text-sm font-medium text-slate-700">Repository URL (Opsional)</label>
-            <input id="repository_url" name="repository_url" type="url" value="{{ old('repository_url', $project->repository_url ?? '') }}" class="w-full rounded-md border border-slate-300 px-3 py-2" />
-        </div>
-    </div>
-
     <div>
         <label for="thumbnail_file" class="mb-2 block text-sm font-medium text-slate-700">Gambar Project (Opsional)</label>
         <input id="thumbnail_file" type="file" name="thumbnail_file" accept="image/*" class="w-full rounded-md border border-slate-300 px-3 py-2" />

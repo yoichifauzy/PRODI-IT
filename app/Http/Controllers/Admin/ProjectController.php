@@ -119,8 +119,6 @@ class ProjectController extends Controller
             'student_nim' => ['nullable', 'string', 'max:30'],
             'year' => ['nullable', 'integer', 'min:2000', 'max:2100'],
             'summary' => ['nullable', 'string'],
-            'demo_url' => ['nullable', 'url', 'max:2048'],
-            'repository_url' => ['nullable', 'url', 'max:2048'],
             'thumbnail_file' => ['nullable', 'image', 'max:5120'],
             'status' => ['required', 'in:draft,published'],
             'is_featured' => ['nullable', 'boolean'],

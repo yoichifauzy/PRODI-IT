@@ -8,7 +8,6 @@
             <h1 class="text-2xl font-bold text-slate-900">Visi & Misi</h1>
             <p class="text-sm text-slate-600">Data pada status aktif akan ditampilkan di section Visi dan Misi pada homepage.</p>
         </div>
-        <a href="{{ route('admin.vision-missions.create') }}" class="rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white">+ Tambah Data</a>
     </div>
 
     <div class="rounded-xl border border-slate-200 bg-white">
@@ -35,11 +34,6 @@
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
                                     <a href="{{ route('admin.vision-missions.edit', $item) }}" class="text-slate-900 underline">Edit</a>
-                                    <form method="POST" action="{{ route('admin.vision-missions.destroy', $item) }}" onsubmit="return confirm('Hapus data ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-rose-600 underline">Hapus</button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>

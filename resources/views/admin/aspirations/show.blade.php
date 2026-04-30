@@ -23,7 +23,6 @@
 
         <div class="space-y-4">
             <div class="rounded-xl border border-slate-200 bg-white p-4 text-sm">
-                <p><span class="font-medium text-slate-700">Nama:</span> {{ $aspiration->full_name }}</p>
                 <p class="mt-2"><span class="font-medium text-slate-700">Email:</span> {{ $aspiration->email }}</p>
                 <p class="mt-2"><span class="font-medium text-slate-700">NIM:</span> {{ $aspiration->nim ?: '-' }}</p>
                 <p class="mt-2"><span class="font-medium text-slate-700">Status:</span> {{ strtoupper($aspiration->status) }}</p>

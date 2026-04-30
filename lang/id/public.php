@@ -81,8 +81,6 @@ return [
         'meta_nim' => 'NIM',
         // 'meta_year' => 'Tahun',
         'meta_published_at' => 'Tanggal Publish',
-        'meta_demo_url' => 'Demo URL',
-        'meta_repository_url' => 'Repository URL',
         'related_title' => 'Project Lainnya',
         'share' => [
             'title' => 'Bagikan Project',
@@ -220,6 +218,13 @@ return [
         'table_relevance' => 'Kesesuaian',
         'empty' => 'Data tracer alumni belum tersedia.',
     ],
+    'about' => [
+        'page_title' => 'Tentang Kami | PGT IT',
+        'cta_title' => 'Mari Berkolaborasi',
+        'cta_subtitle' => 'Kami terbuka untuk peluang kolaborasi, saran, dan masukan untuk terus berkembang',
+        'visit_team' => 'Temui Tim Kami',
+        'see_activities' => 'Lihat Kegiatan',
+    ],
     'lecturer_staff' => [
         'page_title' => 'Dosen dan Staff | PGT IT',
         'hero_title' => 'Dosen dan Staff',
@@ -330,7 +335,6 @@ return [
         'aspiration' => [
             'section_title' => 'Sampaikan Aspirasi Anda',
             'section_subtitle' => 'Kami mendengarkan setiap suara dan aspirasi dari mahasiswa',
-            'field_full_name' => 'Nama Lengkap',
             'field_email' => 'Email (Opsional)',
             'field_nim' => 'NIM (Opsional)',
             'field_subject' => 'Subjek',

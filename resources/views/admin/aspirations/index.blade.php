@@ -9,7 +9,7 @@
     </div>
 
     <form method="GET" action="{{ route('admin.aspirations.index') }}" class="mb-4 grid gap-3 rounded-xl border border-slate-200 bg-white p-4 md:grid-cols-[1fr_200px_auto]">
-        <input name="q" value="{{ $search }}" placeholder="Cari nama, email, subjek, isi pesan..." class="rounded-md border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none" />
+        <input name="q" value="{{ $search }}" placeholder="Cari email, NIM, subjek, isi pesan..." class="rounded-md border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none" />
         <select name="status" class="rounded-md border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none">
             <option value="">Semua Status</option>
             <option value="unread" @selected($status === 'unread')>Unread</option>
@@ -24,7 +24,7 @@
             <table class="min-w-full text-sm">
                 <thead class="bg-slate-50 text-left text-slate-600">
                     <tr>
-                        <th class="px-4 py-3">Pengirim</th>
+                        <th class="px-4 py-3">Kontak</th>
                         <th class="px-4 py-3">Subjek</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Waktu</th>
@@ -35,8 +35,8 @@
                     @forelse ($aspirations as $aspiration)
                         <tr class="border-t border-slate-100">
                             <td class="px-4 py-3">
-                                <p class="font-medium text-slate-900">{{ $aspiration->full_name }}</p>
                                 <p class="text-xs text-slate-500">{{ $aspiration->email }}</p>
+                                <p class="text-xs text-slate-500">NIM: {{ $aspiration->nim ?: '-' }}</p>
                             </td>
                             <td class="px-4 py-3">{{ \Illuminate\Support\Str::limit($aspiration->subject, 50) }}</td>
                             <td class="px-4 py-3">

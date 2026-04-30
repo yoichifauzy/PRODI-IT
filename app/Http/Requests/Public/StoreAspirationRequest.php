@@ -22,8 +22,6 @@ class StoreAspirationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'full_name' => ['required', 'string', 'max:255'],
-            // Make email optional for public submissions
             'email' => ['nullable', 'email:rfc,dns', 'max:255'],
             'nim' => ['nullable', 'string', 'max:30'],
             'subject' => ['required', 'string', 'max:255'],

@@ -17,8 +17,6 @@ class Project extends Model
         'student_nim',
         'year',
         'summary',
-        'demo_url',
-        'repository_url',
         'thumbnail',
         'status',
         'is_featured',

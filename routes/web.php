@@ -12,7 +12,6 @@ use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\GalleryItemController as AdminGalleryItemController;
 use App\Http\Controllers\Admin\HeroSlideController as AdminHeroSlideController;
 use App\Http\Controllers\Admin\LecturerStaffController as AdminLecturerStaffController;
-use App\Http\Controllers\Admin\LecturerStaffBlogController as AdminLecturerStaffBlogController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\TracerAlumniController as AdminTracerAlumniController;
 use App\Http\Controllers\Admin\AcademicEventController as AdminAcademicEventController;
@@ -24,6 +23,7 @@ use App\Http\Controllers\PublicSite\PublicPageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/tentang-kami', [PublicPageController::class, 'about'])->name('public.about');
 Route::get('/kalender-akademik', [AcademicCalendarController::class, 'index'])->name('calendar.index');
 Route::get('/kalender-akademik/event/{academicEvent:slug}', [AcademicCalendarController::class, 'show'])->name('calendar.events.show');
 Route::post('/aspirations', [PublicAspirationController::class, 'store'])->name('aspirations.store');
@@ -32,7 +32,6 @@ Route::get('/galeri', [PublicPageController::class, 'galleries'])->name('public.
 Route::get('/galeri/{galleryItem}', [PublicPageController::class, 'galleryShow'])->name('public.galleries.show');
 Route::get('/kegiatan/{activity}', [PublicPageController::class, 'activityShow'])->name('public.activities.show');
 Route::get('/dosen-dan-staff', [PublicPageController::class, 'lecturerStaff'])->name('public.lecturer-staff');
-Route::get('/dosen-dan-staff/{lecturerStaff}', [PublicPageController::class, 'lecturerStaffBlogs'])->name('public.lecturer-staff.blogs');
 Route::get('/kurikulum', [PublicPageController::class, 'curriculum'])->name('public.curriculum');
 Route::get('/penelitian', [PublicPageController::class, 'research'])->name('public.research');
 Route::get('/pengabdian-masyarakat', [PublicPageController::class, 'communityService'])->name('public.community-service');
@@ -57,20 +56,12 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
 
         Route::resource('announcements', AdminAnnouncementController::class)->except(['show']);
         Route::resource('academic-events', AdminAcademicEventController::class)->except(['show']);
-        Route::resource('vision-missions', AdminVisionMissionController::class)->except(['show']);
+        Route::resource('vision-missions', AdminVisionMissionController::class)->only(['index', 'edit', 'update']);
         Route::resource('hero-slides', AdminHeroSlideController::class)->except(['show']);
         Route::resource('activities', AdminActivityController::class)->except(['show']);
         Route::resource('galleries', AdminGalleryController::class)->except(['show']);
         Route::resource('gallery-items', AdminGalleryItemController::class)->except(['show']);
         Route::resource('lecturer-staff', AdminLecturerStaffController::class)->except(['show']);
-        Route::prefix('lecturer-staff/{lecturerStaff}/blogs')->name('lecturer-staff.blogs.')->group(function (): void {
-            Route::get('/', [AdminLecturerStaffBlogController::class, 'index'])->name('index');
-            Route::get('/create', [AdminLecturerStaffBlogController::class, 'create'])->name('create');
-            Route::post('/', [AdminLecturerStaffBlogController::class, 'store'])->name('store');
-            Route::get('/{blog}/edit', [AdminLecturerStaffBlogController::class, 'edit'])->name('edit');
-            Route::put('/{blog}', [AdminLecturerStaffBlogController::class, 'update'])->name('update');
-            Route::delete('/{blog}', [AdminLecturerStaffBlogController::class, 'destroy'])->name('destroy');
-        });
         Route::resource('curricula', AdminCurriculumController::class)->except(['show']);
         Route::resource('curriculum-courses', AdminCurriculumCourseController::class)->except(['show']);
         Route::resource('projects', AdminProjectController::class)->except(['show']);

@@ -15,26 +15,15 @@ class AspirationController extends Controller
         $payload['ip_address'] = $request->ip();
         $payload['user_agent'] = (string) $request->userAgent();
 
-        // Prevent duplicate submissions: consider submissions with identical
-        // full_name, nim (nullable), subject and message within a short window
-        // as duplicates (likely caused by double-click or reload).
+        // Prevent duplicate submissions using the message content plus optional
+        // identifiers within a short window (likely caused by double-click or reload).
         $existsQuery = Aspiration::query()
-            ->where('full_name', $payload['full_name'])
             ->where('subject', $payload['subject'])
             ->where('message', $payload['message'])
             ->where('created_at', '>=', now()->subMinutes(10));
 
-        if (!empty($payload['nim'])) {
-            $existsQuery->where('nim', $payload['nim']);
-        } else {
-            $existsQuery->whereNull('nim');
-        }
-
-        if (!empty($payload['email'])) {
-            $existsQuery->where('email', $payload['email']);
-        } else {
-            $existsQuery->whereNull('email');
-        }
+        $existsQuery->when(!empty($payload['nim']), fn($query) => $query->where('nim', $payload['nim']), fn($query) => $query->whereNull('nim'));
+        $existsQuery->when(!empty($payload['email']), fn($query) => $query->where('email', $payload['email']), fn($query) => $query->whereNull('email'));
 
         if ($existsQuery->exists()) {
             return redirect()->to(route('home') . '#aspirasi')

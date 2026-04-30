@@ -81,8 +81,6 @@ return [
         'meta_nim' => 'NIM',
         // 'meta_year' => 'Year',
         'meta_published_at' => 'Published At',
-        'meta_demo_url' => 'Demo URL',
-        'meta_repository_url' => 'Repository URL',
         'related_title' => 'Other Projects',
         'share' => [
             'title' => 'Share Project',
@@ -198,6 +196,13 @@ return [
         'table_relevance' => 'Relevance',
         'empty' => 'Alumni tracer data is not available yet.',
     ],
+    'about' => [
+        'page_title' => 'About Us | PGT IT',
+        'cta_title' => 'Let\'s Collaborate',
+        'cta_subtitle' => 'We are open to collaboration opportunities, suggestions, and feedback for continuous growth',
+        'visit_team' => 'Meet Our Team',
+        'see_activities' => 'View Activities',
+    ],
     'lecturer_staff' => [
         'page_title' => 'Lecturers and Staff | PGT IT',
         'hero_title' => 'Lecturers and Staff',
@@ -308,7 +313,6 @@ return [
         'aspiration' => [
             'section_title' => 'Submit Your Aspiration',
             'section_subtitle' => 'We listen to every student voice and aspiration',
-            'field_full_name' => 'Full Name',
             'field_email' => 'Email (Optional)',
             'field_nim' => 'NIM (Optional)',
             'field_subject' => 'Subject',

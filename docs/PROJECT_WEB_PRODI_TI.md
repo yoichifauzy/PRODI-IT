@@ -297,7 +297,6 @@ Admin bisa:
     - `title`, `slug`
     - `student_name`, `student_nim`
     - `year`, `summary`
-    - `demo_url`, `repository_url`
     - `status` (`draft`/`published`)
     - `is_featured`
     - `published_at`.

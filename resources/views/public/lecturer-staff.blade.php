@@ -37,7 +37,6 @@
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @forelse ($members as $member)
                 <article class="staff-card staff-card-enter" style="animation-delay: {{ ($loop->index % 9) * 90 }}ms;">
-                    <a href="{{ route('public.lecturer-staff.blogs', $member) }}" class="staff-card-hit-area" aria-label="{{ __('public.lecturer_staff.open_blog_aria', ['name' => $member->name]) }}"></a>
                     <div class="staff-card-glow"></div>
                     <div class="staff-card-content">
                         <div class="mb-4 flex items-center gap-4">
@@ -51,13 +50,11 @@
                             </div>
                         </div>
 
-                        <p class="staff-role-chip mb-2 text-sm font-semibold text-[var(--accent)]">{{ $member->position }}</p>
+                        <p class="staff-role-chip mb-2 text-sm font-semibold text-white">{{ $member->position }}</p>
                         <p class="mb-3 text-sm text-[var(--text-soft)]">{{ $member->bio ?: __('public.lecturer_staff.bio_fallback') }}</p>
 
                         @if ($member->email)
-                            <a href="mailto:{{ $member->email }}" class="staff-email-link relative z-20">{{ $member->email }}</a>
-
-                            <p class="staff-card-blog-cta">{{ __('public.lecturer_staff.blog_cta') }}</p>
+                            <a href="mailto:{{ $member->email }}" class="staff-email-link relative z-20 text-black">{{ $member->email }}</a>
                         @endif
                     </div>
                 </article>

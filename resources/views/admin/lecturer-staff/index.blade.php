@@ -48,7 +48,6 @@
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
                                     <a href="{{ route('admin.lecturer-staff.edit', $member) }}" class="text-slate-900 underline">Edit</a>
-                                    <a href="{{ route('admin.lecturer-staff.blogs.index', $member) }}" class="text-blue-700 underline">Blog</a>
                                     <form method="POST" action="{{ route('admin.lecturer-staff.destroy', $member) }}" onsubmit="return confirm('Hapus data ini?')">
                                         @csrf
                                         @method('DELETE')

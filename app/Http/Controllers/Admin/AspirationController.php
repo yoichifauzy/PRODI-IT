@@ -20,7 +20,6 @@ class AspirationController extends Controller
             ->when($search !== '', function ($q) use ($search): void {
                 $q->where(function ($query) use ($search): void {
                     $query
-                        ->where('full_name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%")
                         ->orWhere('nim', 'like', "%{$search}%")
                         ->orWhere('subject', 'like', "%{$search}%")

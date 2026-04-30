@@ -187,12 +187,10 @@
             white-space: nowrap;
         }
 
-        .hero-cta-row > a.hero-cta-btn:hover,
-        .hero-cta-row > a.hero-cta-btn:focus-visible {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: 0 16px 28px rgba(255, 77, 0, 0.22);
-            transform: translateY(-1px);
+        .hero-cta-row > a.hero-cta-btn.hero-cta-yellow {
+            background: #facc15;
+            border-color: #facc15;
+            color: #1f2937;
         }
     </style>
 
@@ -207,7 +205,7 @@
             @endforeach
         </div>
 
-        <div class="absolute inset-0 bg-black/55"></div>
+        <div class="absolute inset-0 bg-black/65"></div>
 
         <div class="relative z-10 flex min-h-[92vh] items-center justify-center px-4 py-16 text-center text-white">
             <div class="w-full max-w-6xl">
@@ -225,10 +223,10 @@
                 <p class="mx-auto mb-8 max-w-3xl text-xl italic md:text-2xl">{{ __('public.home.hero.motto') }}</p>
 
                 <div class="hero-cta-row flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-600">
-                    <a href="#tentang" class="hero-cta-btn border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-8 py-3 rounded-lg  text-xl transition-colors duration-200 shadow-lg hover:shadow-xl" data-i18n="hero.cta.about">
+                    <a href="#tentang" class="hero-cta-btn border-2 border-orange-500 text-orange-500 px-8 py-3 rounded-lg text-xl shadow-lg" data-i18n="hero.cta.about">
                         {{ __('public.home.about.section_title') }}
                     </a>
-                    <a href="#aspirasi" class="hero-cta-btn border-2 border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white px-8 py-3 rounded-lg  text-xl transition-colors duration-200 shadow-lg hover:shadow-xl" data-i18n="hero.cta.aspiration">
+                    <a href="#aspirasi" class="hero-cta-btn hero-cta-yellow px-8 py-3 rounded-lg text-xl shadow-lg" data-i18n="hero.cta.aspiration">
                         {{ __('public.home.aspiration.section_title') }}
                     </a>
                 </div>
@@ -264,7 +262,7 @@
                     {{ $aboutDescriptionSecondary }}
                 </p>
 
-                <a href="{{ route('public.lecturer-staff') }}" class="solid-cta" data-i18n="about.explore_more">{{ __('public.home.about.explore_more') }}</a>
+                <a href="{{ route('public.about') }}" class="solid-cta" data-i18n="about.explore_more">{{ __('public.home.about.explore_more') }}</a>
             </div>
 
             <div>
@@ -473,14 +471,10 @@
 
         <form action="{{ route('aspirations.store') }}" method="POST" class="mx-auto max-w-5xl rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 text-[var(--text-main)] shadow-lg md:p-8">
             @csrf
-            <div class="mb-6 grid gap-6 md:grid-cols-2">
-                <div>
-                    <label for="full_name" class="mb-2 block text-sm font-semibold text-[var(--text-main)]">{{ __('public.home.aspiration.field_full_name') }}</label>
-                    <input id="full_name" name="full_name" value="{{ old('full_name') }}" required class="form-input" />
-                </div>
+            <div class="mb-6 grid gap-6">
                 <div>
                     <label for="email" class="mb-2 block text-sm font-semibold text-[var(--text-main)]">{{ __('public.home.aspiration.field_email') }}</label>
-                    <input id="email" name="email" type="email" value="{{ old('email') }}" required class="form-input" />
+                    <input id="email" name="email" type="email" value="{{ old('email') }}" class="form-input" />
                 </div>
             </div>
             <div class="mb-6 grid gap-6 md:grid-cols-2">

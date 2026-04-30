@@ -9,7 +9,6 @@ class Aspiration extends Model
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $fillable = [
-        'full_name',
         'email',
         'nim',
         'subject',

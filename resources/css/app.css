@@ -150,6 +150,54 @@ html[data-motion-level="reduced"] {
     color: var(--text-soft) !important;
 }
 
+/* Dark-mode overrides for common Tailwind text utility classes
+   Ensure components using text-gray-* or text-amber-* adapt to theme-dark */
+.theme-dark .site-body .text-gray-900,
+.theme-dark .site-body .text-gray-800,
+.theme-dark .site-body .text-gray-700 {
+    color: var(--text-main) !important;
+}
+
+.theme-dark .site-body .text-gray-600,
+.theme-dark .site-body .text-gray-500,
+.theme-dark .site-body .text-gray-400 {
+    color: var(--text-soft) !important;
+}
+
+.theme-dark .site-body .text-amber-100,
+.theme-dark .site-body .text-amber-200 {
+    color: rgba(255, 224, 179, 0.95) !important;
+}
+
+/* Specific tweaks for About page sections to ensure good contrast */
+.theme-dark .site-body .hero-section h1,
+.theme-dark .site-body .section-title,
+.theme-dark .site-body .text-4xl,
+.theme-dark .site-body h2,
+.theme-dark .site-body h3 {
+    color: var(--text-main) !important;
+}
+
+/* About/Vision-Mission card and section backgrounds in dark mode */
+.theme-dark .site-body .bg-gray-50 {
+    background-color: var(--bg-soft) !important;
+}
+
+.theme-dark .site-body .border-gray-200 {
+    border-color: var(--border-soft) !important;
+}
+
+/* Ensure list items and paragraph text in cards are readable */
+.theme-dark .site-body .text-gray-700,
+.theme-dark .site-body .text-gray-600 {
+    color: var(--text-soft) !important;
+}
+
+/* Slight tweak for yellow icon contrast */
+.theme-dark .site-body .bg-yellow-400 {
+    background-color: #f59e0b !important; /* slightly darker amber */
+}
+
 html {
     scroll-behavior: smooth;
 }

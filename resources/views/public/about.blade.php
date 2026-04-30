@@ -75,7 +75,7 @@
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
                 <h2 class="text-4xl md:text-5xl font-bold mb-3">{{ __('public.home.vision.section_title') }}</h2>
-                <p class="text-gray-600 text-lg">{{ __('public.home.vision.section_subtitle') }}</p>
+                <p class="text-gray-600 text-lg" style="color:var(--text-soft)">{{ __('public.home.vision.section_subtitle') }}</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -89,7 +89,7 @@
                             {{ $visionMission?->vision_title ?? __('public.home.vision.vision_title') }}
                         </h3>
                     </div>
-                    <p class="text-gray-700 leading-relaxed text-lg">
+                    <p class="text-gray-700 leading-relaxed text-lg" style="color:var(--text-soft)">
                         {{ $visionMission?->vision_text ?: __('public.home.vision.default_vision') }}
                     </p>
                 </div>
@@ -109,7 +109,7 @@
                             @if (trim($item) !== '')
                                 <li class="flex items-start gap-3">
                                     <span class="mt-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-red-600 flex-shrink-0"></span>
-                                    <span class="text-gray-700">{{ $item }}</span>
+                                    <span class="text-gray-700" style="color:var(--text-soft)">{{ $item }}</span>
                                 </li>
                             @endif
                         @endforeach

@@ -225,6 +225,11 @@ return [
         'visit_team' => 'Temui Tim Kami',
         'see_activities' => 'Lihat Kegiatan',
     ],
+    'learning_outcomes' => [
+        'page_title' => 'Capaian Pembelajaran | PGT IT',
+        'hero_title' => 'Capaian Pembelajaran',
+        'hero_subtitle' => 'Capaian pembelajaran Prodi IT akan diperbarui berkala di halaman ini.',
+    ],
     'lecturer_staff' => [
         'page_title' => 'Dosen dan Staff | PGT IT',
         'hero_title' => 'Dosen dan Staff',

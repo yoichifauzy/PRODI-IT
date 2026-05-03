@@ -37,6 +37,7 @@ Route::get('/penelitian', [PublicPageController::class, 'research'])->name('publ
 Route::get('/pengabdian-masyarakat', [PublicPageController::class, 'communityService'])->name('public.community-service');
 Route::get('/project-mahasiswa', [PublicPageController::class, 'projects'])->name('public.projects');
 Route::get('/project-mahasiswa/{project:slug}', [PublicPageController::class, 'projectShow'])->name('public.projects.show');
+Route::get('/capaian-pembelajaran', [PublicPageController::class, 'learningOutcomes'])->name('public.learning-outcomes');
 Route::get('/tracer-alumni', [PublicPageController::class, 'tracerAlumni'])->name('public.tracer-alumni');
 Route::get('/pengumuman', [PublicPageController::class, 'announcements'])->name('public.announcements');
 Route::get('/pengumuman/sync', [PublicPageController::class, 'announcementsSync'])->name('public.announcements.sync');

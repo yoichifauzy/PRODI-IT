@@ -230,6 +230,12 @@ class PublicPageController extends Controller
         ]);
     }
 
+    public function learningOutcomes(): View
+    {
+        // Placeholder content for learning outcomes page. Content will be updated periodically.
+        return view('public.learning-outcomes');
+    }
+
     public function projectShow(Project $project): View
     {
         $isVisible = Project::query()

@@ -78,7 +78,7 @@
                     </button>
                     <div id="desktop-dropdown-academic" class="nav-dropdown-menu" data-nav-menu role="menu">
                         <a href="{{ route('public.curriculum') }}" class="dropdown-item" data-i18n="nav.curriculum">{{ __('public.nav.curriculum') }}</a>
-                        <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.learning_outcomes">{{ __('public.nav.learning_outcomes') }}</a>
+                        <a href="{{ route('public.learning-outcomes') }}" class="dropdown-item" data-i18n="nav.learning_outcomes">{{ __('public.nav.learning_outcomes') }}</a>
                     </div>
                 </div>
 
@@ -159,7 +159,7 @@
                         </summary>
                         <div class="mobile-dropdown-content">
                             <a href="{{ route('public.curriculum') }}" data-i18n="nav.curriculum">{{ __('public.nav.curriculum') }}</a>
-                            <a href="{{ route('home') }}#akreditasi" data-i18n="nav.learning_outcomes">{{ __('public.nav.learning_outcomes') }}</a>
+                            <a href="{{ route('public.learning-outcomes') }}" data-i18n="nav.learning_outcomes">{{ __('public.nav.learning_outcomes') }}</a>
                         </div>
                     </details>
 

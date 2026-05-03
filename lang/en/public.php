@@ -203,6 +203,11 @@ return [
         'visit_team' => 'Meet Our Team',
         'see_activities' => 'View Activities',
     ],
+    'learning_outcomes' => [
+        'page_title' => 'Learning Outcomes | PGT IT',
+        'hero_title' => 'Learning Outcomes',
+        'hero_subtitle' => 'The Information Technology Study Program learning outcomes will be updated periodically on this page.',
+    ],
     'lecturer_staff' => [
         'page_title' => 'Lecturers and Staff | PGT IT',
         'hero_title' => 'Lecturers and Staff',

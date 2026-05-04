@@ -42,21 +42,20 @@ Secara arsitektur, aplikasi memakai pola MVC pada Laravel:
 
 Berikut halaman publik yang tersedia dan fungsinya.
 
-| No  | URL                                 | Route Name                    | Controller@Method                         | View                          | Fungsi Utama                                                                                                       |
-| --- | ----------------------------------- | ----------------------------- | ----------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| 1   | `/`                                 | `home`                        | `HomeController@index`                    | `public.home`                 | Beranda utama dengan section dinamis (hero, tentang, visi-misi, kegiatan, galeri, kalender, aspirasi, akreditasi). |
-| 2   | `/kalender-akademik`                | `calendar.index`              | `AcademicCalendarController@index`        | `public.calendar`             | Kalender akademik bulanan, navigasi bulan, menampilkan event yang dipublish.                                       |
-| 3   | `/kegiatan`                         | `public.activities`           | `PublicPageController@activities`         | `public.activities`           | Daftar kegiatan yang dipublish (dengan pagination).                                                                |
-| 4   | `/kegiatan/{activity}`              | `public.activities.show`      | `PublicPageController@activityShow`       | `public.activity-detail`      | Detail kegiatan + rekomendasi kegiatan terkait.                                                                    |
-| 5   | `/dosen-dan-staff`                  | `public.lecturer-staff`       | `PublicPageController@lecturerStaff`      | `public.lecturer-staff`       | Daftar dosen/staff aktif, dengan filter tipe dan pencarian.                                                        |
-| 6   | `/dosen-dan-staff/{lecturerStaff}`  | `public.lecturer-staff.blogs` | `PublicPageController@lecturerStaffBlogs` | `public.lecturer-staff-blogs` | Daftar blog/aktivitas dari dosen/staff tertentu yang dipublish.                                                    |
-| 7   | `/kurikulum`                        | `public.curriculum`           | `PublicPageController@curriculum`         | `public.curriculum`           | Menampilkan kurikulum dan daftar mata kuliah per semester.                                                         |
-| 8   | `/project-mahasiswa`                | `public.projects`             | `PublicPageController@projects`           | `public.projects`             | Daftar project mahasiswa (featured + regular).                                                                     |
-| 9   | `/project-mahasiswa/{project:slug}` | `public.projects.show`        | `PublicPageController@projectShow`        | `public.project-detail`       | Detail project mahasiswa + project terkait.                                                                        |
-| 10  | `/tracer-alumni`                    | `public.tracer-alumni`        | `PublicPageController@tracerAlumni`       | `public.tracer-alumni`        | Data tracer alumni aktif, bisa filter berdasarkan tahun lulus.                                                     |
-| 11  | `/pengumuman`                       | `public.announcements`        | `PublicPageController@announcements`      | `public.announcements`        | Daftar pengumuman yang tampil publik sesuai aturan publish/schedule.                                               |
-| 12  | `/pengumuman/sync`                  | `public.announcements.sync`   | `PublicPageController@announcementsSync`  | - (JSON)                      | Endpoint sinkronisasi signature/count pengumuman untuk update data real-time ringan.                               |
-| 13  | `POST /aspirations`                 | `aspirations.store`           | `PublicSite\AspirationController@store`   | -                             | Submit form aspirasi dari user (disimpan ke inbox admin).                                                          |
+| No  | URL                                 | Route Name                  | Controller@Method                        | View                     | Fungsi Utama                                                                                                       |
+| --- | ----------------------------------- | --------------------------- | ---------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| 1   | `/`                                 | `home`                      | `HomeController@index`                   | `public.home`            | Beranda utama dengan section dinamis (hero, tentang, visi-misi, kegiatan, galeri, kalender, aspirasi, akreditasi). |
+| 2   | `/kalender-akademik`                | `calendar.index`            | `AcademicCalendarController@index`       | `public.calendar`        | Kalender akademik bulanan, navigasi bulan, menampilkan event yang dipublish.                                       |
+| 3   | `/kegiatan`                         | `public.activities`         | `PublicPageController@activities`        | `public.activities`      | Daftar kegiatan yang dipublish (dengan pagination).                                                                |
+| 4   | `/kegiatan/{activity}`              | `public.activities.show`    | `PublicPageController@activityShow`      | `public.activity-detail` | Detail kegiatan + rekomendasi kegiatan terkait.                                                                    |
+| 5   | `/dosen-dan-staff`                  | `public.lecturer-staff`     | `PublicPageController@lecturerStaff`     | `public.lecturer-staff`  | Daftar dosen/staff aktif, dengan filter tipe dan pencarian.                                                        |
+| 6   | `/kurikulum`                        | `public.curriculum`         | `PublicPageController@curriculum`        | `public.curriculum`      | Menampilkan kurikulum dan daftar mata kuliah per semester.                                                         |
+| 7   | `/project-mahasiswa`                | `public.projects`           | `PublicPageController@projects`          | `public.projects`        | Daftar project mahasiswa (featured + regular).                                                                     |
+| 8   | `/project-mahasiswa/{project:slug}` | `public.projects.show`      | `PublicPageController@projectShow`       | `public.project-detail`  | Detail project mahasiswa + project terkait.                                                                        |
+| 9   | `/tracer-alumni`                    | `public.tracer-alumni`      | `PublicPageController@tracerAlumni`      | `public.tracer-alumni`   | Data tracer alumni aktif, bisa filter berdasarkan tahun lulus.                                                     |
+| 10  | `/pengumuman`                       | `public.announcements`      | `PublicPageController@announcements`     | `public.announcements`   | Daftar pengumuman yang tampil publik sesuai aturan publish/schedule.                                               |
+| 11  | `/pengumuman/sync`                  | `public.announcements.sync` | `PublicPageController@announcementsSync` | - (JSON)                 | Endpoint sinkronisasi signature/count pengumuman untuk update data real-time ringan.                               |
+| 12  | `POST /aspirations`                 | `aspirations.store`         | `PublicSite\AspirationController@store`  | -                        | Submit form aspirasi dari user (disimpan ke inbox admin).                                                          |
 
 ### 3.1 Detail Section di Halaman Home
 
@@ -467,13 +466,12 @@ Entitas yang terhubung langsung dengan halaman publik/admin saat ini:
 7. `Gallery`
 8. `GalleryItem`
 9. `LecturerStaff`
-10. `LecturerStaffBlog`
-11. `Curriculum`
-12. `CurriculumCourse`
-13. `Project`
-14. `TracerAlumni`
-15. `Aspiration`
-16. `Setting`
+10. `Curriculum`
+11. `CurriculumCourse`
+12. `Project`
+13. `TracerAlumni`
+14. `Aspiration`
+15. `Setting`
 
 ## 9. Catatan Implementasi
 

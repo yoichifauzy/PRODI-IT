@@ -225,7 +225,7 @@
                 <div>
                     <h4 class="mb-4 text-lg font-semibold">{{ __('public.footer.contact') }}</h4>
                     <ul class="space-y-2 text-[var(--text-soft)]">
-                        <li>Email: <a href="mailto:prodi-ti@domain.id" class="footer-link">prodi-ti@domain.id</a></li>
+                        <li>Email : <a href="mailto:prodi-it@pgt.id" class="footer-link">prodi-it@pgt.id</a></li>
                         <li>{{ __('public.footer.phone') }}: +62 899-9999-9999</li>
                         <li data-i18n-ignore>{{ __('public.footer.campus_address') }}: Jl. Gajah Tunggal No.16, RT.001/RW.002, Alam Jaya, Kec. Jatiuwung, Kota Tangerang, Banten 15133</li>
                     </ul>

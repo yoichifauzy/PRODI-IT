@@ -30,9 +30,4 @@ class LecturerStaff extends Model
             'is_active' => 'boolean',
         ];
     }
-
-    public function blogs(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(LecturerStaffBlog::class);
-    }
 }

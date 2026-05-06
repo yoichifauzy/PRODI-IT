@@ -169,8 +169,8 @@
                             <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                         </summary>
                         <div class="mobile-dropdown-content">
-                            <a href="{{ route('home') }}#akreditasi" data-i18n="nav.research">{{ __('public.nav.research') }}</a>
-                            <a href="{{ route('home') }}#akreditasi" data-i18n="nav.community_service">{{ __('public.nav.community_service') }}</a>
+                            <a href="{{ route('public.research') }}" data-i18n="nav.research">{{ __('public.nav.research') }}</a>
+                            <a href="{{ route('public.community-service') }}" data-i18n="nav.community_service">{{ __('public.nav.community_service') }}</a>
                             <a href="{{ route('home') }}#akreditasi" data-i18n="nav.spmi">{{ __('public.nav.spmi') }}</a>
                         </div>
                     </details>

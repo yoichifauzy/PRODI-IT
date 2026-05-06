@@ -4,26 +4,28 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Curriculum;
+use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CurriculumController extends Controller
 {
     public function index(): View
     {
-        $curricula = Curriculum::query()
-        ->with(['courses' => function($q) {
-            // Urutin biar pas tampil di tabel udah rapi per semester
-            $q->orderBy('code'); 
-        }])
-        ->orderByDesc('is_active')
-        ->orderBy('name')
-        ->get();
+        $defaultUrl = 'https://docs.google.com/spreadsheets/d/1d-MGrDU54pP-0uUyl5Txd4S3fV1ukCMqMUtsoxpZ9NM/edit?usp=sharing';
 
-    return view('public.curriculum', [
-        'curricula' => $curricula,
-    ]);
+        $setting = Setting::query()->firstOrCreate(
+            ['key' => 'curriculum_sheet_url'],
+            ['value' => $defaultUrl, 'type' => 'string', 'group' => 'curriculum']
+        );
+
+        $sheetUrl = (string) ($setting->value ?: $defaultUrl);
+
+        return view('admin.curricula.index', [
+            'sheetUrl' => $sheetUrl,
+        ]);
     }
 
     public function create(): View
@@ -35,10 +37,6 @@ class CurriculumController extends Controller
     {
         $payload = $this->validatePayload($request);
         $payload['created_by'] = $request->user()?->id;
-
-        if ($payload['is_active']) {
-            Curriculum::query()->update(['is_active' => false]);
-        }
 
         Curriculum::query()->create($payload);
 
@@ -63,13 +61,7 @@ class CurriculumController extends Controller
 
     public function update(Request $request, Curriculum $curriculum): RedirectResponse
     {
-        $payload = $this->validatePayload($request);
-
-        if ($payload['is_active']) {
-            Curriculum::query()
-                ->where('id', '!=', $curriculum->id)
-                ->update(['is_active' => false]);
-        }
+        $payload = $this->validatePayload($request, $curriculum);
 
         $curriculum->update($payload);
 
@@ -90,16 +82,17 @@ class CurriculumController extends Controller
     /**
      * @return array<string, mixed>
      */
-    private function validatePayload(Request $request): array
+    private function validatePayload(Request $request, ?Curriculum $curriculum = null): array
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'major_selection' => ['nullable', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('curricula', 'name')->ignore($curriculum?->id),
+            ],
             'description' => ['nullable', 'string'],
-            'is_active' => ['nullable', 'boolean'],
         ]);
-
-        $validated['is_active'] = (bool) ($validated['is_active'] ?? false);
 
         return $validated;
     }

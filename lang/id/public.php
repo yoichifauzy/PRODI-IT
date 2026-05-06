@@ -220,6 +220,7 @@ return [
     ],
     'about' => [
         'page_title' => 'Tentang Kami | PGT IT',
+        'back_to_home' => 'Kembali ke Home',
         'cta_title' => 'Mari Berkolaborasi',
         'cta_subtitle' => 'Kami terbuka untuk peluang kolaborasi, saran, dan masukan untuk terus berkembang',
         'visit_team' => 'Temui Tim Kami',

@@ -6,8 +6,9 @@ use App\Http\Controllers\Admin\AboutSectionController as AdminAboutSectionContro
 use App\Http\Controllers\Admin\AspirationController as AdminAspirationController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CurriculumController as AdminCurriculumController;
-use App\Http\Controllers\Admin\CurriculumCourseController as AdminCurriculumCourseController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\CurriculumImportController as AdminCurriculumImportController;
+use App\Http\Controllers\Admin\ResearchCommunitySyncController as AdminResearchCommunitySyncController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\GalleryItemController as AdminGalleryItemController;
 use App\Http\Controllers\Admin\HeroSlideController as AdminHeroSlideController;
@@ -63,8 +64,16 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
         Route::resource('galleries', AdminGalleryController::class)->except(['show']);
         Route::resource('gallery-items', AdminGalleryItemController::class)->except(['show']);
         Route::resource('lecturer-staff', AdminLecturerStaffController::class)->except(['show']);
-        Route::resource('curricula', AdminCurriculumController::class)->except(['show']);
-        Route::resource('curriculum-courses', AdminCurriculumCourseController::class)->except(['show']);
+        Route::get('curricula', [AdminCurriculumController::class, 'index'])->name('curricula.index');
+        Route::post('curricula/link', [AdminCurriculumImportController::class, 'updateLink'])->name('curricula.link.update');
+        Route::post('curricula/upload', [AdminCurriculumImportController::class, 'upload'])->name('curricula.upload');
+        Route::post('curricula/sync', [AdminCurriculumImportController::class, 'syncNow'])->name('curricula.sync');
+        Route::get('curricula/download', [AdminCurriculumImportController::class, 'download'])->name('curricula.download');
+        Route::get('research-community', [AdminResearchCommunitySyncController::class, 'index'])->name('research-community.index');
+        Route::post('research-community/link', [AdminResearchCommunitySyncController::class, 'updateLink'])->name('research-community.link.update');
+        Route::post('research-community/upload', [AdminResearchCommunitySyncController::class, 'upload'])->name('research-community.upload');
+        Route::post('research-community/sync', [AdminResearchCommunitySyncController::class, 'syncNow'])->name('research-community.sync');
+        Route::get('research-community/download', [AdminResearchCommunitySyncController::class, 'download'])->name('research-community.download');
         Route::resource('projects', AdminProjectController::class)->except(['show']);
         Route::resource('tracer-alumni', AdminTracerAlumniController::class)
             ->parameters(['tracer-alumni' => 'tracerAlumni'])

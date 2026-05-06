@@ -8,6 +8,8 @@ class CommunityService extends Model
 {
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
+    protected $table = 'community_services';
+
     protected $fillable = [
         'title',
         'activity_date',

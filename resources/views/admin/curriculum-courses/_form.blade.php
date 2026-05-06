@@ -9,7 +9,7 @@
             <option value="">-- Pilih Kurikulum --</option>
             @foreach ($curricula as $curriculum)
                 <option value="{{ $curriculum->id }}" {{ (old('curriculum_id', $selectedCurriculum ?? '') == $curriculum->id) ? 'selected' : '' }}>
-                    {{ $curriculum->name }} 
+                    {{ $curriculum->name }}
                     @if(!empty($curriculum->major_selection) && $curriculum->major_selection !== '-')
                         ({{ $curriculum->major_selection }})
                     @endif
@@ -19,10 +19,6 @@
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">
-        <!-- <div>
-            <label for="semester" class="mb-2 block text-sm font-medium text-slate-700">Semester</label>
-            <input id="semester" type="number" min="1" max="14" name="semester" required value="{{ old('semester', $curriculumCourse->semester ?? 1) }}" class="w-full rounded-md border border-slate-300 px-3 py-2" />
-        </div> -->
         <div>
             <label for="code" class="mb-2 block text-sm font-medium text-slate-700">Kode MK</label>
             <input id="code" name="code" required value="{{ old('code', $curriculumCourse->code ?? '') }}" class="w-full rounded-md border border-slate-300 px-3 py-2" />

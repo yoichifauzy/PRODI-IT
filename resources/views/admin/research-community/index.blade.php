@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Kelola Kurikulum')
+@section('title', 'Penelitian & Pengabdian')
 
 @section('content')
     <div class="mb-4 flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">Kurikulum</h1>
-            <p class="text-sm text-slate-600">Kelola data kurikulum dan matakuliah melalui spreadsheet.</p>
+            <h1 class="text-2xl font-bold text-slate-900">Penelitian & Pengabdian</h1>
+            <p class="text-sm text-slate-600">Kelola data penelitian dan pengabdian melalui spreadsheet.</p>
         </div>
     </div>
 
@@ -32,18 +32,18 @@
                             <div class="flex flex-wrap items-center gap-3">
                                 <button class="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white" id="openEditLink">Edit</button>
 
-                                <form method="POST" action="{{ route('admin.curricula.upload') }}" enctype="multipart/form-data" id="uploadForm">
+                                <form method="POST" action="{{ route('admin.research-community.upload') }}" enctype="multipart/form-data" id="uploadForm">
                                     @csrf
                                     <input type="file" name="file" id="uploadInput" class="hidden" accept=".csv,.xlsx,.xls" />
                                     <button type="button" class="rounded-md bg-indigo-600 px-3 py-2 text-xs font-semibold text-white" id="uploadButton">Upload</button>
                                 </form>
 
-                                <form method="POST" action="{{ route('admin.curricula.sync') }}" id="syncForm">
+                                <form method="POST" action="{{ route('admin.research-community.sync') }}" id="syncForm">
                                     @csrf
                                     <button type="button" class="rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white" id="syncButton">Sync Now</button>
                                 </form>
 
-                                <a href="{{ route('admin.curricula.download') }}" class="rounded-md bg-slate-500 px-3 py-2 text-xs font-semibold text-white">Download</a>
+                                <a href="{{ route('admin.research-community.download') }}" class="rounded-md bg-slate-500 px-3 py-2 text-xs font-semibold text-white">Download</a>
                             </div>
                         </td>
                     </tr>
@@ -66,7 +66,7 @@
         <div id="linkModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:60;align-items:center;justify-content:center;">
             <div style="background:#fff;border-radius:8px;max-width:720px;margin:48px auto;padding:20px;">
                 <h3 style="margin-top:0">Link Google Sheets (public)</h3>
-                <form method="post" action="{{ route('admin.curricula.link.update') }}" id="linkForm">
+                <form method="post" action="{{ route('admin.research-community.link.update') }}" id="linkForm">
                     @csrf
                     <div style="margin-bottom:12px">
                         <label style="display:block;margin-bottom:6px">URL Spreadsheet</label>
@@ -99,13 +99,13 @@
         uploadButton.addEventListener('click', function(){ uploadInput.click(); });
         uploadInput.addEventListener('change', function(){
             if (uploadInput.files.length > 0) {
-                const ok = confirm('Upload ini akan menghapus semua data kurikulum dan matakuliah lalu menggantinya dari file. Lanjutkan?');
+                const ok = confirm('Upload ini akan menghapus semua data penelitian dan pengabdian lalu menggantinya dari file. Lanjutkan?');
                 if (ok) { uploadForm.submit(); } else { uploadInput.value = ''; }
             }
         });
 
         syncButton.addEventListener('click', function(){
-            const ok = confirm('Sync Now akan menghapus semua data kurikulum dan matakuliah lalu mengambil dari spreadsheet. Lanjutkan?');
+            const ok = confirm('Sync Now akan menghapus semua data penelitian dan pengabdian lalu mengambil dari spreadsheet. Lanjutkan?');
             if (ok) { syncForm.submit(); }
         });
     })();

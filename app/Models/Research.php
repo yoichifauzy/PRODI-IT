@@ -8,6 +8,8 @@ class Research extends Model
 {
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
+    protected $table = 'researches';
+
     protected $fillable = [
         'title',
         'researcher_name',

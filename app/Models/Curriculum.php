@@ -11,17 +11,13 @@ class Curriculum extends Model
 
     protected $fillable = [
         'name',
-        'major_selection',
         'description',
-        'is_active',
         'created_by',
     ];
 
     protected function casts(): array
     {
-        return [
-            'is_active' => 'boolean',
-        ];
+        return [];
     }
 
     public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -205,7 +205,7 @@
             @endforeach
         </div>
 
-        <div class="absolute inset-0 bg-black/65"></div>
+        <div class="absolute inset-0 bg-black/70"></div>
 
         <div class="relative z-10 flex min-h-[92vh] items-center justify-center px-4 py-16 text-center text-white">
             <div class="w-full max-w-6xl">
@@ -562,11 +562,10 @@
 
     <div id="about-video-modal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-black/70 p-4">
         <div class="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-black shadow-2xl">
-            <button data-video-close class="absolute right-3 top-3 z-10 rounded-md bg-white/90 px-3 py-1 text-sm font-semibold text-slate-900">{{ __('public.home.video.close') }}</button>
+            <button data-video-close class="absolute right-3 top-3 z-10 rounded-md bg-orange-500 px-3 py-1 text-sm font-semibold text-white shadow-md transition hover:bg-orange-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300">{{ __('public.home.video.close') }}</button>
             <video id="about-video-player" controls class="h-full w-full" preload="metadata">
                 <source src="{{ $aboutVideoSrc }}" type="video/mp4">
             </video>
         </div>
     </div>
 @endsection
-

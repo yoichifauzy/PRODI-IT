@@ -27,7 +27,7 @@ class CurriculumCourseController extends Controller
 
         return view('admin.curriculum-courses.index', [
             'courses' => $courses,
-            'curricula' => Curriculum::query()->orderByDesc('is_active')->orderBy('id')->orderBy('name')->get(),
+            'curricula' => Curriculum::query()->orderBy('name')->orderBy('id')->get(),
             'curriculumId' => $curriculumId,
         ]);
     }
@@ -35,7 +35,7 @@ class CurriculumCourseController extends Controller
     public function create(): View
     {
         return view('admin.curriculum-courses.create', [
-            'curricula' => Curriculum::query()->orderByDesc('is_active')->orderBy('name')->get(),
+            'curricula' => Curriculum::query()->orderBy('name')->orderBy('id')->get(),
         ]);
     }
 
@@ -58,7 +58,7 @@ class CurriculumCourseController extends Controller
     {
         return view('admin.curriculum-courses.edit', [
             'curriculumCourse' => $curriculumCourse,
-            'curricula' => Curriculum::query()->orderByDesc('is_active')->orderBy('code')->get(),
+            'curricula' => Curriculum::query()->orderBy('name')->orderBy('id')->get(),
         ]);
     }
 
@@ -84,13 +84,12 @@ class CurriculumCourseController extends Controller
     /**
      * @return array<string, mixed>
      */
-        private function validatePayload(Request $request, ?CurriculumCourse $curriculumCourse = null): array
+    private function validatePayload(Request $request, ?CurriculumCourse $curriculumCourse = null): array
     {
         $ignoreId = $curriculumCourse?->id;
 
         $validated = $request->validate([
             'curriculum_id' => ['required', 'exists:curricula,id'],
-            // Semester sudah dihapus dari sini sesuai permintaanmu
             'code' => [
                 'required',
                 'string',
@@ -108,8 +107,13 @@ class CurriculumCourseController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
         ]);
 
-        // Memberikan nilai default jika user mengosongkan input
-        $validated['credits_practice'] = (int) ($request->input('credits_practice', 0));
+        // Simpan SKS teori/praktik dan total.
+        $creditsTheory = (int) ($request->input('credits_theory', 0));
+        $creditsPractice = (int) ($request->input('credits_practice', 0));
+        $validated['credits_theory'] = $creditsTheory;
+        $validated['credits_practice'] = $creditsPractice;
+        $validated['credits'] = $creditsTheory + $creditsPractice;
+
         $validated['sort_order'] = (int) ($request->input('sort_order', 0));
         $validated['short_syllabus'] = $request->input('short_syllabus');
 

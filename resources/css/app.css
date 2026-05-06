@@ -621,12 +621,12 @@ html {
 
 .hero-type-glow {
     color: #ff8d36;
-    -webkit-text-stroke: 1px #fff;
+    -webkit-text-stroke: 1px #000;
     text-shadow:
-        -1px -1px 0 #fff,
-        1px -1px 0 #fff,
-        -1px 1px 0 #fff,
-        1px 1px 0 #fff;
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
 }
 
 .hero-slide {

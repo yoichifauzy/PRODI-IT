@@ -10,7 +10,9 @@ use App\Models\Gallery;
 use App\Models\GalleryItem;
 use App\Models\LecturerStaff;
 use App\Models\Project;
+use App\Models\Research;
 use App\Models\Setting;
+use App\Models\CommunityService;
 use App\Models\TracerAlumni;
 use App\Models\VisionMission;
 use Illuminate\Http\JsonResponse;
@@ -54,8 +56,8 @@ class PublicPageController extends Controller
             ->with(['courses' => function ($query) {
                 $query->orderBy('sort_order')->orderBy('code');
             }])
-            ->orderByDesc('is_active')
             ->orderBy('name')
+            ->orderBy('id')
             ->get();
 
         // Tombol filter utama hanya menampilkan nama yang unik
@@ -279,15 +281,19 @@ class PublicPageController extends Controller
 
         $rows = TracerAlumni::query()
             ->where('is_active', true)
-            ->when($selectedYear !== null, fn($query) => $query->where('graduation_year', $selectedYear))
             ->orderByDesc('graduation_year')
             ->orderBy('nim')
             ->get();
+
+        $visibleRows = $selectedYear !== null
+            ? $rows->where('graduation_year', $selectedYear)
+            : $rows;
 
         return view('public.tracer-alumni', [
             'graduationYears' => $graduationYears,
             'selectedYear' => $selectedYear,
             'rows' => $rows,
+            'visibleRows' => $visibleRows,
         ]);
     }
 
@@ -318,8 +324,15 @@ class PublicPageController extends Controller
 
     public function research(): View
     {
-        // Nantinya kalau ada model Research, tinggal panggil di sini
-        return view('public.research');
+        $researches = Research::query()
+            ->where('status', 'published')
+            ->orderByDesc('year')
+            ->orderBy('title')
+            ->get();
+
+        return view('public.research', [
+            'researches' => $researches,
+        ]);
     }
 
     public function about(): View
@@ -350,7 +363,14 @@ class PublicPageController extends Controller
 
     public function communityService(): View
     {
-        // Begitu juga buat Pengabdian Masyarakat
-        return view('public.community-service');
+        $services = CommunityService::query()
+            ->where('status', 'published')
+            ->orderByDesc('activity_date')
+            ->orderBy('title')
+            ->get();
+
+        return view('public.community-service', [
+            'services' => $services,
+        ]);
     }
 }

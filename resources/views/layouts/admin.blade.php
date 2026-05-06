@@ -44,8 +44,8 @@
                 <a href="{{ route('admin.galleries.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.galleries.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Filter Galeri</a>
                 <a href="{{ route('admin.gallery-items.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.gallery-items.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Item Galeri</a>
                 <a href="{{ route('admin.lecturer-staff.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.lecturer-staff.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dosen & Staff</a>
-                <a href="{{ route('admin.curricula.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.curricula.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kurikulum</a>
-                <a href="{{ route('admin.curriculum-courses.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.curriculum-courses.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Mata Kuliah Kurikulum</a>
+                <a href="{{ route('admin.curricula.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.curricula.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kurikulum & Matakuliah</a>
+                <a href="{{ route('admin.research-community.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.research-community.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Penelitian & Pengabdian</a>
                 <a href="{{ route('admin.projects.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.projects.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Project Mahasiswa</a>
                 <a href="{{ route('admin.tracer-alumni.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.tracer-alumni.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Tracer Alumni</a>
                 <a href="{{ route('admin.announcements.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Pengumuman</a>
@@ -76,4 +76,7 @@
         </main>
     </div>
 </body>
+
+@stack('scripts')
+</html>
 </html>

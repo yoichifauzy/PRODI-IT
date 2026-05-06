@@ -22,12 +22,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-t border-slate-100">
-                            <td class="px-4 py-3">1</td>
-                            <td class="px-4 py-3 text-center">2026</td>
-                            <td class="px-4 py-3 font-semibold">Workshop Literasi Digital untuk UMKM Tangerang</td>
-                            <td class="px-4 py-3 text-slate-600">Jatiuwung, Tangerang</td>
-                        </tr>
+                        @forelse ($services as $index => $service)
+                            <tr class="border-t border-slate-100">
+                                <td class="px-4 py-3 text-center text-slate-400">{{ $index + 1 }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    {{ $service->activity_date?->format('Y') }}
+                                </td>
+                                <td class="px-4 py-3 font-semibold">{{ $service->title }}</td>
+                                <td class="px-4 py-3 text-slate-600">{{ $service->location }}</td>
+                            </tr>
+                        @empty
+                            <tr class="border-t border-slate-100">
+                                <td class="px-4 py-3 text-center text-slate-500" colspan="4">{{ __('public.community_service.empty') }}</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

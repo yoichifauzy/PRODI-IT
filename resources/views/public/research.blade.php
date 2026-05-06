@@ -21,31 +21,34 @@
                         <tr>
                             {{-- No: Paksa sekecil mungkin --}}
                             <th class="px-4 py-3 w-1 whitespace-nowrap text-center">No</th>
-                            
+
                             {{-- Tahun: Paksa sekecil mungkin biar rapet ke No --}}
                             <th class="px-4 py-3 w-1 whitespace-nowrap text-center">{{ __('public.research.table_year') }}</th>
-                            
+
                             {{-- Judul: Biarkan fleksibel --}}
                             <th class="px-4 py-3">{{ __('public.research.table_title') }}</th>
-                            
+
                             {{-- Researcher: Kasih lebar lebih besar (misal 35% atau 40% layar) --}}
                             <th class="px-4 py-3 w-1/3 min-w-[200px]">{{ __('public.research.table_author') }}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
-                            <td class="px-4 py-3 text-center text-slate-400">1</td>
-                            <td class="px-4 py-3 text-center font-medium">2026</td>
-                            <td class="px-4 py-3">
-                                <div class="font-semibold text-slate-700">
-                                    Pengembangan AI untuk Deteksi Hama Padi di Lahan Gambat
-                                </div>
-                            </td>
-                            {{-- Researcher jadi lebih panjang ruangnya --}}
-                            <td class="px-4 py-3 text-slate-600 italic">
-                                Tama, M.T., Dr. Eng. Heru Susanto, dkk.
-                            </td>
-                        </tr>
+                        @forelse ($researches as $index => $research)
+                            <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
+                                <td class="px-4 py-3 text-center text-slate-400">{{ $index + 1 }}</td>
+                                <td class="px-4 py-3 text-center font-medium">{{ $research->year }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="font-semibold text-slate-700">
+                                        {{ $research->title }}
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-slate-600 italic">{{ $research->researcher_name }}</td>
+                            </tr>
+                        @empty
+                            <tr class="border-t border-slate-100">
+                                <td class="px-4 py-3 text-center text-slate-500" colspan="4">{{ __('public.research.empty') }}</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

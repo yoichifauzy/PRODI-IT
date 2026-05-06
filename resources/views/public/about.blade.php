@@ -4,11 +4,12 @@
 
 @section('content')
     @php
-        $aboutSectionTitle = $aboutSettings['about_section_title'] ?? __('public.home.about.section_title');
-        $aboutSectionSubtitle = $aboutSettings['about_section_subtitle'] ?? __('public.home.about.section_subtitle');
-        $aboutHeading = $aboutSettings['about_heading'] ?? __('public.home.about.heading');
-        $aboutDescriptionPrimary = $aboutSettings['about_description_primary'] ?? __('public.home.about.description_primary');
-        $aboutDescriptionSecondary = $aboutSettings['about_description_secondary'] ?? __('public.home.about.description_secondary');
+        $isEn = app()->getLocale() === 'en';
+        $aboutSectionTitle = $isEn ? __('public.home.about.section_title') : ($aboutSettings['about_section_title'] ?? __('public.home.about.section_title'));
+        $aboutSectionSubtitle = $isEn ? __('public.home.about.section_subtitle') : ($aboutSettings['about_section_subtitle'] ?? __('public.home.about.section_subtitle'));
+        $aboutHeading = $isEn ? __('public.home.about.heading') : ($aboutSettings['about_heading'] ?? __('public.home.about.heading'));
+        $aboutDescriptionPrimary = $isEn ? __('public.home.about.description_primary') : ($aboutSettings['about_description_primary'] ?? __('public.home.about.description_primary'));
+        $aboutDescriptionSecondary = $isEn ? __('public.home.about.description_secondary') : ($aboutSettings['about_description_secondary'] ?? __('public.home.about.description_secondary'));
         $tentangImageOne = !empty($aboutSettings['about_image_one']) ? asset('storage/' . $aboutSettings['about_image_one']) : asset('storage/image/tentang-kami/prodi-it.png');
         $tentangImageTwo = !empty($aboutSettings['about_image_two']) ? asset('storage/' . $aboutSettings['about_image_two']) : asset('storage/image/tentang-kami/teknofo.png');
 
@@ -17,7 +18,7 @@
             $defaultMissionItems = [];
         }
 
-        $missionSource = $visionMission?->mission_text;
+        $missionSource = $isEn ? null : $visionMission?->mission_text;
         $missionItems = filled($missionSource)
             ? preg_split('/\n+/', trim($missionSource))
             : $defaultMissionItems;
@@ -40,6 +41,11 @@
     <section class="py-16 md:py-24 px-4 md:px-8 bg-white">
         <div class="max-w-6xl mx-auto">
             <div class="mb-12">
+                <a href="{{ route('home') }}"
+                   class="mb-5 inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50">
+                    <span aria-hidden="true">&larr;</span>
+                    {{ __('public.about.back_to_home') }}
+                </a>
                 <h2 class="text-4xl md:text-5xl font-bold mb-3">{{ $aboutHeading }}</h2>
                 <div class="h-1 w-24 bg-red-600"></div>
             </div>
@@ -86,11 +92,11 @@
                             <i class="fa-solid fa-eye text-xl"></i>
                         </div>
                         <h3 class="text-2xl md:text-3xl font-bold text-gray-900">
-                            {{ $visionMission?->vision_title ?? __('public.home.vision.vision_title') }}
+                            {{ $isEn ? __('public.home.vision.vision_title') : ($visionMission?->vision_title ?? __('public.home.vision.vision_title')) }}
                         </h3>
                     </div>
                     <p class="text-gray-700 leading-relaxed text-lg" style="color:var(--text-soft)">
-                        {{ $visionMission?->vision_text ?: __('public.home.vision.default_vision') }}
+                        {{ $isEn ? __('public.home.vision.default_vision') : ($visionMission?->vision_text ?: __('public.home.vision.default_vision')) }}
                     </p>
                 </div>
 
@@ -101,7 +107,7 @@
                             <i class="fa-solid fa-shield text-xl"></i>
                         </div>
                         <h3 class="text-2xl md:text-3xl font-bold text-gray-900">
-                            {{ $visionMission?->mission_title ?? __('public.home.vision.mission_title') }}
+                            {{ $isEn ? __('public.home.vision.mission_title') : ($visionMission?->mission_title ?? __('public.home.vision.mission_title')) }}
                         </h3>
                     </div>
                     <ul class="space-y-3">

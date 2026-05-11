@@ -14,7 +14,6 @@ class TracerStudyLink extends Model
         'form_url',
         'is_active',
         'published_at',
-        'created_by',
     ];
 
     protected function casts(): array
@@ -23,10 +22,5 @@ class TracerStudyLink extends Model
             'is_active' => 'boolean',
             'published_at' => 'datetime',
         ];
-    }
-
-    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by');
     }
 }

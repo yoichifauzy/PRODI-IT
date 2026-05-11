@@ -17,6 +17,7 @@ class TracerAlumni extends Model
         'relevance',
         'notes',
         'is_active',
+        'created_by',
     ];
 
     protected function casts(): array
@@ -25,5 +26,10 @@ class TracerAlumni extends Model
             'graduation_year' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

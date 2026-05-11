@@ -183,6 +183,8 @@ return [
         'table_author' => 'Peneliti',
         'table_year' => 'Tahun',
         'empty' => 'Belum ada data penelitian tersedia.',
+        'filter_year' => 'Filter Tahun',
+        'filter_search' => 'Pencarian',
     ],
     'community_service' => [
         'page_title' => 'Pengabdian Masyarakat | PGT IT',

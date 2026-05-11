@@ -47,6 +47,7 @@ class HeroSlideController extends Controller
 
         unset($validated['image']);
 
+        $validated['created_by'] = $request->user()?->id ?? null;
         HeroSlide::query()->create($validated);
 
         return redirect()
@@ -86,10 +87,13 @@ class HeroSlideController extends Controller
             $validated['image_path'] = $request->file('image')?->store('hero-slides', 'public');
         }
 
+
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
         $validated['is_active'] = (bool) ($validated['is_active'] ?? false);
 
         unset($validated['image']);
+
+        $validated['updated_by'] = $request->user()?->id ?? null;
 
         $heroSlide->update($validated);
 

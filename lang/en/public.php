@@ -183,6 +183,8 @@ return [
         'table_author' => 'Researcher',
         'table_year' => 'Year',
         'empty' => 'No research data available yet.',
+        'filter_year' => 'Filter by Year',
+        'filter_search' => 'Search',
     ],
     'community_service' => [
         'page_title' => 'Community Service | PGT IT',

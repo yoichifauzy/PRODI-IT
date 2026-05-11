@@ -16,6 +16,8 @@ class HeroSlide extends Model
         'is_active',
         'start_at',
         'end_at',
+        'created_by',
+        'updated_by',
     ];
 
     protected function casts(): array
@@ -26,5 +28,15 @@ class HeroSlide extends Model
             'start_at' => 'datetime',
             'end_at' => 'datetime',
         ];
+    }
+
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

@@ -21,6 +21,8 @@ class LecturerStaff extends Model
         'photo_path',
         'sort_order',
         'is_active',
+        'created_by',
+        'updated_by',
     ];
 
     protected function casts(): array
@@ -29,5 +31,15 @@ class LecturerStaff extends Model
             'sort_order' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

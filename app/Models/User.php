@@ -80,8 +80,28 @@ class User extends Authenticatable
         return $this->hasMany(Document::class, 'created_by');
     }
 
-    public function createdTracerStudyLinks(): HasMany
+    public function createdTracerAlumnis(): HasMany
     {
-        return $this->hasMany(TracerStudyLink::class, 'created_by');
+        return $this->hasMany(TracerAlumni::class, 'created_by');
+    }
+
+    public function createdHeroSlides(): HasMany
+    {
+        return $this->hasMany(HeroSlide::class, 'created_by');
+    }
+
+    public function updatedHeroSlides(): HasMany
+    {
+        return $this->hasMany(HeroSlide::class, 'updated_by');
+    }
+
+    public function createdLecturerStaff(): HasMany
+    {
+        return $this->hasMany(LecturerStaff::class, 'created_by');
+    }
+
+    public function updatedLecturerStaff(): HasMany
+    {
+        return $this->hasMany(LecturerStaff::class, 'updated_by');
     }
 }

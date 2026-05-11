@@ -66,6 +66,7 @@ class TracerAlumniController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $payload = $this->validatePayload($request);
+        $payload['created_by'] = $request->user()?->id ?? null;
         TracerAlumni::query()->create($payload);
 
         return redirect()

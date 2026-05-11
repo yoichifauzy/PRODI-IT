@@ -9,26 +9,46 @@
     ])
 
     <section class="section-wrap public-page-shell">
-        <!-- <header class="public-page-intro">
-            <h2 class="public-page-title">{{ __('public.research.intro_title') }}</h2>
-            <p class="public-page-copy">{{ __('public.research.intro_copy') }}</p>
-        </header> -->
-
         <div class="public-panel rounded-2xl border border-[var(--border-soft)] bg-white p-5 shadow-sm">
+            <!-- Filter Section -->
+            <div class="mb-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Year Filter -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Tahun</label>
+                    <select id="yearFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <option value="">Semua Tahun</option>
+                        @foreach ($researchYears as $year)
+                            <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Search with Autocomplete -->
+                <div class="md:col-span-2 lg:col-span-1 relative">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Cari</label>
+                    <div class="relative">
+                        <input type="text" id="searchInput"
+                            placeholder="Cari judul, peneliti..."
+                            value="{{ $search }}"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            autocomplete="off" />
+
+                        <!-- Autocomplete Dropdown -->
+                        <div id="suggestionsList" class="absolute top-full left-0 right-0 bg-white border border-slate-300 rounded-lg mt-1 shadow-lg z-50 hidden max-h-64 overflow-y-auto">
+                            <!-- Suggestions will be populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
             <div class="overflow-x-auto">
                 <table class="curriculum-table min-w-full text-sm">
                     <thead class="curriculum-table-head text-left">
                         <tr>
-                            {{-- No: Paksa sekecil mungkin --}}
                             <th class="px-4 py-3 w-1 whitespace-nowrap text-center">No</th>
-
-                            {{-- Tahun: Paksa sekecil mungkin biar rapet ke No --}}
                             <th class="px-4 py-3 w-1 whitespace-nowrap text-center">{{ __('public.research.table_year') }}</th>
-
-                            {{-- Judul: Biarkan fleksibel --}}
                             <th class="px-4 py-3">{{ __('public.research.table_title') }}</th>
-
-                            {{-- Researcher: Kasih lebar lebih besar (misal 35% atau 40% layar) --}}
                             <th class="px-4 py-3 w-1/3 min-w-[200px]">{{ __('public.research.table_author') }}</th>
                         </tr>
                     </thead>
@@ -55,3 +75,84 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+<script>
+(function() {
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsList = document.getElementById('suggestionsList');
+    const yearFilter = document.getElementById('yearFilter');
+    let debounceTimer;
+
+    // Search input with autocomplete
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim();
+
+        if (query.length < 2) {
+            suggestionsList.classList.add('hidden');
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            fetch(`{{ route('public.research.suggestions') }}?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        suggestionsList.innerHTML = '<div class="px-4 py-2 text-sm text-slate-500">Tidak ada hasil</div>';
+                        suggestionsList.classList.remove('hidden');
+                        return;
+                    }
+
+                    suggestionsList.innerHTML = data.map((item, idx) => `
+                        <div class="px-4 py-2 hover:bg-indigo-50 cursor-pointer border-b border-slate-100 last:border-b-0 suggestion-item"
+                            data-title="${item.title}" data-researcher="${item.researcher}" data-year="${item.year}">
+                            <div class="font-semibold text-slate-700 text-sm">${item.title}</div>
+                            <div class="text-xs text-slate-500">${item.researcher} (${item.year})</div>
+                        </div>
+                    `).join('');
+
+                    suggestionsList.classList.remove('hidden');
+
+                    // Add click handlers to suggestions
+                    document.querySelectorAll('.suggestion-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            searchInput.value = this.getAttribute('data-title');
+                            suggestionsList.classList.add('hidden');
+                            applyFilters();
+                        });
+                    });
+                })
+                .catch(err => console.error(err));
+        }, 300);
+    });
+
+    // Year filter change
+    yearFilter.addEventListener('change', applyFilters);
+
+    // Click outside to close suggestions
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#searchInput') && !e.target.closest('#suggestionsList')) {
+            suggestionsList.classList.add('hidden');
+        }
+    });
+
+    function applyFilters() {
+        const year = yearFilter.value;
+        const search = searchInput.value.trim();
+
+        const params = new URLSearchParams();
+        if (year) params.append('year', year);
+        if (search) params.append('q', search);
+
+        const url = `{{ route('public.research') }}${params.toString() ? '?' + params.toString() : ''}`;
+        window.location.href = url;
+    }
+
+    // Restore search value if exists (untuk page reload)
+    if (searchInput.value.trim().length > 0) {
+        searchInput.focus();
+    }
+})();
+</script>
+@endpush

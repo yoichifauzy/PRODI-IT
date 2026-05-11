@@ -322,17 +322,83 @@ class PublicPageController extends Controller
             ->header('Pragma', 'no-cache');
     }
 
-    public function research(): View
+    public function research(Request $request): View
     {
-        $researches = Research::query()
-            ->where('status', 'published')
+        $query = Research::query()
+            ->where('status', 'published');
+
+        $selectedYear = (string) $request->query('year', '');
+        $searchTerm = trim((string) $request->query('q', ''));
+
+        if ($selectedYear !== '') {
+            $query->where('year', (int) $selectedYear);
+        }
+
+        if ($searchTerm !== '') {
+            $query->where(function ($q) use ($searchTerm): void {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                    ->orWhere('researcher_name', 'like', "%{$searchTerm}%")
+                    ->orWhere('abstract', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        $researches = $query
             ->orderByDesc('year')
             ->orderBy('title')
             ->get();
 
+        $allResearches = Research::query()
+            ->where('status', 'published')
+            ->get();
+
+        $researchYears = $allResearches
+            ->pluck('year')
+            ->filter()
+            ->unique()
+            ->sortDesc()
+            ->values();
+
+        if ($selectedYear !== '' && !$researchYears->contains((int) $selectedYear)) {
+            $selectedYear = '';
+        }
+
         return view('public.research', [
             'researches' => $researches,
+            'researchYears' => $researchYears,
+            'selectedYear' => $selectedYear,
+            'search' => $searchTerm,
         ]);
+    }
+
+    public function researchSuggestions(Request $request): JsonResponse
+    {
+        $query = trim((string) $request->query('q', ''));
+
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        $suggestions = Research::query()
+            ->where('status', 'published')
+            ->where(function ($q) use ($query): void {
+                $q->where('title', 'like', "%{$query}%")
+                    ->orWhere('researcher_name', 'like', "%{$query}%");
+            })
+            ->select('id', 'title', 'researcher_name', 'year')
+            ->orderBy('title')
+            ->limit(8)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title,
+                    'researcher' => $item->researcher_name,
+                    'year' => $item->year,
+                    'display' => "{$item->title} ({$item->year})",
+                ];
+            });
+
+        return response()->json($suggestions);
     }
 
     public function about(): View

@@ -41,6 +41,7 @@ class LecturerStaffController extends Controller
     {
         $payload = $this->validatePayload($request);
 
+        $payload['created_by'] = $request->user()?->id ?? null;
         LecturerStaff::query()->create($payload);
 
         return redirect()
@@ -64,6 +65,7 @@ class LecturerStaffController extends Controller
     public function update(Request $request, LecturerStaff $lecturerStaff): RedirectResponse
     {
         $payload = $this->validatePayload($request, $lecturerStaff);
+        $payload['updated_by'] = $request->user()?->id ?? null;
         $lecturerStaff->update($payload);
 
         return redirect()

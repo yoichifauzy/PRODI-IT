@@ -324,34 +324,16 @@ class PublicPageController extends Controller
 
     public function research(Request $request): View
     {
-        $query = Research::query()
-            ->where('status', 'published');
-
         $selectedYear = (string) $request->query('year', '');
         $searchTerm = trim((string) $request->query('q', ''));
 
-        if ($selectedYear !== '') {
-            $query->where('year', (int) $selectedYear);
-        }
-
-        if ($searchTerm !== '') {
-            $query->where(function ($q) use ($searchTerm): void {
-                $q->where('title', 'like', "%{$searchTerm}%")
-                    ->orWhere('researcher_name', 'like', "%{$searchTerm}%")
-                    ->orWhere('abstract', 'like', "%{$searchTerm}%");
-            });
-        }
-
-        $researches = $query
+        $researches = Research::query()
+            ->where('status', 'published')
             ->orderByDesc('year')
             ->orderBy('title')
             ->get();
 
-        $allResearches = Research::query()
-            ->where('status', 'published')
-            ->get();
-
-        $researchYears = $allResearches
+        $researchYears = $researches
             ->pluck('year')
             ->filter()
             ->unique()

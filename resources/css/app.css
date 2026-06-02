@@ -2240,6 +2240,19 @@ html {
     overflow: hidden;
 }
 
+@media (max-width: 767.98px) {
+    .mobile-nav-wrap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        width: 100%;
+        z-index: 40;
+        background: var(--surface);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.16);
+    }
+}
+
 .mobile-nav-wrap.is-ready {
     overflow: hidden;
     max-height: 0;

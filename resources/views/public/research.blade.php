@@ -54,8 +54,15 @@
                     </thead>
                     <tbody>
                         @forelse ($researches as $index => $research)
-                            <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
-                                <td class="px-4 py-3 text-center text-slate-400">{{ $index + 1 }}</td>
+                            <tr
+                                class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors"
+                                data-research-row
+                                data-year="{{ $research->year }}"
+                                data-title="{{ $research->title }}"
+                                data-researcher="{{ $research->researcher_name }}"
+                                data-abstract="{{ $research->abstract ?? '' }}"
+                            >
+                                <td class="px-4 py-3 text-center text-slate-400" data-research-no>{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-center font-medium">{{ $research->year }}</td>
                                 <td class="px-4 py-3">
                                     <div class="font-semibold text-slate-700">
@@ -65,10 +72,15 @@
                                 <td class="px-4 py-3 text-slate-600 italic">{{ $research->researcher_name }}</td>
                             </tr>
                         @empty
-                            <tr class="border-t border-slate-100">
+                            <tr class="border-t border-slate-100" data-research-empty>
                                 <td class="px-4 py-3 text-center text-slate-500" colspan="4">{{ __('public.research.empty') }}</td>
                             </tr>
                         @endforelse
+                        @if ($researches->isNotEmpty())
+                            <tr class="border-t border-slate-100 hidden" data-research-empty>
+                                <td class="px-4 py-3 text-center text-slate-500" colspan="4">{{ __('public.research.empty') }}</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
@@ -82,6 +94,8 @@
     const searchInput = document.getElementById('searchInput');
     const suggestionsList = document.getElementById('suggestionsList');
     const yearFilter = document.getElementById('yearFilter');
+    const researchRows = Array.from(document.querySelectorAll('[data-research-row]'));
+    const emptyRow = document.querySelector('[data-research-empty]');
     let debounceTimer;
 
     // Search input with autocomplete
@@ -91,6 +105,7 @@
 
         if (query.length < 2) {
             suggestionsList.classList.add('hidden');
+            applyFilters(false);
             return;
         }
 
@@ -119,16 +134,26 @@
                         item.addEventListener('click', function() {
                             searchInput.value = this.getAttribute('data-title');
                             suggestionsList.classList.add('hidden');
-                            applyFilters();
+                            applyFilters(true);
                         });
                     });
                 })
                 .catch(err => console.error(err));
         }, 300);
+
+        applyFilters(false);
     });
 
     // Year filter change
-    yearFilter.addEventListener('change', applyFilters);
+    yearFilter.addEventListener('change', () => applyFilters(true));
+
+    searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            applyFilters(true);
+            suggestionsList.classList.add('hidden');
+        }
+    });
 
     // Click outside to close suggestions
     document.addEventListener('click', function(e) {
@@ -137,22 +162,52 @@
         }
     });
 
-    function applyFilters() {
+    function applyFilters(updateUrl) {
         const year = yearFilter.value;
-        const search = searchInput.value.trim();
+        const search = searchInput.value.trim().toLowerCase();
 
-        const params = new URLSearchParams();
-        if (year) params.append('year', year);
-        if (search) params.append('q', search);
+        let visibleIndex = 0;
+        researchRows.forEach((row) => {
+            const rowYear = row.getAttribute('data-year') || '';
+            const title = (row.getAttribute('data-title') || '').toLowerCase();
+            const researcher = (row.getAttribute('data-researcher') || '').toLowerCase();
+            const abstractText = (row.getAttribute('data-abstract') || '').toLowerCase();
 
-        const url = `{{ route('public.research') }}${params.toString() ? '?' + params.toString() : ''}`;
-        window.location.href = url;
+            const matchesYear = !year || rowYear === year;
+            const matchesSearch = !search || `${title} ${researcher} ${abstractText}`.includes(search);
+            const isVisible = matchesYear && matchesSearch;
+
+            row.classList.toggle('hidden', !isVisible);
+
+            if (isVisible) {
+                visibleIndex += 1;
+                const noCell = row.querySelector('[data-research-no]');
+                if (noCell) {
+                    noCell.textContent = String(visibleIndex);
+                }
+            }
+        });
+
+        if (emptyRow) {
+            emptyRow.classList.toggle('hidden', visibleIndex !== 0);
+        }
+
+        if (updateUrl) {
+            const params = new URLSearchParams();
+            if (year) params.append('year', year);
+            if (search) params.append('q', search);
+
+            const url = `{{ route('public.research') }}${params.toString() ? '?' + params.toString() : ''}`;
+            window.history.replaceState({}, '', url);
+        }
     }
 
     // Restore search value if exists (untuk page reload)
     if (searchInput.value.trim().length > 0) {
         searchInput.focus();
     }
+
+    applyFilters(false);
 })();
 </script>
 @endpush

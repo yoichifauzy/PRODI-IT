@@ -218,7 +218,6 @@
                         <li><a href="{{ route('public.projects') }}" class="footer-link">{{ __('public.nav.student_projects') }}</a></li>
                         <li><a href="{{ route('public.tracer-alumni') }}" class="footer-link">{{ __('public.nav.tracer_alumni') }}</a></li>
                         <li><a href="{{ route('public.announcements') }}" class="footer-link">{{ __('public.nav.announcements') }}</a></li>
-                        <li><a href="{{ route('public.announcements') }}" class="footer-link">{{ __('public.footer.link_archive') }}</a></li>
                     </ul>
                 </div>
 

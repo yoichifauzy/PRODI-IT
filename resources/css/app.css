@@ -343,15 +343,13 @@ html {
 }
 
 .site-header[data-nav-state="scrolled"] {
-    background: rgba(255, 255, 255, 0.78);
+    background: #ffffff;
     border-color: rgba(148, 163, 184, 0.3);
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
 }
 
 .theme-dark .site-header[data-nav-state="scrolled"] {
-    background: rgba(15, 23, 42, 0.74);
+    background: #0b1220;
     border-color: rgba(148, 163, 184, 0.26);
     box-shadow: 0 8px 24px rgba(2, 6, 23, 0.35);
 }
@@ -2511,5 +2509,8 @@ html {
         height: 2.6rem;
         width: 2.6rem;
         font-size: 1.2rem;
+        top: 0.75rem;
+        right: 0.75rem;
+        z-index: 60;
     }
 }

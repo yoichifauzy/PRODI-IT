@@ -15,7 +15,7 @@
                 <!-- Year Filter -->
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Tahun</label>
-                    <select id="yearFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <select id="yearFilter" class="w-full px-3 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                         <option value="">Semua Tahun</option>
                         @foreach ($researchYears as $year)
                             <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -30,7 +30,7 @@
                         <input type="text" id="searchInput"
                             placeholder="Cari judul, peneliti..."
                             value="{{ $search }}"
-                            class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            class="w-full px-3 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                             autocomplete="off" />
 
                         <!-- Autocomplete Dropdown -->

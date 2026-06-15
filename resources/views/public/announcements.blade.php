@@ -169,7 +169,7 @@
             max-height: 85vh;
             overflow: hidden;
             border-radius: 22px;
-            background: #ffffff;
+            background: var(--surface);
             box-shadow: 0 35px 90px rgba(15, 23, 42, 0.45);
             transform: translateY(22px) scale(0.95);
             opacity: 0;
@@ -193,6 +193,10 @@
             padding: 1.25rem 1.5rem 1rem;
             border-bottom: 1px solid var(--border-soft);
             background: linear-gradient(135deg, rgba(255, 237, 213, 0.7), rgba(255, 255, 255, 0.9));
+        }
+
+        .theme-dark .announcement-modal-header {
+            background: var(--surface);
         }
 
         .announcement-modal-status {
@@ -222,7 +226,7 @@
             overflow: auto;
             color: var(--text-soft);
             line-height: 1.7;
-            background: #ffffff;
+            background: var(--surface);
         }
 
         .announcement-modal-close {
@@ -232,9 +236,9 @@
             height: 2.25rem;
             width: 2.25rem;
             border-radius: 999px;
-            border: 1px solid rgba(148, 163, 184, 0.4);
-            background: rgba(255, 255, 255, 0.85);
-            color: #0f172a;
+            border: 1px solid var(--border-soft);
+            background: var(--bg-soft);
+            color: var(--text-main);
             font-size: 1.6rem;
             line-height: 1;
             display: flex;
@@ -247,7 +251,7 @@
 
         .announcement-modal-close:hover {
             transform: scale(1.05);
-            background: #ffffff;
+            background: var(--surface);
         }
 
         body.modal-open {

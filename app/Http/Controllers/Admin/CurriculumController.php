@@ -23,8 +23,16 @@ class CurriculumController extends Controller
 
         $sheetUrl = (string) ($setting->value ?: $defaultUrl);
 
+        $allCurricula = Curriculum::query()
+            ->with(['courses' => fn($q) => $q->orderBy('sort_order')->orderBy('code')])
+            ->orderBy('name')->orderBy('id')->get();
+
+        $uniqueCurricula = $allCurricula->unique('name');
+
         return view('admin.curricula.index', [
             'sheetUrl' => $sheetUrl,
+            'allCurricula' => $allCurricula,
+            'curricula' => $uniqueCurricula,
         ]);
     }
 

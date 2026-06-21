@@ -10,7 +10,8 @@
         </div>
     </div>
 
-    <div class="rounded-xl border border-slate-200 bg-white">
+    {{-- Spreadsheet Link Section --}}
+    <div class="rounded-xl border border-slate-200 bg-white mb-6">
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
                 <thead class="bg-slate-50 text-left text-slate-600">
@@ -47,6 +48,85 @@
                             </div>
                         </td>
                     </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Filter Buttons --}}
+    <div class="mb-6 flex flex-wrap justify-center gap-3">
+        <button type="button" class="filter-btn rounded-lg px-4 py-2 text-sm font-semibold transition-all bg-indigo-600 text-white shadow-md" data-filter="all">Semua</button>
+        <button type="button" class="filter-btn rounded-lg px-4 py-2 text-sm font-semibold transition-all bg-slate-100 text-slate-700 hover:bg-indigo-600 hover:text-white" data-filter="research">Penelitian</button>
+        <button type="button" class="filter-btn rounded-lg px-4 py-2 text-sm font-semibold transition-all bg-slate-100 text-slate-700 hover:bg-indigo-600 hover:text-white" data-filter="community">Pengabdian Masyarakat</button>
+    </div>
+
+    {{-- Penelitian Data --}}
+    <div id="section-research" class="rounded-xl border border-slate-200 bg-white mb-6">
+        <div class="border-b border-slate-200 px-4 py-3">
+            <h2 class="text-lg font-semibold text-slate-900">Data Penelitian</h2>
+            <p class="text-xs text-slate-500">{{ $researches->count() }} data</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="bg-slate-50 text-left text-slate-600">
+                    <tr>
+                        <th class="px-4 py-3 w-10">#</th>
+                        <th class="px-4 py-3 w-20">Tahun</th>
+                        <th class="px-4 py-3">Judul Penelitian</th>
+                        <th class="px-4 py-3 w-56">Peneliti</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($researches as $i => $research)
+                        <tr class="border-t border-slate-100 hover:bg-slate-50">
+                            <td class="px-4 py-3 text-slate-500">{{ $loop->iteration }}</td>
+                            <td class="px-4 py-3">
+                                <span class="inline-block rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800">{{ $research->year }}</span>
+                            </td>
+                            <td class="px-4 py-3 font-medium text-slate-900 max-w-md">{{ $research->title }}</td>
+                            <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ $research->researcher_name }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-4 py-8 text-center text-slate-400">Belum ada data penelitian. Lakukan sync atau upload terlebih dahulu.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Pengabdian Masyarakat Data --}}
+    <div id="section-community" class="rounded-xl border border-slate-200 bg-white">
+        <div class="border-b border-slate-200 px-4 py-3">
+            <h2 class="text-lg font-semibold text-slate-900">Data Pengabdian Masyarakat</h2>
+            <p class="text-xs text-slate-500">{{ $communityServices->count() }} data</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="bg-slate-50 text-left text-slate-600">
+                    <tr>
+                        <th class="px-4 py-3 w-10">#</th>
+                        <th class="px-4 py-3">Tahun</th>
+                        <th class="px-4 py-3">Nama Program</th>
+                        <th class="px-4 py-3">Lokasi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($communityServices as $i => $service)
+                        <tr class="border-t border-slate-100 hover:bg-slate-50">
+                            <td class="px-4 py-3 text-slate-500">{{ $loop->iteration }}</td>
+                            <td class="px-4 py-3">
+                                <span class="inline-block rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800">{{ $service->activity_date ? $service->activity_date->format('Y') : '-' }}</span>
+                            </td>
+                            <td class="px-4 py-3 font-medium text-slate-900">{{ $service->title }}</td>
+                            <td class="px-4 py-3 text-slate-700">{{ $service->location ?: '-' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-4 py-8 text-center text-slate-400">Belum ada data pengabdian. Lakukan sync atau upload terlebih dahulu.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -107,6 +187,34 @@
         syncButton.addEventListener('click', function(){
             const ok = confirm('Sync Now akan menghapus semua data penelitian dan pengabdian lalu mengambil dari spreadsheet. Lanjutkan?');
             if (ok) { syncForm.submit(); }
+        });
+
+        // Filter buttons
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const sectionResearch = document.getElementById('section-research');
+        const sectionCommunity = document.getElementById('section-community');
+
+        filterBtns.forEach(function(btn){
+            btn.addEventListener('click', function(){
+                filterBtns.forEach(function(b){
+                    b.classList.remove('bg-indigo-600','text-white','shadow-md');
+                    b.classList.add('bg-slate-100','text-slate-700');
+                });
+                btn.classList.remove('bg-slate-100','text-slate-700');
+                btn.classList.add('bg-indigo-600','text-white','shadow-md');
+
+                var filter = btn.getAttribute('data-filter');
+                if (filter === 'all') {
+                    sectionResearch.style.display = '';
+                    sectionCommunity.style.display = '';
+                } else if (filter === 'research') {
+                    sectionResearch.style.display = '';
+                    sectionCommunity.style.display = 'none';
+                } else if (filter === 'community') {
+                    sectionResearch.style.display = 'none';
+                    sectionCommunity.style.display = '';
+                }
+            });
         });
     })();
 </script>

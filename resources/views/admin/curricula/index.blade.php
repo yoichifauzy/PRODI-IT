@@ -51,6 +51,85 @@
             </table>
         </div>
     </div>
+
+    {{-- Curriculum & Course Data --}}
+    @if ($allCurricula->isNotEmpty())
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+            @foreach ($curricula as $curriculum)
+                <button type="button"
+                        class="js-admin-curriculum-filter rounded-lg px-4 py-2 text-sm font-semibold transition-all {{ $loop->first ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-indigo-600 hover:text-white' }}"
+                        data-curriculum-name="{{ $curriculum->name }}">
+                    {{ $curriculum->name }}
+                </button>
+            @endforeach
+        </div>
+
+        @foreach ($allCurricula as $curriculum)
+            @php
+                $panelMajorOptions = $allCurricula->where('name', $curriculum->name);
+            @endphp
+            <div class="js-admin-curriculum-panel mt-6 rounded-xl border border-slate-200 bg-white {{ $loop->first ? '' : 'hidden' }}"
+                 data-curriculum-id="{{ $curriculum->id }}"
+                 data-curriculum-name="{{ $curriculum->name }}">
+                <div class="flex flex-wrap items-end justify-between gap-3 px-5 pt-5 pb-3">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">{{ $curriculum->name }}</h2>
+                        @if($curriculum->description)
+                            <p class="mt-1 text-sm text-slate-500">{{ $curriculum->description }}</p>
+                        @endif
+                    </div>
+                    <span class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                        {{ $curriculum->courses->count() }} Matakuliah
+                    </span>
+                </div>
+
+                @if($panelMajorOptions->count() > 1)
+                    <div class="flex flex-wrap gap-2 border-b border-slate-100 px-5 pb-4">
+                        @foreach($panelMajorOptions as $option)
+                            <button type="button"
+                                    class="js-admin-curriculum-major rounded-lg px-4 py-2 text-sm font-medium transition-all hover:bg-indigo-600 hover:text-white {{ $loop->first ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-50 text-slate-600 border border-slate-200' }}"
+                                    data-curriculum-id="{{ $option->id }}">
+                                {{ $option->major_selection ?: 'Umum' }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-slate-50 text-left text-slate-600">
+                            <tr>
+                                <th class="px-4 py-3">No</th>
+                                <th class="px-4 py-3">Kode</th>
+                                <th class="px-4 py-3">Nama Matakuliah</th>
+                                <th class="px-4 py-3 text-center">SKS Teori</th>
+                                <th class="px-4 py-3 text-center">SKS Praktek</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($curriculum->courses as $iteration => $course)
+                                <tr class="border-t border-slate-100 hover:bg-slate-50">
+                                    <td class="px-4 py-3">{{ $iteration + 1 }}</td>
+                                    <td class="px-4 py-3 font-mono text-xs">{{ $course->code }}</td>
+                                    <td class="px-4 py-3">{{ $course->name }}</td>
+                                    <td class="px-4 py-3 text-center">{{ $course->credits_theory }}</td>
+                                    <td class="px-4 py-3 text-center">{{ $course->credits_practice }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="px-4 py-8 text-center text-slate-400">Belum ada matakuliah.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endforeach
+    @else
+        <div class="mt-6 rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-400">
+            Belum ada data kurikulum. Silakan upload atau sync dari spreadsheet.
+        </div>
+    @endif
 @endsection
 
 @push('scripts')
@@ -107,6 +186,58 @@
         syncButton.addEventListener('click', function(){
             const ok = confirm('Sync Now akan menghapus semua data kurikulum dan matakuliah lalu mengambil dari spreadsheet. Lanjutkan?');
             if (ok) { syncForm.submit(); }
+        });
+
+        // --- Curriculum panel switching ---
+        const filterBtns = Array.from(document.querySelectorAll('.js-admin-curriculum-filter'));
+        const majorBtns = Array.from(document.querySelectorAll('.js-admin-curriculum-major'));
+        const panels = Array.from(document.querySelectorAll('.js-admin-curriculum-panel'));
+
+        function setFilterActive(name) {
+            filterBtns.forEach(btn => {
+                const isActive = btn.dataset.curriculumName === name;
+                btn.classList.toggle('bg-indigo-600', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('shadow-md', isActive);
+                btn.classList.toggle('bg-slate-100', !isActive);
+                btn.classList.toggle('text-slate-700', !isActive);
+            });
+        }
+
+        function setMajorActive(curriculumId) {
+            majorBtns.forEach(btn => {
+                const isActive = btn.dataset.curriculumId === curriculumId;
+                btn.classList.toggle('bg-indigo-600', isActive);
+                btn.classList.toggle('text-white', isActive);
+                btn.classList.toggle('shadow-md', isActive);
+                btn.classList.toggle('bg-slate-50', !isActive);
+                btn.classList.toggle('text-slate-600', !isActive);
+                btn.classList.toggle('border', !isActive);
+                btn.classList.toggle('border-slate-200', !isActive);
+            });
+        }
+
+        function showPanel(curriculumId) {
+            const target = panels.find(p => p.dataset.curriculumId === curriculumId);
+            if (!target) return;
+            panels.forEach(p => p.classList.toggle('hidden', p !== target));
+            setFilterActive(target.dataset.curriculumName);
+            setMajorActive(curriculumId);
+        }
+
+        function showGroup(groupName) {
+            const groupPanels = panels.filter(p => p.dataset.curriculumName === groupName);
+            if (groupPanels.length === 0) return;
+            const visible = groupPanels.find(p => !p.classList.contains('hidden')) || groupPanels[0];
+            showPanel(visible.dataset.curriculumId);
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => showGroup(btn.dataset.curriculumName));
+        });
+
+        majorBtns.forEach(btn => {
+            btn.addEventListener('click', () => showPanel(btn.dataset.curriculumId));
         });
     })();
 </script>

@@ -26,8 +26,13 @@ class ResearchCommunitySyncController extends Controller
 
         $sheetUrl = (string) ($setting->value ?: self::DEFAULT_SHEET_URL);
 
+        $researches = Research::query()->orderByDesc('year')->orderBy('title')->get();
+        $communityServices = CommunityService::query()->orderByDesc('activity_date')->orderBy('title')->get();
+
         return view('admin.research-community.index', [
             'sheetUrl' => $sheetUrl,
+            'researches' => $researches,
+            'communityServices' => $communityServices,
         ]);
     }
 

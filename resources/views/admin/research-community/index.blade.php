@@ -10,6 +10,24 @@
         </div>
     </div>
 
+    @if ($isDraftMode ?? false)
+        <div class="mb-6 rounded-lg bg-yellow-50 border border-yellow-200 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-yellow-800">Mode Preview (Data Draft)</h3>
+                    <div class="mt-2 text-sm text-yellow-700">
+                        <p>Anda sedang melihat data draft hasil sinkronisasi dari spreadsheet. Data ini <strong>belum</strong> dipublikasikan ke halaman publik.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- Spreadsheet Link Section --}}
     <div class="rounded-xl border border-slate-200 bg-white mb-6">
         <div class="overflow-x-auto">
@@ -39,10 +57,22 @@
                                     <button type="button" class="rounded-md bg-indigo-600 px-3 py-2 text-xs font-semibold text-white" id="uploadButton">Upload</button>
                                 </form>
 
-                                <form method="POST" action="{{ route('admin.research-community.sync') }}" id="syncForm">
-                                    @csrf
-                                    <button type="button" class="rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white" id="syncButton">Sync Now</button>
-                                </form>
+                                @if (!($isDraftMode ?? false))
+                                    <form method="POST" action="{{ route('admin.research-community.sync') }}" id="syncForm">
+                                        @csrf
+                                        <button type="button" class="rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white" id="syncButton">Sync Now</button>
+                                    </form>
+                                @else
+                                    <form method="POST" action="{{ route('admin.research-community.sync.validate') }}" id="syncValidateForm">
+                                        @csrf
+                                        <button type="button" class="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white" id="syncValidateButton">Sync Validate</button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('admin.research-community.sync.discard') }}" id="syncDiscardForm">
+                                        @csrf
+                                        <button type="button" class="rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white" id="syncDiscardButton">Batalkan Draft</button>
+                                    </form>
+                                @endif
 
                                 <a href="{{ route('admin.research-community.download') }}" class="rounded-md bg-slate-500 px-3 py-2 text-xs font-semibold text-white">Download</a>
                             </div>
@@ -156,6 +186,10 @@
     const linkForm = document.getElementById('linkForm');
     const syncButton = document.getElementById('syncButton');
     const syncForm = document.getElementById('syncForm');
+    const syncValidateButton = document.getElementById('syncValidateButton');
+    const syncValidateForm = document.getElementById('syncValidateForm');
+    const syncDiscardButton = document.getElementById('syncDiscardButton');
+    const syncDiscardForm = document.getElementById('syncDiscardForm');
 
     openBtn.addEventListener('click', function(){ modal.style.display = 'flex'; });
     cancel.addEventListener('click', function(){ modal.style.display = 'none'; });
@@ -165,18 +199,38 @@
         if (!ok) { e.preventDefault(); }
     });
 
-    uploadButton.addEventListener('click', function(){ uploadInput.click(); });
-    uploadInput.addEventListener('change', function(){
-        if (uploadInput.files.length > 0) {
-            const ok = confirm('Upload ini akan menghapus semua data penelitian dan pengabdian lalu menggantinya dari file. Lanjutkan?');
-            if (ok) { uploadForm.submit(); } else { uploadInput.value = ''; }
-        }
-    });
+    if (uploadButton) {
+        uploadButton.addEventListener('click', function(){ uploadInput.click(); });
+    }
+    if (uploadInput) {
+        uploadInput.addEventListener('change', function(){
+            if (uploadInput.files.length > 0) {
+                const ok = confirm('Upload ini akan mengambil data dari file dan menyimpannya ke Draft. Lanjutkan?');
+                if (ok) { uploadForm.submit(); } else { uploadInput.value = ''; }
+            }
+        });
+    }
 
-    syncButton.addEventListener('click', function(){
-        const ok = confirm('Sync Now akan menghapus semua data penelitian dan pengabdian lalu mengambil dari spreadsheet. Lanjutkan?');
-        if (ok) { syncForm.submit(); }
-    });
+    if (syncButton) {
+        syncButton.addEventListener('click', function(){
+            const ok = confirm('Sync Now akan mengambil data dari spreadsheet dan menyimpannya ke Draft untuk direview. Lanjutkan?');
+            if (ok) { syncForm.submit(); }
+        });
+    }
+
+    if (syncValidateButton) {
+        syncValidateButton.addEventListener('click', function(){
+            const ok = confirm('Sync Validate akan mempublikasikan data draft ini ke publik. Data lama akan dihapus. Lanjutkan?');
+            if (ok) { syncValidateForm.submit(); }
+        });
+    }
+
+    if (syncDiscardButton) {
+        syncDiscardButton.addEventListener('click', function(){
+            const ok = confirm('Batalkan Draft akan menghapus semua preview dan kembali ke data publik. Lanjutkan?');
+            if (ok) { syncDiscardForm.submit(); }
+        });
+    }
 
     // ========== Filter buttons ==========
     const filterBtns = document.querySelectorAll('.filter-btn');

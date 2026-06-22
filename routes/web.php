@@ -76,6 +76,8 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
         Route::post('research-community/link', [AdminResearchCommunitySyncController::class, 'updateLink'])->name('research-community.link.update');
         Route::post('research-community/upload', [AdminResearchCommunitySyncController::class, 'upload'])->name('research-community.upload');
         Route::post('research-community/sync', [AdminResearchCommunitySyncController::class, 'syncNow'])->name('research-community.sync');
+        Route::post('research-community/sync/validate', [AdminResearchCommunitySyncController::class, 'syncValidate'])->name('research-community.sync.validate');
+        Route::post('research-community/sync/discard', [AdminResearchCommunitySyncController::class, 'syncDiscard'])->name('research-community.sync.discard');
         Route::get('research-community/download', [AdminResearchCommunitySyncController::class, 'download'])->name('research-community.download');
         Route::resource('projects', AdminProjectController::class)->except(['show']);
         Route::resource('tracer-alumni', AdminTracerAlumniController::class)

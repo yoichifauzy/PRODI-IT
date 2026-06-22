@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CommunityService;
+use App\Models\CommunityServiceDraft;
 use App\Models\Research;
+use App\Models\ResearchDraft;
 use App\Models\Setting;
 use App\Services\ResearchCommunityImportService;
 use Illuminate\Http\Request;
@@ -26,13 +28,22 @@ class ResearchCommunitySyncController extends Controller
 
         $sheetUrl = (string) ($setting->value ?: self::DEFAULT_SHEET_URL);
 
-        $researches = Research::query()->orderByDesc('year')->orderBy('title')->get();
-        $communityServices = CommunityService::query()->orderByDesc('activity_date')->orderBy('title')->get();
+        $draftCount = ResearchDraft::count() + CommunityServiceDraft::count();
+        $isDraftMode = $draftCount > 0;
+
+        if ($isDraftMode) {
+            $researches = ResearchDraft::query()->orderByDesc('year')->orderBy('title')->get();
+            $communityServices = CommunityServiceDraft::query()->orderByDesc('activity_date')->orderBy('title')->get();
+        } else {
+            $researches = Research::query()->orderByDesc('year')->orderBy('title')->get();
+            $communityServices = CommunityService::query()->orderByDesc('activity_date')->orderBy('title')->get();
+        }
 
         return view('admin.research-community.index', [
             'sheetUrl' => $sheetUrl,
             'researches' => $researches,
             'communityServices' => $communityServices,
+            'isDraftMode' => $isDraftMode,
         ]);
     }
 
@@ -117,8 +128,8 @@ class ResearchCommunitySyncController extends Controller
     {
         DB::beginTransaction();
         try {
-            DB::table('researches')->delete();
-            DB::table('community_services')->delete();
+            DB::table('researches_drafts')->delete();
+            DB::table('community_services_drafts')->delete();
 
             foreach ($data['penelitian'] ?? [] as $row) {
                 $year = (int) ($row['Tahun'] ?? 0);
@@ -129,12 +140,12 @@ class ResearchCommunitySyncController extends Controller
                     continue;
                 }
 
-                Research::create([
+                ResearchDraft::create([
                     'title' => $title,
                     'researcher_name' => $researcher,
                     'researcher_role' => 'dosen',
                     'year' => $year,
-                    'status' => 'published',
+                    'status' => 'published', // or draft, since it is in drafts table it doesn't matter
                     'created_by' => $createdBy,
                 ]);
             }
@@ -148,11 +159,11 @@ class ResearchCommunitySyncController extends Controller
                     continue;
                 }
 
-                CommunityService::create([
+                CommunityServiceDraft::create([
                     'title' => $program,
                     'activity_date' => $year . '-01-01',
                     'location' => $location,
-                    'status' => 'published',
+                    'status' => 'published', // or draft
                     'created_by' => $createdBy,
                 ]);
             }
@@ -161,6 +172,67 @@ class ResearchCommunitySyncController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    public function syncValidate()
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('researches')->delete();
+            DB::table('community_services')->delete();
+
+            $researchDrafts = ResearchDraft::all();
+            foreach ($researchDrafts as $draft) {
+                Research::create([
+                    'title' => $draft->title,
+                    'researcher_name' => $draft->researcher_name,
+                    'researcher_role' => $draft->researcher_role,
+                    'year' => $draft->year,
+                    'publication' => $draft->publication,
+                    'link' => $draft->link,
+                    'abstract' => $draft->abstract,
+                    'status' => $draft->status,
+                    'created_by' => $draft->created_by,
+                ]);
+            }
+
+            $communityDrafts = CommunityServiceDraft::all();
+            foreach ($communityDrafts as $draft) {
+                CommunityService::create([
+                    'title' => $draft->title,
+                    'activity_date' => $draft->activity_date,
+                    'location' => $draft->location,
+                    'organizer' => $draft->organizer,
+                    'summary' => $draft->summary,
+                    'documentation_cover' => $draft->documentation_cover,
+                    'status' => $draft->status,
+                    'created_by' => $draft->created_by,
+                ]);
+            }
+
+            DB::table('researches_drafts')->delete();
+            DB::table('community_services_drafts')->delete();
+
+            DB::commit();
+            return redirect()->route('admin.research-community.index')->with('success', 'Data penelitian dan pengabdian berhasil dipublikasikan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal mempublikasikan data: ' . $e->getMessage());
+        }
+    }
+
+    public function syncDiscard()
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('researches_drafts')->delete();
+            DB::table('community_services_drafts')->delete();
+            DB::commit();
+            return redirect()->route('admin.research-community.index')->with('success', 'Perubahan draft berhasil dibatalkan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal membatalkan perubahan: ' . $e->getMessage());
         }
     }
 }

@@ -139,6 +139,7 @@
                                 <th class="px-4 py-3">Nama Matakuliah</th>
                                 <th class="px-4 py-3 text-center">SKS Teori</th>
                                 <th class="px-4 py-3 text-center">SKS Praktek</th>
+                                <th class="px-4 py-3 text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody class="js-admin-course-tbody" data-curriculum-id="{{ $curriculum->id }}">
@@ -149,10 +150,17 @@
                                     <td class="px-4 py-3">{{ $course->name }}</td>
                                     <td class="px-4 py-3 text-center">{{ $course->credits_theory }}</td>
                                     <td class="px-4 py-3 text-center">{{ $course->credits_practice }}</td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($isDraftMode)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Draft</span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Published</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-4 py-8 text-center text-slate-400">Belum ada matakuliah.</td>
+                                    <td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada matakuliah.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -283,8 +291,12 @@
             var pageItems = data.slice(start, start + PER_PAGE);
             var html = '';
 
+            var statusHtml = {{ $isDraftMode ? 'true' : 'false' }} 
+                ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Draft</span>'
+                : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Published</span>';
+
             if (pageItems.length === 0) {
-                html = '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">Belum ada matakuliah.</td></tr>';
+                html = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada matakuliah.</td></tr>';
             } else {
                 for (var i = 0; i < pageItems.length; i++) {
                     var item = pageItems[i];
@@ -295,6 +307,7 @@
                         '<td class="px-4 py-3">' + item.name + '</td>' +
                         '<td class="px-4 py-3 text-center">' + item.credits_theory + '</td>' +
                         '<td class="px-4 py-3 text-center">' + item.credits_practice + '</td>' +
+                        '<td class="px-4 py-3 text-center">' + statusHtml + '</td>' +
                         '</tr>';
                 }
             }

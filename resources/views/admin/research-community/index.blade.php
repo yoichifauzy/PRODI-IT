@@ -112,6 +112,7 @@
                         <th class="px-4 py-3 w-20">Tahun</th>
                         <th class="px-4 py-3">Judul Penelitian</th>
                         <th class="px-4 py-3 w-56">Peneliti</th>
+                        <th class="px-4 py-3 text-center w-28">Status</th>
                     </tr>
                 </thead>
                 <tbody id="research-tbody"></tbody>
@@ -142,6 +143,7 @@
                         <th class="px-4 py-3">Tahun</th>
                         <th class="px-4 py-3">Nama Program</th>
                         <th class="px-4 py-3">Lokasi</th>
+                        <th class="px-4 py-3 text-center w-28">Status</th>
                     </tr>
                 </thead>
                 <tbody id="community-tbody"></tbody>
@@ -338,8 +340,12 @@
         var pageItems = data.slice(start, start + PER_PAGE);
         var html = '';
 
+        var statusHtml = {{ ($isDraftMode ?? false) ? 'true' : 'false' }} 
+            ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Draft</span>'
+            : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Published</span>';
+
         if (pageItems.length === 0) {
-            var colspan = 4;
+            var colspan = 5;
             var emptyMsg = tbodyId === 'research-tbody'
                 ? 'Belum ada data penelitian. Lakukan sync atau upload terlebih dahulu.'
                 : 'Belum ada data pengabdian. Lakukan sync atau upload terlebih dahulu.';
@@ -355,6 +361,7 @@
                         '<td class="px-4 py-3"><span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ' + yearClass + '">' + item.year + '</span></td>' +
                         '<td class="px-4 py-3 font-medium text-slate-900 max-w-md">' + item.title + '</td>' +
                         '<td class="px-4 py-3 text-slate-700 whitespace-nowrap">' + item.researcher_name + '</td>' +
+                        '<td class="px-4 py-3 text-center">' + statusHtml + '</td>' +
                         '</tr>';
                 } else {
                     html += '<tr class="border-t border-slate-100 hover:bg-slate-50">' +
@@ -362,6 +369,7 @@
                         '<td class="px-4 py-3"><span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ' + yearClass + '">' + item.year + '</span></td>' +
                         '<td class="px-4 py-3 font-medium text-slate-900">' + item.title + '</td>' +
                         '<td class="px-4 py-3 text-slate-700">' + item.location + '</td>' +
+                        '<td class="px-4 py-3 text-center">' + statusHtml + '</td>' +
                         '</tr>';
                 }
             }

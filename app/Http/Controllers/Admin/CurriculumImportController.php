@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Curriculum;
 use App\Models\CurriculumCourse;
+use App\Models\CurriculumDraft;
+use App\Models\CurriculumCourseDraft;
 use App\Models\Setting;
 use App\Services\CurriculumImportService;
 use Illuminate\Http\Request;
@@ -110,14 +112,14 @@ class CurriculumImportController extends Controller
     {
         DB::beginTransaction();
         try {
-            DB::table('curriculum_courses')->delete();
-            DB::table('curricula')->delete();
+            DB::table('curriculum_course_drafts')->delete();
+            DB::table('curricula_drafts')->delete();
 
             $curriculumNames = array_values(array_unique(array_filter(array_map('trim', $data['kurikulum'] ?? []))));
             $curriculaByName = [];
 
             foreach ($curriculumNames as $name) {
-                $curriculum = Curriculum::create(['name' => $name, 'created_by' => $createdBy]);
+                $curriculum = CurriculumDraft::create(['name' => $name, 'created_by' => $createdBy]);
                 $curriculaByName[$name] = $curriculum;
             }
 
@@ -138,11 +140,11 @@ class CurriculumImportController extends Controller
                 $credits = $sksTheory + $sksPraktek;
 
                 if (! isset($curriculaByName[$currName])) {
-                    $curriculaByName[$currName] = Curriculum::create(['name' => $currName, 'created_by' => $createdBy]);
+                    $curriculaByName[$currName] = CurriculumDraft::create(['name' => $currName, 'created_by' => $createdBy]);
                 }
 
-                CurriculumCourse::create([
-                    'curriculum_id' => $curriculaByName[$currName]->id,
+                CurriculumCourseDraft::create([
+                    'curriculum_draft_id' => $curriculaByName[$currName]->id,
                     'code' => $code,
                     'name' => $name,
                     'credits_theory' => $sksTheory,
@@ -155,6 +157,63 @@ class CurriculumImportController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    public function syncValidate()
+    {
+        DB::beginTransaction();
+        try {
+            // Delete old public data
+            DB::table('curriculum_courses')->delete();
+            DB::table('curricula')->delete();
+
+            // Copy drafts to public
+            $drafts = CurriculumDraft::with('courses')->get();
+            foreach ($drafts as $draft) {
+                $curriculum = Curriculum::create([
+                    'name' => $draft->name,
+                    'description' => $draft->description,
+                    'created_by' => $draft->created_by,
+                ]);
+
+                foreach ($draft->courses as $courseDraft) {
+                    CurriculumCourse::create([
+                        'curriculum_id' => $curriculum->id,
+                        'code' => $courseDraft->code,
+                        'name' => $courseDraft->name,
+                        'credits_theory' => $courseDraft->credits_theory,
+                        'credits_practice' => $courseDraft->credits_practice,
+                        'credits' => $courseDraft->credits,
+                        'short_syllabus' => $courseDraft->short_syllabus,
+                        'sort_order' => $courseDraft->sort_order,
+                    ]);
+                }
+            }
+
+            // Delete drafts after validation
+            DB::table('curriculum_course_drafts')->delete();
+            DB::table('curricula_drafts')->delete();
+
+            DB::commit();
+            return redirect()->route('admin.curricula.index')->with('success', 'Data kurikulum draft berhasil dipublikasikan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal mempublikasikan data: ' . $e->getMessage());
+        }
+    }
+
+    public function syncDiscard()
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('curriculum_course_drafts')->delete();
+            DB::table('curricula_drafts')->delete();
+            DB::commit();
+            return redirect()->route('admin.curricula.index')->with('success', 'Perubahan draft berhasil dibatalkan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal membatalkan perubahan: ' . $e->getMessage());
         }
     }
 }

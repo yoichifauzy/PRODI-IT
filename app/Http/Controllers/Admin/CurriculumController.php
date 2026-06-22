@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Curriculum;
+use App\Models\CurriculumDraft;
 use App\Models\Setting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -23,9 +24,18 @@ class CurriculumController extends Controller
 
         $sheetUrl = (string) ($setting->value ?: $defaultUrl);
 
-        $allCurricula = Curriculum::query()
-            ->with(['courses' => fn($q) => $q->orderBy('sort_order')->orderBy('code')])
-            ->orderBy('name')->orderBy('id')->get();
+        $draftCount = CurriculumDraft::count();
+        $isDraftMode = $draftCount > 0;
+
+        if ($isDraftMode) {
+            $allCurricula = CurriculumDraft::query()
+                ->with(['courses' => fn($q) => $q->orderBy('sort_order')->orderBy('code')])
+                ->orderBy('name')->orderBy('id')->get();
+        } else {
+            $allCurricula = Curriculum::query()
+                ->with(['courses' => fn($q) => $q->orderBy('sort_order')->orderBy('code')])
+                ->orderBy('name')->orderBy('id')->get();
+        }
 
         $uniqueCurricula = $allCurricula->unique('name');
 
@@ -33,6 +43,7 @@ class CurriculumController extends Controller
             'sheetUrl' => $sheetUrl,
             'allCurricula' => $allCurricula,
             'curricula' => $uniqueCurricula,
+            'isDraftMode' => $isDraftMode,
         ]);
     }
 

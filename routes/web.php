@@ -69,6 +69,8 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
         Route::post('curricula/link', [AdminCurriculumImportController::class, 'updateLink'])->name('curricula.link.update');
         Route::post('curricula/upload', [AdminCurriculumImportController::class, 'upload'])->name('curricula.upload');
         Route::post('curricula/sync', [AdminCurriculumImportController::class, 'syncNow'])->name('curricula.sync');
+        Route::post('curricula/sync/validate', [AdminCurriculumImportController::class, 'syncValidate'])->name('curricula.sync.validate');
+        Route::post('curricula/sync/discard', [AdminCurriculumImportController::class, 'syncDiscard'])->name('curricula.sync.discard');
         Route::get('curricula/download', [AdminCurriculumImportController::class, 'download'])->name('curricula.download');
         Route::get('research-community', [AdminResearchCommunitySyncController::class, 'index'])->name('research-community.index');
         Route::post('research-community/link', [AdminResearchCommunitySyncController::class, 'updateLink'])->name('research-community.link.update');

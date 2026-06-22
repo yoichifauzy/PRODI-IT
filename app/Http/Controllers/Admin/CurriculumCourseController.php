@@ -22,8 +22,7 @@ class CurriculumCourseController extends Controller
             // ->orderBy('curriculum_id')
             ->orderBy('code')
             ->orderBy('name')
-            ->paginate(20)
-            ->withQueryString();
+            ->get();
 
         return view('admin.curriculum-courses.index', [
             'courses' => $courses,

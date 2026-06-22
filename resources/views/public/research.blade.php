@@ -52,7 +52,7 @@
                             <th class="px-4 py-3 w-1/3 min-w-[200px]">{{ __('public.research.table_author') }}</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="researchTbody">
                         @forelse ($researches as $index => $research)
                             <tr
                                 class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors"
@@ -84,6 +84,11 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            @if ($researches->isNotEmpty())
+            <div id="researchPagination" class="mt-4 flex items-center justify-center gap-1"></div>
+            @endif
         </div>
     </section>
 @endsection
@@ -91,12 +96,122 @@
 @push('scripts')
 <script>
 (function() {
+    const PER_PAGE = 10;
+    let currentPage = 1;
+
     const searchInput = document.getElementById('searchInput');
     const suggestionsList = document.getElementById('suggestionsList');
     const yearFilter = document.getElementById('yearFilter');
-    const researchRows = Array.from(document.querySelectorAll('[data-research-row]'));
-    const emptyRow = document.querySelector('[data-research-empty]');
+    const tbody = document.getElementById('researchTbody');
+    const paginationEl = document.getElementById('researchPagination');
+    const emptyRows = document.querySelectorAll('[data-research-empty]');
     let debounceTimer;
+
+    // Build data array from server-rendered rows
+    const allData = [];
+    document.querySelectorAll('[data-research-row]').forEach(function(row, idx) {
+        allData.push({
+            year: row.getAttribute('data-year') || '',
+            title: row.getAttribute('data-title') || '',
+            researcher: row.getAttribute('data-researcher') || '',
+            abstract: row.getAttribute('data-abstract') || ''
+        });
+    });
+
+    // Remove server-rendered rows, we'll render via JS
+    document.querySelectorAll('[data-research-row]').forEach(function(row) { row.remove(); });
+
+    function getFilteredData() {
+        const year = yearFilter.value;
+        const search = searchInput.value.trim().toLowerCase();
+
+        return allData.filter(function(item) {
+            const matchesYear = !year || item.year === year;
+            const matchesSearch = !search || (item.title.toLowerCase() + ' ' + item.researcher.toLowerCase() + ' ' + item.abstract.toLowerCase()).includes(search);
+            return matchesYear && matchesSearch;
+        });
+    }
+
+    function renderTable() {
+        const filtered = getFilteredData();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const start = (currentPage - 1) * PER_PAGE;
+        const pageItems = filtered.slice(start, start + PER_PAGE);
+
+        let html = '';
+        if (pageItems.length === 0) {
+            html = '<tr class="border-t border-slate-100" data-research-empty><td class="px-4 py-3 text-center text-slate-500" colspan="4">{{ __("public.research.empty") }}</td></tr>';
+        } else {
+            pageItems.forEach(function(item, idx) {
+                const no = start + idx + 1;
+                html += '<tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors" data-research-row>'
+                    + '<td class="px-4 py-3 text-center text-slate-400">' + no + '</td>'
+                    + '<td class="px-4 py-3 text-center font-medium">' + item.year + '</td>'
+                    + '<td class="px-4 py-3"><div class="font-semibold text-slate-700">' + item.title + '</div></td>'
+                    + '<td class="px-4 py-3 text-slate-600 italic">' + item.researcher + '</td>'
+                    + '</tr>';
+            });
+        }
+        tbody.innerHTML = html;
+        renderPagination(filtered.length, totalPages);
+    }
+
+    function renderPagination(total, totalPages) {
+        if (!paginationEl) return;
+        if (totalPages <= 1) { paginationEl.innerHTML = ''; return; }
+
+        let html = '';
+        // Prev button
+        html += '<button data-page="prev" class="px-3 py-1.5 rounded-lg text-sm font-medium ' +
+            (currentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-100') +
+            '" ' + (currentPage === 1 ? 'disabled' : '') + '>&laquo;</button>';
+
+        // Page numbers
+        var startPage = Math.max(1, currentPage - 2);
+        var endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+        for (var i = startPage; i <= endPage; i++) {
+            html += '<button data-page="' + i + '" class="px-3 py-1.5 rounded-lg text-sm font-medium ' +
+                (i === currentPage ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100') +
+                '">' + i + '</button>';
+        }
+
+        // Next button
+        html += '<button data-page="next" class="px-3 py-1.5 rounded-lg text-sm font-medium ' +
+            (currentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-100') +
+            '" ' + (currentPage === totalPages ? 'disabled' : '') + '>&raquo;</button>';
+
+        // Info text
+        html += '<span class="ml-3 text-sm text-slate-500">Baris ' + ((currentPage - 1) * PER_PAGE + 1) + '&ndash;' + Math.min(currentPage * PER_PAGE, total) + ' dari ' + total + '</span>';
+
+        paginationEl.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        var filtered = getFilteredData();
+        var totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+        if (page === 'prev') page = Math.max(1, currentPage - 1);
+        else if (page === 'next') page = Math.min(totalPages, currentPage + 1);
+        else page = parseInt(page, 10);
+        if (isNaN(page) || page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderTable();
+        // Scroll table into view
+        var tableEl = document.querySelector('.curriculum-table');
+        if (tableEl) tableEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Pagination click delegation
+    if (paginationEl) {
+        paginationEl.addEventListener('click', function(e) {
+            var btn = e.target.closest('[data-page]');
+            if (!btn || btn.disabled) return;
+            goToPage(btn.dataset.page);
+        });
+    }
 
     // Search input with autocomplete
     searchInput.addEventListener('input', function() {
@@ -105,7 +220,9 @@
 
         if (query.length < 2) {
             suggestionsList.classList.add('hidden');
-            applyFilters(false);
+            currentPage = 1;
+            renderTable();
+            updateUrl();
             return;
         }
 
@@ -134,23 +251,33 @@
                         item.addEventListener('click', function() {
                             searchInput.value = this.getAttribute('data-title');
                             suggestionsList.classList.add('hidden');
-                            applyFilters(true);
+                            currentPage = 1;
+                            renderTable();
+                            updateUrl();
                         });
                     });
                 })
                 .catch(err => console.error(err));
         }, 300);
 
-        applyFilters(false);
+        currentPage = 1;
+        renderTable();
+        updateUrl();
     });
 
     // Year filter change
-    yearFilter.addEventListener('change', () => applyFilters(true));
+    yearFilter.addEventListener('change', function() {
+        currentPage = 1;
+        renderTable();
+        updateUrl();
+    });
 
     searchInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
-            applyFilters(true);
+            currentPage = 1;
+            renderTable();
+            updateUrl();
             suggestionsList.classList.add('hidden');
         }
     });
@@ -162,52 +289,23 @@
         }
     });
 
-    function applyFilters(updateUrl) {
+    function updateUrl() {
         const year = yearFilter.value;
-        const search = searchInput.value.trim().toLowerCase();
-
-        let visibleIndex = 0;
-        researchRows.forEach((row) => {
-            const rowYear = row.getAttribute('data-year') || '';
-            const title = (row.getAttribute('data-title') || '').toLowerCase();
-            const researcher = (row.getAttribute('data-researcher') || '').toLowerCase();
-            const abstractText = (row.getAttribute('data-abstract') || '').toLowerCase();
-
-            const matchesYear = !year || rowYear === year;
-            const matchesSearch = !search || `${title} ${researcher} ${abstractText}`.includes(search);
-            const isVisible = matchesYear && matchesSearch;
-
-            row.classList.toggle('hidden', !isVisible);
-
-            if (isVisible) {
-                visibleIndex += 1;
-                const noCell = row.querySelector('[data-research-no]');
-                if (noCell) {
-                    noCell.textContent = String(visibleIndex);
-                }
-            }
-        });
-
-        if (emptyRow) {
-            emptyRow.classList.toggle('hidden', visibleIndex !== 0);
-        }
-
-        if (updateUrl) {
-            const params = new URLSearchParams();
-            if (year) params.append('year', year);
-            if (search) params.append('q', search);
-
-            const url = `{{ route('public.research') }}${params.toString() ? '?' + params.toString() : ''}`;
-            window.history.replaceState({}, '', url);
-        }
+        const search = searchInput.value.trim();
+        const params = new URLSearchParams();
+        if (year) params.append('year', year);
+        if (search) params.append('q', search);
+        const url = `{{ route('public.research') }}${params.toString() ? '?' + params.toString() : ''}`;
+        window.history.replaceState({}, '', url);
     }
 
-    // Restore search value if exists (untuk page reload)
+    // Restore search value if exists
     if (searchInput.value.trim().length > 0) {
         searchInput.focus();
     }
 
-    applyFilters(false);
+    // Initial render
+    renderTable();
 })();
 </script>
 @endpush

@@ -95,6 +95,11 @@
                     </div>
                 @endif
 
+                <div class="flex flex-wrap items-center gap-3 border-b border-slate-100 px-5 pb-4">
+                    <input type="text" placeholder="Cari matakuliah…" class="js-admin-course-search rounded-md border border-slate-300 px-3 py-1.5 text-sm" data-curriculum-id="{{ $curriculum->id }}" />
+                    <span class="ml-auto text-xs text-slate-500"><span class="js-admin-course-total" data-curriculum-id="{{ $curriculum->id }}">{{ $curriculum->courses->count() }}</span> matakuliah</span>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm">
                         <thead class="bg-slate-50 text-left text-slate-600">
@@ -106,7 +111,7 @@
                                 <th class="px-4 py-3 text-center">SKS Praktek</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="js-admin-course-tbody" data-curriculum-id="{{ $curriculum->id }}">
                             @forelse ($curriculum->courses as $iteration => $course)
                                 <tr class="border-t border-slate-100 hover:bg-slate-50">
                                     <td class="px-4 py-3">{{ $iteration + 1 }}</td>
@@ -123,6 +128,7 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="js-admin-course-pagination flex flex-wrap items-center justify-center gap-1 px-5 py-3" data-curriculum-id="{{ $curriculum->id }}"></div>
             </div>
         @endforeach
     @else
@@ -188,6 +194,102 @@
             if (ok) { syncForm.submit(); }
         });
 
+        // --- Client-side Pagination for Course Tables ---
+        const PER_PAGE = 5;
+
+        // Build course data per curriculum panel from server JSON
+        var courseDataMap = {!! json_encode($allCurricula->mapWithKeys(function($cur){ return [(string)$cur->id => $cur->courses->map(function($c){ return ['code' => $c->code, 'name' => $c->name, 'credits_theory' => $c->credits_theory, 'credits_practice' => $c->credits_practice]; })]; })) !!};
+        var coursePageMap = {};
+        Object.keys(courseDataMap).forEach(function(cid) {
+            coursePageMap[cid] = 1;
+        });
+
+        function filterCourses(data, searchText) {
+            if (!searchText) return data;
+            var lower = searchText.toLowerCase();
+            return data.filter(function(item) {
+                return (item.code && item.code.toLowerCase().indexOf(lower) !== -1) ||
+                       (item.name && item.name.toLowerCase().indexOf(lower) !== -1);
+            });
+        }
+
+        function renderCourseTable(cid) {
+            var tbody = document.querySelector('.js-admin-course-tbody[data-curriculum-id="' + cid + '"]');
+            var totalSpan = document.querySelector('.js-admin-course-total[data-curriculum-id="' + cid + '"]');
+            var searchInput = document.querySelector('.js-admin-course-search[data-curriculum-id="' + cid + '"]');
+            var searchText = searchInput ? searchInput.value : '';
+            var data = filterCourses(courseDataMap[cid] || [], searchText);
+            var page = coursePageMap[cid] || 1;
+            var totalPages = Math.ceil(data.length / PER_PAGE) || 1;
+            if (page > totalPages) page = totalPages;
+            if (page < 1) page = 1;
+            coursePageMap[cid] = page;
+
+            var start = (page - 1) * PER_PAGE;
+            var pageItems = data.slice(start, start + PER_PAGE);
+            var html = '';
+
+            if (pageItems.length === 0) {
+                html = '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">Belum ada matakuliah.</td></tr>';
+            } else {
+                for (var i = 0; i < pageItems.length; i++) {
+                    var item = pageItems[i];
+                    var num = start + i + 1;
+                    html += '<tr class="border-t border-slate-100 hover:bg-slate-50">' +
+                        '<td class="px-4 py-3">' + num + '</td>' +
+                        '<td class="px-4 py-3 font-mono text-xs">' + item.code + '</td>' +
+                        '<td class="px-4 py-3">' + item.name + '</td>' +
+                        '<td class="px-4 py-3 text-center">' + item.credits_theory + '</td>' +
+                        '<td class="px-4 py-3 text-center">' + item.credits_practice + '</td>' +
+                        '</tr>';
+                }
+            }
+            tbody.innerHTML = html;
+            if (totalSpan) totalSpan.textContent = data.length;
+
+            // Render pagination
+            var pagContainer = document.querySelector('.js-admin-course-pagination[data-curriculum-id="' + cid + '"]');
+            if (totalPages <= 1) { pagContainer.innerHTML = ''; return; }
+
+            var pagHtml = '';
+            pagHtml += '<button class="px-2 py-1 rounded border border-slate-300 ' + (page === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-100') + '"' + (page === 1 ? ' disabled' : '') + ' data-page="' + (page - 1) + '">&laquo;</button>';
+            for (var p = 1; p <= totalPages; p++) {
+                if (p === page) {
+                    pagHtml += '<span class="px-3 py-1 rounded bg-indigo-600 text-white font-semibold">' + p + '</span>';
+                } else {
+                    pagHtml += '<button class="px-3 py-1 rounded border border-slate-300 text-slate-600 hover:bg-slate-100" data-page="' + p + '">' + p + '</button>';
+                }
+            }
+            pagHtml += '<button class="px-2 py-1 rounded border border-slate-300 ' + (page === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-100') + '"' + (page === totalPages ? ' disabled' : '') + ' data-page="' + (page + 1) + '">&raquo;</button>';
+            pagContainer.innerHTML = pagHtml;
+        }
+
+        // Search input handlers
+        document.querySelectorAll('.js-admin-course-search').forEach(function(input) {
+            input.addEventListener('input', function() {
+                var cid = this.dataset.curriculumId;
+                coursePageMap[cid] = 1;
+                renderCourseTable(cid);
+            });
+        });
+
+        // Pagination click delegation
+        document.querySelectorAll('.js-admin-course-pagination').forEach(function(container) {
+            container.addEventListener('click', function(e) {
+                var btn = e.target.closest('button');
+                if (btn && btn.dataset.page) {
+                    var cid = this.dataset.curriculumId;
+                    coursePageMap[cid] = parseInt(btn.dataset.page);
+                    renderCourseTable(cid);
+                }
+            });
+        });
+
+        // Initial render for all panels
+        Object.keys(courseDataMap).forEach(function(cid) {
+            renderCourseTable(cid);
+        });
+
         // --- Curriculum panel switching ---
         const filterBtns = Array.from(document.querySelectorAll('.js-admin-curriculum-filter'));
         const majorBtns = Array.from(document.querySelectorAll('.js-admin-curriculum-major'));
@@ -223,6 +325,11 @@
             panels.forEach(p => p.classList.toggle('hidden', p !== target));
             setFilterActive(target.dataset.curriculumName);
             setMajorActive(curriculumId);
+            // Reset search and re-render pagination for the shown panel
+            var searchInput = target.querySelector('.js-admin-course-search');
+            if (searchInput) searchInput.value = '';
+            coursePageMap[curriculumId] = 1;
+            renderCourseTable(curriculumId);
         }
 
         function showGroup(groupName) {
@@ -230,6 +337,13 @@
             if (groupPanels.length === 0) return;
             const visible = groupPanels.find(p => !p.classList.contains('hidden')) || groupPanels[0];
             showPanel(visible.dataset.curriculumId);
+            // Reset search and re-render for all panels in the group
+            groupPanels.forEach(p => {
+                var searchInput = p.querySelector('.js-admin-course-search');
+                if (searchInput) searchInput.value = '';
+                coursePageMap[p.dataset.curriculumId] = 1;
+                renderCourseTable(p.dataset.curriculumId);
+            });
         }
 
         filterBtns.forEach(btn => {

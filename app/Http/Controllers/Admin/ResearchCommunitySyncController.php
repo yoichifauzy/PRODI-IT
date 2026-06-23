@@ -34,9 +34,13 @@ class ResearchCommunitySyncController extends Controller
         if ($isDraftMode) {
             $researches = ResearchDraft::query()->orderByDesc('year')->orderBy('title')->get();
             $communityServices = CommunityServiceDraft::query()->orderByDesc('activity_date')->orderBy('title')->get();
+            $this->markResearchPreviewStatuses($researches);
+            $this->markCommunityPreviewStatuses($communityServices);
         } else {
             $researches = Research::query()->orderByDesc('year')->orderBy('title')->get();
             $communityServices = CommunityService::query()->orderByDesc('activity_date')->orderBy('title')->get();
+            $researches->each->setAttribute('admin_sync_status', 'published');
+            $communityServices->each->setAttribute('admin_sync_status', 'published');
         }
 
         return view('admin.research-community.index', [
@@ -173,6 +177,47 @@ class ResearchCommunitySyncController extends Controller
             DB::rollBack();
             throw $e;
         }
+    }
+
+    private function markResearchPreviewStatuses($researches): void
+    {
+        $publishedKeys = Research::query()
+            ->get(['title', 'researcher_name', 'year'])
+            ->mapWithKeys(fn(Research $research) => [$this->researchPreviewKey($research->title, $research->researcher_name, (int) $research->year) => true]);
+
+        $researches->each(function (ResearchDraft $draft) use ($publishedKeys): void {
+            $key = $this->researchPreviewKey($draft->title, $draft->researcher_name, (int) $draft->year);
+            $draft->setAttribute('admin_sync_status', $publishedKeys->has($key) ? 'published' : 'draft');
+        });
+    }
+
+    private function markCommunityPreviewStatuses($communityServices): void
+    {
+        $publishedKeys = CommunityService::query()
+            ->get(['title', 'location', 'activity_date'])
+            ->mapWithKeys(function (CommunityService $service) {
+                return [$this->communityPreviewKey($service->title, $service->location, $service->activity_date?->format('Y-m-d')) => true];
+            });
+
+        $communityServices->each(function (CommunityServiceDraft $draft) use ($publishedKeys): void {
+            $key = $this->communityPreviewKey($draft->title, $draft->location, $draft->activity_date?->format('Y-m-d'));
+            $draft->setAttribute('admin_sync_status', $publishedKeys->has($key) ? 'published' : 'draft');
+        });
+    }
+
+    private function researchPreviewKey(?string $title, ?string $researcher, int $year): string
+    {
+        return implode('|', [$year, $this->normalizePreviewValue($title), $this->normalizePreviewValue($researcher)]);
+    }
+
+    private function communityPreviewKey(?string $title, ?string $location, ?string $activityDate): string
+    {
+        return implode('|', [$activityDate ?: '', $this->normalizePreviewValue($title), $this->normalizePreviewValue($location)]);
+    }
+
+    private function normalizePreviewValue(?string $value): string
+    {
+        return mb_strtolower(trim(preg_replace('/\s+/', ' ', (string) $value)));
     }
 
     public function syncValidate()

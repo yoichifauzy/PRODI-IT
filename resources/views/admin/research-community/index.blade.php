@@ -289,8 +289,8 @@
     }
 
     // Research data
-    var researchData = {!! json_encode($researches->map(function($r){ return ['year' => $r->year, 'title' => $r->title, 'researcher_name' => $r->researcher_name]; })) !!};
-    var communityData = {!! json_encode($communityServices->map(function($c){ return ['year' => $c->activity_date ? $c->activity_date->format('Y') : '-', 'title' => $c->title, 'location' => $c->location ?: '-']; })) !!};
+    var researchData = {!! json_encode($researches->map(function($r){ return ['year' => $r->year, 'title' => $r->title, 'researcher_name' => $r->researcher_name, 'status' => $r->admin_sync_status ?? 'published']; })) !!};
+    var communityData = {!! json_encode($communityServices->map(function($c){ return ['year' => $c->activity_date ? $c->activity_date->format('Y') : '-', 'title' => $c->title, 'location' => $c->location ?: '-', 'status' => $c->admin_sync_status ?? 'published']; })) !!};
 
     // Populate year filter dropdowns
     function populateYearFilters() {
@@ -334,15 +334,19 @@
         });
     }
 
+    function renderStatus(status) {
+        if (status === 'draft') {
+            return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Draft</span>';
+        }
+
+        return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Published</span>';
+    }
+
     function renderTable(tbodyId, data, page, totalSpanId) {
         var tbody = document.getElementById(tbodyId);
         var start = (page - 1) * PER_PAGE;
         var pageItems = data.slice(start, start + PER_PAGE);
         var html = '';
-
-        var statusHtml = {{ ($isDraftMode ?? false) ? 'true' : 'false' }} 
-            ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Draft</span>'
-            : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Published</span>';
 
         if (pageItems.length === 0) {
             var colspan = 5;
@@ -355,6 +359,7 @@
                 var item = pageItems[i];
                 var num = start + i + 1;
                 var yearClass = getYearColor(item.year);
+                var statusHtml = renderStatus(item.status);
                 if (tbodyId === 'research-tbody') {
                     html += '<tr class="border-t border-slate-100 hover:bg-slate-50">' +
                         '<td class="px-4 py-3 text-slate-500">' + num + '</td>' +

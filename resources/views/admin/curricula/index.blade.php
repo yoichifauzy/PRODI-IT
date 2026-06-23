@@ -151,7 +151,7 @@
                                     <td class="px-4 py-3 text-center">{{ $course->credits_theory }}</td>
                                     <td class="px-4 py-3 text-center">{{ $course->credits_practice }}</td>
                                     <td class="px-4 py-3 text-center">
-                                        @if($isDraftMode)
+                                        @if(($course->admin_sync_status ?? 'published') === 'draft')
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Draft</span>
                                         @else
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Published</span>
@@ -260,7 +260,7 @@
         const PER_PAGE = 5;
 
         // Build course data per curriculum panel from server JSON
-        var courseDataMap = {!! json_encode($allCurricula->mapWithKeys(function($cur){ return [(string)$cur->id => $cur->courses->map(function($c){ return ['code' => $c->code, 'name' => $c->name, 'credits_theory' => $c->credits_theory, 'credits_practice' => $c->credits_practice]; })]; })) !!};
+        var courseDataMap = {!! json_encode($allCurricula->mapWithKeys(function($cur){ return [(string)$cur->id => $cur->courses->map(function($c){ return ['code' => $c->code, 'name' => $c->name, 'credits_theory' => $c->credits_theory, 'credits_practice' => $c->credits_practice, 'status' => $c->admin_sync_status ?? 'published']; })]; })) !!};
         var coursePageMap = {};
         Object.keys(courseDataMap).forEach(function(cid) {
             coursePageMap[cid] = 1;
@@ -273,6 +273,14 @@
                 return (item.code && item.code.toLowerCase().indexOf(lower) !== -1) ||
                        (item.name && item.name.toLowerCase().indexOf(lower) !== -1);
             });
+        }
+
+        function renderStatus(status) {
+            if (status === 'draft') {
+                return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Draft</span>';
+            }
+
+            return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Published</span>';
         }
 
         function renderCourseTable(cid) {
@@ -291,16 +299,13 @@
             var pageItems = data.slice(start, start + PER_PAGE);
             var html = '';
 
-            var statusHtml = {{ $isDraftMode ? 'true' : 'false' }} 
-                ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Draft</span>'
-                : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Published</span>';
-
             if (pageItems.length === 0) {
                 html = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada matakuliah.</td></tr>';
             } else {
                 for (var i = 0; i < pageItems.length; i++) {
                     var item = pageItems[i];
                     var num = start + i + 1;
+                    var statusHtml = renderStatus(item.status);
                     html += '<tr class="border-t border-slate-100 hover:bg-slate-50">' +
                         '<td class="px-4 py-3">' + num + '</td>' +
                         '<td class="px-4 py-3 font-mono text-xs">' + item.code + '</td>' +

@@ -15,7 +15,7 @@
                 <!-- Year Filter -->
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Tahun</label>
-                    <select id="yearFilter" class="w-full px-3 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <select id="yearFilter" class="w-full px-3 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent">
                         <option value="">Semua Tahun</option>
                         @foreach ($researchYears as $year)
                             <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -30,7 +30,7 @@
                         <input type="text" id="searchInput"
                             placeholder="Cari judul, peneliti..."
                             value="{{ $search }}"
-                            class="w-full px-3 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            class="w-full px-3 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                             autocomplete="off" />
 
                         <!-- Autocomplete Dropdown -->
@@ -175,7 +175,7 @@
 
         for (var i = startPage; i <= endPage; i++) {
             html += '<button data-page="' + i + '" class="px-3 py-1.5 rounded-lg text-sm font-medium ' +
-                (i === currentPage ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100') +
+                (i === currentPage ? 'bg-orange-600 text-white' : 'text-slate-600 hover:bg-slate-100') +
                 '">' + i + '</button>';
         }
 
@@ -237,7 +237,7 @@
                     }
 
                     suggestionsList.innerHTML = data.map((item, idx) => `
-                        <div class="px-4 py-2 hover:bg-indigo-50 cursor-pointer border-b border-slate-100 last:border-b-0 suggestion-item"
+                        <div class="px-4 py-2 hover:bg-orange-50 cursor-pointer border-b border-slate-100 last:border-b-0 suggestion-item"
                             data-title="${item.title}" data-researcher="${item.researcher}" data-year="${item.year}">
                             <div class="font-semibold text-slate-700 text-sm">${item.title}</div>
                             <div class="text-xs text-slate-500">${item.researcher} (${item.year})</div>

@@ -65,9 +65,9 @@
                                     <!-- <th class="px-4 py-3">{{ __('public.curriculum.table_syllabus') }}</th> -->
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="js-public-course-tbody" data-curriculum-id="{{ $curriculum->id }}">
                                 @forelse ($curriculum->courses as $iteration => $course)
-                                    <tr class="border-t border-slate-100">
+                                    <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
                                         <td class="px-4 py-3">{{ $iteration + 1 }}</td>
                                         <td class="px-4 py-3">{{ $course->code }}</td>
                                         <td class="px-4 py-3">{{ $course->name }}</td>
@@ -83,6 +83,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="js-public-course-pagination mt-4 flex items-center justify-center gap-1" data-curriculum-id="{{ $curriculum->id }}"></div>
                 </div>
             @endforeach
         @else
@@ -166,6 +167,77 @@
                             showCurriculum(curriculumId);
                         });
                     });
+
+                    // --- Client-side Pagination ---
+                    const PER_PAGE = 10;
+                    var courseDataMap = {!! json_encode($allCurricula->mapWithKeys(function($cur){ return [(string)$cur->id => $cur->courses->map(function($c){ return ['code' => $c->code, 'name' => $c->name, 'credits_theory' => $c->credits_theory, 'credits_practice' => $c->credits_practice]; })]; })) !!};
+                    var coursePageMap = {};
+                    Object.keys(courseDataMap).forEach(function(cid) { coursePageMap[cid] = 1; });
+
+                    function renderCourseTable(cid) {
+                        var tbody = document.querySelector('.js-public-course-tbody[data-curriculum-id="' + cid + '"]');
+                        var data = courseDataMap[cid] || [];
+                        var page = coursePageMap[cid] || 1;
+                        var totalPages = Math.ceil(data.length / PER_PAGE) || 1;
+                        if (page > totalPages) page = totalPages;
+                        if (page < 1) page = 1;
+                        coursePageMap[cid] = page;
+
+                        var start = (page - 1) * PER_PAGE;
+                        var pageItems = data.slice(start, start + PER_PAGE);
+                        var html = '';
+
+                        if (pageItems.length === 0) {
+                            html = '<tr><td colspan="5" class="px-4 py-8 text-center text-[var(--text-soft)]">{{ __("public.curriculum.empty_courses") }}</td></tr>';
+                        } else {
+                            for (var i = 0; i < pageItems.length; i++) {
+                                var item = pageItems[i];
+                                var num = start + i + 1;
+                                html += '<tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">' +
+                                    '<td class="px-4 py-3">' + num + '</td>' +
+                                    '<td class="px-4 py-3">' + item.code + '</td>' +
+                                    '<td class="px-4 py-3">' + item.name + '</td>' +
+                                    '<td class="px-4 py-3">' + item.credits_theory + '</td>' +
+                                    '<td class="px-4 py-3">' + item.credits_practice + '</td>' +
+                                    '</tr>';
+                            }
+                        }
+                        if (tbody) tbody.innerHTML = html;
+
+                        var pagContainer = document.querySelector('.js-public-course-pagination[data-curriculum-id="' + cid + '"]');
+                        if (!pagContainer) return;
+                        if (totalPages <= 1) { pagContainer.innerHTML = ''; return; }
+
+                        var pagHtml = '';
+                        pagHtml += '<button class="px-3 py-1.5 rounded-lg text-sm font-medium ' + (page === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-100') + '"' + (page === 1 ? ' disabled' : '') + ' data-page="' + (page - 1) + '">&laquo;</button>';
+                        
+                        var startPage = Math.max(1, page - 2);
+                        var endPage = Math.min(totalPages, startPage + 4);
+                        if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+                        for (var p = startPage; p <= endPage; p++) {
+                            pagHtml += '<button class="px-3 py-1.5 rounded-lg text-sm font-medium ' + (p === page ? 'bg-orange-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100') + '" data-page="' + p + '">' + p + '</button>';
+                        }
+                        pagHtml += '<button class="px-3 py-1.5 rounded-lg text-sm font-medium ' + (page === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-100') + '"' + (page === totalPages ? ' disabled' : '') + ' data-page="' + (page + 1) + '">&raquo;</button>';
+                        
+                        pagHtml += '<span class="ml-3 text-sm text-slate-500">Baris ' + (start + 1) + '&ndash;' + Math.min(page * PER_PAGE, data.length) + ' dari ' + data.length + '</span>';
+
+                        pagContainer.innerHTML = pagHtml;
+                    }
+
+                    document.querySelectorAll('.js-public-course-pagination').forEach(function(container) {
+                        container.addEventListener('click', function(e) {
+                            var btn = e.target.closest('button[data-page]');
+                            if (btn && !btn.disabled) {
+                                var cid = this.dataset.curriculumId;
+                                coursePageMap[cid] = parseInt(btn.dataset.page);
+                                renderCourseTable(cid);
+                            }
+                        });
+                    });
+
+                    Object.keys(courseDataMap).forEach(function(cid) { renderCourseTable(cid); });
+
                 });
             </script>
         @endpush

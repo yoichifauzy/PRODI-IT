@@ -60,17 +60,17 @@
                                 @if (!($isDraftMode ?? false))
                                     <form method="POST" action="{{ route('admin.research-community.sync') }}" id="syncForm">
                                         @csrf
-                                        <button type="button" class="rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white" id="syncButton">Sync Now</button>
+                                        <button type="button" class="rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white" id="syncButton">Priview</button>
                                     </form>
                                 @else
                                     <form method="POST" action="{{ route('admin.research-community.sync.validate') }}" id="syncValidateForm">
                                         @csrf
-                                        <button type="button" class="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white" id="syncValidateButton">Sync Validate</button>
+                                        <button type="button" class="rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-white" id="syncValidateButton">Save</button>
                                     </form>
 
                                     <form method="POST" action="{{ route('admin.research-community.sync.discard') }}" id="syncDiscardForm">
                                         @csrf
-                                        <button type="button" class="rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white" id="syncDiscardButton">Batalkan Draft</button>
+                                        <button type="button" class="rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white" id="syncDiscardButton">Cancel</button>
                                     </form>
                                 @endif
 
@@ -215,14 +215,14 @@
 
     if (syncButton) {
         syncButton.addEventListener('click', function(){
-            const ok = confirm('Sync Now akan mengambil data dari spreadsheet dan menyimpannya ke Draft untuk direview. Lanjutkan?');
+            const ok = confirm('Data Preview akan mengambil data dari spreadsheet dan menyimpannya ke Draft untuk direview. Lanjutkan?');
             if (ok) { syncForm.submit(); }
         });
     }
 
     if (syncValidateButton) {
         syncValidateButton.addEventListener('click', function(){
-            const ok = confirm('Sync Validate akan mempublikasikan data draft ini ke publik. Data lama akan dihapus. Lanjutkan?');
+            const ok = confirm('Save akan mempublikasikan data draft ini ke publik. Data lama akan dihapus. Lanjutkan?');
             if (ok) { syncValidateForm.submit(); }
         });
     }

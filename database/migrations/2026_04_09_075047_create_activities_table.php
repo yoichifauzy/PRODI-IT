@@ -18,13 +18,14 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('location')->nullable();
             $table->date('event_date');
+            $table->timestamp('start_at')->nullable();
+            $table->timestamp('end_at')->nullable();
             $table->string('image_path')->nullable();
-            $table->unsignedSmallInteger('sort_order')->default(0);
-            $table->boolean('is_published')->default(true);
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('google_event_url')->nullable();
             $table->timestamps();
 
-            $table->index(['event_date', 'is_published']);
+            $table->index(['event_date']);
         });
     }
 

@@ -9,12 +9,11 @@ use App\Models\Curriculum;
 use App\Models\Gallery;
 use App\Models\GalleryItem;
 use App\Models\LecturerStaff;
+use App\Models\Profile;
 use App\Models\Project;
 use App\Models\Research;
-use App\Models\Setting;
 use App\Models\CommunityService;
 use App\Models\TracerAlumni;
-use App\Models\VisionMission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -91,14 +90,18 @@ class PublicPageController extends Controller
     {
         $activities = Activity::query()
             ->visibleOnPublic()
-            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
             ->orderByDesc('event_date')
             ->orderByDesc('id')
             ->paginate(12)
             ->withQueryString();
 
+        $runningActivities = Activity::query()
+            ->upcomingRunningCard()
+            ->get();
+
         return view('public.activities', [
-            'activities' => $activities,
+            'activities'        => $activities,
+            'runningActivities' => $runningActivities,
         ]);
     }
 
@@ -114,7 +117,7 @@ class PublicPageController extends Controller
         $relatedActivities = Activity::query()
             ->visibleOnPublic()
             ->where('id', '!=', $activity->id)
-            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
+            // ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
             ->orderByDesc('event_date')
             ->orderByDesc('id')
             ->take(6)
@@ -383,29 +386,12 @@ class PublicPageController extends Controller
         return response()->json($suggestions);
     }
 
-    public function about(): View
+    public function profile(): View
     {
-        $visionMission = VisionMission::query()->where('is_active', true)->first();
+        $profile = Profile::first();
 
-        $aboutKeys = [
-            'about_section_title',
-            'about_section_subtitle',
-            'about_heading',
-            'about_description_primary',
-            'about_description_secondary',
-            'about_image_one',
-            'about_image_two',
-            'about_video_path',
-        ];
-
-        $aboutSettings = Setting::query()
-            ->whereIn('key', $aboutKeys)
-            ->get()
-            ->pluck('value', 'key');
-
-        return view('public.about', [
-            'visionMission' => $visionMission,
-            'aboutSettings' => $aboutSettings,
+        return view('public.profile', [
+            'profile' => $profile,
         ]);
     }
 

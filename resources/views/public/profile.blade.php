@@ -5,37 +5,31 @@
 @section('content')
     @php
         $isEn = app()->getLocale() === 'en';
-        $aboutSectionTitle = $isEn ? __('public.home.about.section_title') : ($aboutSettings['about_section_title'] ?? __('public.home.about.section_title'));
-        $aboutSectionSubtitle = $isEn ? __('public.home.about.section_subtitle') : ($aboutSettings['about_section_subtitle'] ?? __('public.home.about.section_subtitle'));
-        $aboutHeading = $isEn ? __('public.home.about.heading') : ($aboutSettings['about_heading'] ?? __('public.home.about.heading'));
-        $aboutDescriptionPrimary = $isEn ? __('public.home.about.description_primary') : ($aboutSettings['about_description_primary'] ?? __('public.home.about.description_primary'));
-        $aboutDescriptionSecondary = $isEn ? __('public.home.about.description_secondary') : ($aboutSettings['about_description_secondary'] ?? __('public.home.about.description_secondary'));
-        $tentangImageOne = !empty($aboutSettings['about_image_one']) ? asset('storage/' . $aboutSettings['about_image_one']) : asset('storage/image/tentang-kami/prodi-it.png');
-        $tentangImageTwo = !empty($aboutSettings['about_image_two']) ? asset('storage/' . $aboutSettings['about_image_two']) : asset('storage/image/tentang-kami/teknofo.png');
+        $aboutSectionTitle = $isEn ? __('public.home.about.section_title') : 'Profil Program Studi';
+        $aboutSectionSubtitle = $isEn ? __('public.home.about.section_subtitle') : 'Mengenal lebih dekat visi, misi, dan identitas Prodi Teknologi Informasi.';
+        $aboutHeading = $isEn ? __('public.home.about.heading') : 'Teknologi Informasi';
+        $aboutDescriptionPrimary = $profile?->description_primary ?? ($isEn ? __('public.home.about.description_primary') : '');
+        $aboutDescriptionSecondary = $profile?->description_secondary ?? ($isEn ? __('public.home.about.description_secondary') : '');
+        $tentangImageOne = !empty($profile?->image_one_path) ? asset('storage/' . $profile->image_one_path) : asset('storage/image/tentang-kami/prodi-it.png');
+        $tentangImageTwo = !empty($profile?->image_two_path) ? asset('storage/' . $profile->image_two_path) : asset('storage/image/tentang-kami/teknofo.png');
 
         $defaultMissionItems = trans('public.home.vision.default_mission_items');
         if (!is_array($defaultMissionItems) || $defaultMissionItems === []) {
             $defaultMissionItems = [];
         }
 
-        $missionSource = $isEn ? null : $visionMission?->mission_text;
-        $missionItems = filled($missionSource)
-            ? preg_split('/\n+/', trim($missionSource))
-            : $defaultMissionItems;
+        $missionSource = $profile?->mission_text;
+        $missionItems = is_array($missionSource) && !empty($missionSource)
+            ? $missionSource
+            : (filled($missionSource) && is_string($missionSource) ? preg_split('/\n+/', trim($missionSource)) : $defaultMissionItems);
 
         $missionItems = array_filter($missionItems, fn($item) => trim($item) !== '');
     @endphp
 
-    <!-- Hero Section -->
-    <section class="hero-section relative min-h-screen w-full overflow-hidden bg-gradient-to-r from-amber-900 via-amber-800 to-amber-700 flex items-center justify-center">
-        <div class="absolute inset-0 bg-orange-600 opacity-40" style="background-image: url('data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.15\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 0h20v20H0V0zm20 20h20v20H20V20z\'/%3E%3C/g%3E%3C/svg%3E');"></div>
-
-        <div class="relative z-10 text-center text-white px-4 py-20">
-            <h1 class="text-5xl md:text-6xl font-bold mb-4 leading-tight">{{ $aboutSectionTitle }}</h1>
-            <p class="text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto">{{ $aboutSectionSubtitle }}</p>
-            <div class="h-1 w-24 bg-red-600 mx-auto mt-8"></div>
-        </div>
-    </section>
+    @include('public.partials.page-hero', [
+        'title' => $aboutSectionTitle,
+        'subtitle' => $aboutSectionSubtitle,
+    ])
 
     <!-- Profil IKTE Section -->
     <section class="py-16 md:py-24 px-4 md:px-8 bg-white">
@@ -92,11 +86,11 @@
                             <i class="fa-solid fa-eye text-xl"></i>
                         </div>
                         <h3 class="text-2xl md:text-3xl font-bold text-gray-900">
-                            {{ $isEn ? __('public.home.vision.vision_title') : ($visionMission?->vision_title ?? __('public.home.vision.vision_title')) }}
+                            {{ $isEn ? __('public.home.vision.vision_title') : __('public.home.vision.vision_title') }}
                         </h3>
                     </div>
                     <p class="text-gray-700 leading-relaxed text-lg" style="color:var(--text-soft)">
-                        {{ $isEn ? __('public.home.vision.default_vision') : ($visionMission?->vision_text ?: __('public.home.vision.default_vision')) }}
+                        {{ $profile?->vision_text ?: ($isEn ? __('public.home.vision.default_vision') : __('public.home.vision.default_vision')) }}
                     </p>
                 </div>
 
@@ -107,7 +101,7 @@
                             <i class="fa-solid fa-shield text-xl"></i>
                         </div>
                         <h3 class="text-2xl md:text-3xl font-bold text-gray-900">
-                            {{ $isEn ? __('public.home.vision.mission_title') : ($visionMission?->mission_title ?? __('public.home.vision.mission_title')) }}
+                            {{ $isEn ? __('public.home.vision.mission_title') : __('public.home.vision.mission_title') }}
                         </h3>
                     </div>
                     <ul class="space-y-3">

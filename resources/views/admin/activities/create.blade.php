@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="mb-4">
-        <h1 class="text-2xl font-bold text-slate-900">Tambah Dokumentasi Kegiatan</h1>
+        <h1 class="text-2xl font-bold text-slate-900">Tambah Kegiatan</h1>
         <p class="text-sm text-slate-600">Isi label, judul, deskripsi, lokasi, waktu, dan gambar kegiatan.</p>
     </div>
 

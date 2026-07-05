@@ -7,22 +7,14 @@ use App\Models\Activity;
 use App\Models\Gallery;
 use App\Models\GalleryItem;
 use App\Models\HeroSlide;
-use App\Models\Setting;
-use App\Models\VisionMission;
+use App\Models\Profile;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
     public function index(): View
     {
-        $visionMission = VisionMission::query()
-            ->where('is_active', true)
-            ->latest('updated_at')
-            ->first();
-
-        if ($visionMission === null) {
-            $visionMission = VisionMission::query()->latest()->first();
-        }
+        $profile = Profile::first();
 
         $heroSlides = HeroSlide::query()
             ->where('is_active', true)
@@ -38,10 +30,13 @@ class HomeController extends Controller
 
         $activities = Activity::query()
             ->visibleOnPublic()
-            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
             ->orderByDesc('event_date')
             ->orderByDesc('id')
             ->take(9)
+            ->get();
+
+        $runningActivities = Activity::query()
+            ->upcomingRunningCard()
             ->get();
 
         $galleries = Gallery::query()
@@ -84,28 +79,15 @@ class HomeController extends Controller
             $galleryCategories[$gallery->slug] = $gallery->name;
         }
 
-        $aboutKeys = [
-            'about_section_title',
-            'about_section_subtitle',
-            'about_heading',
-            'about_description_primary',
-            'about_description_secondary',
-            'about_image_one',
-            'about_image_two',
-            'about_video_path',
-        ];
 
-        $aboutSettings = Setting::query()
-            ->whereIn('key', $aboutKeys)
-            ->pluck('value', 'key');
 
         return view('public.home', [
-            'visionMission' => $visionMission,
-            'heroSlidesFromDb' => $heroSlides,
-            'activitiesFromDb' => $activities,
+            'profile'             => $profile,
+            'heroSlidesFromDb'    => $heroSlides,
+            'activitiesFromDb'    => $activities,
+            'runningActivities'   => $runningActivities,
             'galleryCategoriesFromDb' => $galleryCategories,
-            'galleryItemsFromDb' => $galleryItems,
-            'aboutSettings' => $aboutSettings,
+            'galleryItemsFromDb'  => $galleryItems,
         ]);
     }
 }

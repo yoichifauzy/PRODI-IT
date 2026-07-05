@@ -87,7 +87,7 @@
                         <th class="px-4 py-3">{{ __('public.tracer.table_nim') }}</th>
                         <th class="px-4 py-3">{{ __('public.tracer.table_graduation') }}</th>
                         <th class="px-4 py-3">{{ __('public.tracer.table_company') }}</th>
-                        <th class="px-4 py-3">{{ __('public.tracer.table_level') }}</th>
+                        <!-- <th class="px-4 py-3">{{ __('public.tracer.table_level') }}</th> -->
                         <th class="px-4 py-3">{{ __('public.tracer.table_department') }}</th>
                         <th class="px-4 py-3">{{ __('public.tracer.table_relevance') }}</th>
                     </tr>
@@ -102,7 +102,7 @@
                             <td class="px-4 py-3">{{ $row->nim }}</td>
                             <td class="px-4 py-3">{{ $row->graduation_year ?: '-' }}</td>
                             <td class="px-4 py-3">{{ $row->company_name }}</td>
-                            <td class="px-4 py-3">{{ $row->company_level ?: '-' }}</td>
+                            <!-- <td class="px-4 py-3">{{ $row->company_level ?: '-' }}</td> -->
                             <td class="px-4 py-3">{{ $row->department ?: '-' }}</td>
                             <td class="px-4 py-3">{{ $row->relevance ?: '-' }}</td>
                         </tr>

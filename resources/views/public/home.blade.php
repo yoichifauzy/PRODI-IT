@@ -19,14 +19,14 @@
 
         $defaultKegiatanImage = asset('storage/image/kegiatan/image2.jpeg');
 
-        $aboutSectionTitle = $aboutSettings['about_section_title'] ?? __('public.home.about.section_title');
-        $aboutSectionSubtitle = $aboutSettings['about_section_subtitle'] ?? __('public.home.about.section_subtitle');
-        $aboutHeading = $aboutSettings['about_heading'] ?? __('public.home.about.heading');
-        $aboutDescriptionPrimary = $aboutSettings['about_description_primary'] ?? __('public.home.about.description_primary');
-        $aboutDescriptionSecondary = $aboutSettings['about_description_secondary'] ?? __('public.home.about.description_secondary');
-        $tentangImageOne = !empty($aboutSettings['about_image_one']) ? asset('storage/' . $aboutSettings['about_image_one']) : asset('storage/image/tentang-kami/prodi-it.png');
-        $tentangImageTwo = !empty($aboutSettings['about_image_two']) ? asset('storage/' . $aboutSettings['about_image_two']) : asset('storage/image/tentang-kami/teknofo.png');
-        $aboutVideoSrc = !empty($aboutSettings['about_video_path']) ? asset('storage/' . $aboutSettings['about_video_path']) : asset('video/video_about.mp4');
+        $aboutSectionTitle = __('public.home.about.section_title');
+        $aboutSectionSubtitle = __('public.home.about.section_subtitle');
+        $aboutHeading = __('public.home.about.heading');
+        $aboutDescriptionPrimary = $profile?->description_primary ?? __('public.home.about.description_primary');
+        $aboutDescriptionSecondary = $profile?->description_secondary ?? __('public.home.about.description_secondary');
+        $tentangImageOne = !empty($profile?->image_one_path) ? asset('storage/' . $profile->image_one_path) : asset('storage/image/tentang-kami/prodi-it.png');
+        $tentangImageTwo = !empty($profile?->image_two_path) ? asset('storage/' . $profile->image_two_path) : asset('storage/image/tentang-kami/teknofo.png');
+        $aboutVideoSrc = !empty($profile?->video_path) ? asset('storage/' . $profile->video_path) : asset('video/video_about.mp4');
 
         $heroWordsId = trans('public.home.hero.words.id', [], 'id');
         $heroWordsEn = trans('public.home.hero.words.en', [], 'en');
@@ -146,10 +146,10 @@
             $defaultMissionItems = [];
         }
 
-        $missionSource = $visionMission?->mission_text;
-        $missionItems = filled($missionSource)
-            ? (preg_split('/\r\n|\r|\n/', $missionSource) ?: [])
-            : $defaultMissionItems;
+        $missionSource = $profile?->mission_text;
+        $missionItems = is_array($missionSource) && !empty($missionSource)
+            ? $missionSource
+            : (filled($missionSource) && is_string($missionSource) ? preg_split('/\r\n|\r|\n/', trim($missionSource)) : $defaultMissionItems);
     @endphp
 
     <style>
@@ -262,7 +262,7 @@
                     {{ $aboutDescriptionSecondary }}
                 </p>
 
-                <a href="{{ route('public.about') }}" class="solid-cta" data-i18n="about.explore_more">{{ __('public.home.about.explore_more') }}</a>
+                <a href="{{ route('public.profile') }}" class="solid-cta" data-i18n="about.explore_more">{{ __('public.home.about.explore_more') }}</a>
             </div>
 
             <div>
@@ -289,14 +289,14 @@
 
         <div class="grid gap-6 lg:grid-cols-2">
             <article class="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 text-[var(--text-main)] shadow-md">
-                <h3 class="mb-4 text-3xl font-bold text-[var(--accent)]">{{ $visionMission?->vision_title ?? __('public.home.vision.vision_title') }}</h3>
+                <h3 class="mb-4 text-3xl font-bold text-[var(--accent)]">{{ __('public.home.vision.vision_title') }}</h3>
                 <p class="leading-relaxed text-[var(--text-soft)]">
-                    {{ $visionMission?->vision_text ?: $defaultVision }}
+                    {{ $profile?->vision_text ?: $defaultVision }}
                 </p>
             </article>
 
             <article class="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] p-6 text-[var(--text-main)] shadow-md">
-                <h3 class="mb-4 text-3xl font-bold text-[var(--accent)]">{{ $visionMission?->mission_title ?? __('public.home.vision.mission_title') }}</h3>
+                <h3 class="mb-4 text-3xl font-bold text-[var(--accent)]">{{ __('public.home.vision.mission_title') }}</h3>
                 <ul class="space-y-3 text-[var(--text-soft)]">
                     @foreach ($missionItems as $item)
                         @if (trim($item) !== '')
@@ -318,6 +318,7 @@
             <span class="section-line"></span>
         </div>
         <div class="max-w-7xl mx-auto px-4">
+            @include('public.partials._running-card', ['runningActivities' => $runningActivities ?? collect()])
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($kegiatanItems as $kegiatan)
                     @php

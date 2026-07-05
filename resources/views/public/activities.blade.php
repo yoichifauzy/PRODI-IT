@@ -7,7 +7,7 @@
         'title' => __('public.activities.hero_title'),
         'subtitle' => __('public.activities.hero_subtitle'),
     ])
-
+    
     <section class="section-wrap public-page-shell">
         <header class="public-page-intro">
             <h2 class="public-page-title">{{ __('public.activities.intro_title') }}</h2>
@@ -17,6 +17,9 @@
                 <span class="meta-pill">{{ __('public.activities.meta_page') }}: {{ $activities->currentPage() }} / {{ $activities->lastPage() }}</span>
             </div>
         </header>
+        <div class="mb-8">
+            @include('public.partials._running-card', ['runningActivities' => $runningActivities])
+        </div>
 
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @forelse ($activities as $activity)

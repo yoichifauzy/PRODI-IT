@@ -14,6 +14,7 @@ use App\Models\Research;
 use App\Models\Setting;
 use App\Models\CommunityService;
 use App\Models\TracerAlumni;
+use App\Models\TracerAlumniSlide;
 use App\Models\VisionMission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
@@ -289,11 +290,14 @@ class PublicPageController extends Controller
             ? $rows->where('graduation_year', $selectedYear)
             : $rows;
 
+        $tracerSlides = TracerAlumniSlide::where('is_active', true)->orderBy('order')->get();
+
         return view('public.tracer-alumni', [
             'graduationYears' => $graduationYears,
             'selectedYear' => $selectedYear,
             'rows' => $rows,
             'visibleRows' => $visibleRows,
+            'tracerSlides' => $tracerSlides,
         ]);
     }
 

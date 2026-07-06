@@ -57,9 +57,55 @@
             data-summary-all-id="{{ trans('public.tracer.summary_all', [], 'id') }}"
             data-summary-all-en="{{ trans('public.tracer.summary_all', [], 'en') }}"
         >
-            <div class="tracer-hero-image-wrap">
-                <img src="{{ asset('image/galeri/image3.jpeg') }}" alt="{{ __('public.tracer.hero_title') }}" class="h-80 w-full rounded-xl object-cover" />
-                <span class="tracer-hero-label" data-tracer-hero-label>{{ __('public.tracer.hero_label', ['year' => $selectedYear ?: __('public.tracer.all_graduates')]) }}</span>
+            <style>
+                .tracer-marquee-container {
+                    display: flex;
+                    overflow: hidden;
+                    width: 100%;
+                    position: relative;
+                }
+                .tracer-marquee-track {
+                    display: flex;
+                    flex-shrink: 0;
+                    min-width: 100%;
+                    animation: tracer-marquee-scroll 15s linear infinite;
+                }
+                .tracer-marquee-track img {
+                    height: 20rem; /* h-80 equivalent */
+                    aspect-ratio: 16/9; /* Frame yang seragam */
+                    object-fit: cover;
+                    flex-shrink: 0;
+                    margin: 0;
+                    padding: 0;
+                    display: block;
+                }
+                @keyframes tracer-marquee-scroll {
+                    from { transform: translateX(0); }
+                    to { transform: translateX(-100%); }
+                }
+                .tracer-hero-image-wrap {
+                    position: relative;
+                }
+            </style>
+
+            <div class="tracer-hero-image-wrap rounded-xl overflow-hidden">
+                @if(isset($tracerSlides) && $tracerSlides->count() > 0)
+                    <div class="tracer-marquee-container">
+                        <div class="tracer-marquee-track">
+                            @foreach($tracerSlides as $slide)
+                                <img src="{{ asset('storage/' . $slide->image_path) }}" alt="Tracer Slide">
+                            @endforeach
+                        </div>
+                        <div class="tracer-marquee-track" aria-hidden="true">
+                            @foreach($tracerSlides as $slide)
+                                <img src="{{ asset('storage/' . $slide->image_path) }}" alt="Tracer Slide">
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <img src="{{ asset('image/galeri/image3.jpeg') }}" alt="{{ __('public.tracer.hero_title') }}" class="h-80 w-full object-cover" />
+                @endif
+                <span class="tracer-hero-label absolute bottom-4 left-4 z-10" data-tracer-hero-label>{{ __('public.tracer.hero_label', ['year' => $selectedYear ?: __('public.tracer.all_graduates')]) }}</span>
             </div>
             <p class="mt-4 text-[var(--text-soft)]" data-tracer-summary>
                 {!! $selectedYear

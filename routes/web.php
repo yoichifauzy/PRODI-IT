@@ -83,6 +83,9 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
         Route::resource('tracer-alumni', AdminTracerAlumniController::class)
             ->parameters(['tracer-alumni' => 'tracerAlumni'])
             ->except(['show']);
+        Route::resource('tracer-alumni-slides', App\Http\Controllers\Admin\TracerAlumniSlideController::class)
+            ->parameters(['tracer-alumni-slides' => 'tracerAlumniSlide'])
+            ->except(['show']);
 
         Route::get('/about-section', [AdminAboutSectionController::class, 'edit'])->name('about-section.edit');
         Route::put('/about-section', [AdminAboutSectionController::class, 'update'])->name('about-section.update');

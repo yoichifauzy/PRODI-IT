@@ -94,9 +94,9 @@
                         <a href="{{ route('public.community-service') }}" class="dropdown-item" data-i18n="nav.community_service">
                             {{ __('public.nav.community_service') }}
                         </a>
-                        <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.spmi">
+                        <!-- <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.spmi">
                             {{ __('public.nav.spmi') }}
-                        </a>
+                        </a> -->
                     </div>
                 </div>
 

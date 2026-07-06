@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\ActivityController as AdminActivityController;
-use App\Http\Controllers\Admin\AboutSectionController as AdminAboutSectionController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\AspirationController as AdminAspirationController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CurriculumController as AdminCurriculumController;
@@ -16,7 +16,7 @@ use App\Http\Controllers\Admin\LecturerStaffController as AdminLecturerStaffCont
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\TracerAlumniController as AdminTracerAlumniController;
 use App\Http\Controllers\Admin\AcademicEventController as AdminAcademicEventController;
-use App\Http\Controllers\Admin\VisionMissionController as AdminVisionMissionController;
+
 use App\Http\Controllers\PublicSite\AcademicCalendarController;
 use App\Http\Controllers\PublicSite\AspirationController as PublicAspirationController;
 use App\Http\Controllers\PublicSite\HomeController;
@@ -24,7 +24,7 @@ use App\Http\Controllers\PublicSite\PublicPageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/tentang-kami', [PublicPageController::class, 'about'])->name('public.about');
+Route::get('/tentang-kami', [PublicPageController::class, 'profile'])->name('public.profile');
 Route::get('/kalender-akademik', [AcademicCalendarController::class, 'index'])->name('calendar.index');
 Route::get('/kalender-akademik/event/{academicEvent:slug}', [AcademicCalendarController::class, 'show'])->name('calendar.events.show');
 Route::post('/aspirations', [PublicAspirationController::class, 'store'])->name('aspirations.store');
@@ -59,7 +59,7 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
 
         Route::resource('announcements', AdminAnnouncementController::class)->except(['show']);
         Route::resource('academic-events', AdminAcademicEventController::class)->except(['show']);
-        Route::resource('vision-missions', AdminVisionMissionController::class)->only(['index', 'edit', 'update']);
+
         Route::resource('hero-slides', AdminHeroSlideController::class)->except(['show']);
         Route::resource('activities', AdminActivityController::class)->except(['show']);
         Route::resource('galleries', AdminGalleryController::class)->except(['show']);
@@ -87,8 +87,8 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
             ->parameters(['tracer-alumni-slides' => 'tracerAlumniSlide'])
             ->except(['show']);
 
-        Route::get('/about-section', [AdminAboutSectionController::class, 'edit'])->name('about-section.edit');
-        Route::put('/about-section', [AdminAboutSectionController::class, 'update'])->name('about-section.update');
+        Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
 
         Route::get('/aspirations', [AdminAspirationController::class, 'index'])->name('aspirations.index');
         Route::get('/aspirations/{aspiration}', [AdminAspirationController::class, 'show'])->name('aspirations.show');

@@ -1,48 +1,12 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
+// Migration ini dikosongkan karena kolom published_at dan sort_order
+// tidak lagi digunakan di tabel activities dan gallery_items.
+// Kolom tersebut sudah tidak ada di migration awal (create table).
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('activities', function (Blueprint $table): void {
-            if (!Schema::hasColumn('activities', 'published_at')) {
-                $table->timestamp('published_at')->nullable()->after('event_date');
-                $table->index('published_at', 'activities_published_at_idx');
-            }
-        });
-
-        Schema::table('gallery_items', function (Blueprint $table): void {
-            if (!Schema::hasColumn('gallery_items', 'published_at')) {
-                $table->timestamp('published_at')->nullable()->after('taken_at');
-                $table->index('published_at', 'gallery_items_published_at_idx');
-            }
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('activities', function (Blueprint $table): void {
-            if (Schema::hasColumn('activities', 'published_at')) {
-                $table->dropIndex('activities_published_at_idx');
-                $table->dropColumn('published_at');
-            }
-        });
-
-        Schema::table('gallery_items', function (Blueprint $table): void {
-            if (Schema::hasColumn('gallery_items', 'published_at')) {
-                $table->dropIndex('gallery_items_published_at_idx');
-                $table->dropColumn('published_at');
-            }
-        });
-    }
+    public function up(): void {}
+    public function down(): void {}
 };

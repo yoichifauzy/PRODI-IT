@@ -59,10 +59,12 @@ class HeroSlideController extends Controller
     {
         $hero_slide = Banner::findOrFail($id);
         
+        // UBAH 'required' MENJADI 'nullable' DI SINI
         $request->validate([
-            'image' => ['required', 'image', 'max:10240'],
+            'image' => ['nullable', 'image', 'max:10240'],
         ]);
 
+        // Logika kamu di bawah ini sudah aman
         if ($request->hasFile('image')) {
             if ($hero_slide->image_path && Storage::disk('public')->exists($hero_slide->image_path)) {
                 Storage::disk('public')->delete($hero_slide->image_path);

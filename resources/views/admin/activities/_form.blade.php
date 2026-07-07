@@ -9,7 +9,7 @@
         <i class="fa-brands fa-google mt-0.5 text-base"></i>
         <div>
             <p class="font-semibold">Tersinkronisasi dengan Google Calendar</p>
-            <a href="{{ $activity->google_event_url }}" target="_blank" class="mt-0.5 block truncate text-xs text-emerald-600 underline">{{ $activity->google_event_url }}</a>
+            <!-- <a href="{{ $activity->google_event_url }}" target="_blank" class="mt-0.5 block truncate text-xs text-emerald-600 underline">{{ $activity->google_event_url }}</a> -->
         </div>
     </div>
 @endif

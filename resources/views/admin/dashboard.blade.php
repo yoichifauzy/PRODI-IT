@@ -8,30 +8,35 @@
         <p class="text-sm text-slate-600">Ringkasan data konten website dan aspirasi mahasiswa.</p>
     </div>
 
-    <div class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div class="rounded-xl border border-slate-200 bg-white p-4">
-            <p class="text-sm text-slate-500">Total Pengumuman</p>
-            
+            <p class="text-sm text-slate-500">Total Project Mahasiswa</p>
+            <p class="mt-2 text-2xl font-bold">{{ $stats['project_total'] }}</p>
+            <p class="text-xs text-slate-400 mt-1">{{ $stats['project_unggulan'] }} Unggulan</p>
         </div>
         <div class="rounded-xl border border-slate-200 bg-white p-4">
-            <p class="text-sm text-slate-500">Pengumuman Publish</p>
-           
+            <p class="text-sm text-slate-500">Total Dosen & Staff</p>
+            <p class="mt-2 text-2xl font-bold">{{ $stats['lecturer_total'] }}</p>
         </div>
         <div class="rounded-xl border border-slate-200 bg-white p-4">
-            <p class="text-sm text-slate-500">Total Aspirasi</p>
+            <p class="text-sm text-slate-500">Total Alumni (Tracer)</p>
+            <p class="mt-2 text-2xl font-bold">{{ $stats['alumni_total'] }}</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white p-4">
+            <p class="text-sm text-slate-500">Total Mata Kuliah</p>
+            <p class="mt-2 text-2xl font-bold">{{ $stats['course_total'] }}</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white p-4">
+            <p class="text-sm text-slate-500">Total Galeri Kegiatan</p>
+            <p class="mt-2 text-2xl font-bold">{{ $stats['gallery_total'] }}</p>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white p-4">
+            <p class="text-sm text-slate-500">Total Aspirasi Masuk</p>
             <p class="mt-2 text-2xl font-bold">{{ $stats['aspiration_total'] }}</p>
         </div>
-        <div class="rounded-xl border border-slate-200 bg-white p-4">
-            <p class="text-sm text-slate-500">Aspirasi Belum Dibaca</p>
-            <p class="mt-2 text-2xl font-bold">{{ $stats['aspiration_unread'] }}</p>
-        </div>
-        <div class="rounded-xl border border-slate-200 bg-white p-4">
-            <p class="text-sm text-slate-500">Total Event Akademik</p>
-            
-        </div>
-        <div class="rounded-xl border border-slate-200 bg-white p-4">
-            <p class="text-sm text-slate-500">Event Publish</p>
-            
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 xl:col-span-2">
+            <p class="text-sm text-amber-700">Aspirasi Belum Dibaca</p>
+            <p class="mt-2 text-2xl font-bold text-amber-800">{{ $stats['aspiration_unread'] }}</p>
         </div>
     </div>
 

@@ -24,14 +24,14 @@
 </div>
 @endif
 
-<form method="POST" action="{{ route('admin.projects.update', $project) }}" enctype="multipart/form-data"
+<form id="edit-form" method="POST" action="{{ route('admin.projects.update', $project) }}" enctype="multipart/form-data"
       class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
     @csrf
     @method('PUT')
     @include('admin.projects._form', ['project' => $project])
 
     <div class="mt-6 flex items-center gap-3 border-t border-slate-100 pt-5">
-        <button type="submit"
+        <button type="submit" form="edit-form"
                 class="rounded-lg bg-slate-900 px-5 py-2 text-sm font-semibold text-white hover:bg-slate-700 transition">
             Perbarui Project
         </button>
@@ -41,15 +41,16 @@
         </a>
 
         {{-- Quick delete --}}
-        <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" class="ml-auto"
-              onsubmit="return confirm('Hapus project ini secara permanen?')">
-            @csrf
-            @method('DELETE')
-            <button type="submit"
-                    class="rounded-lg border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition">
-                Hapus Project
-            </button>
-        </form>
+        <button type="submit" form="delete-form"
+                class="ml-auto rounded-lg border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 transition">
+            Hapus Project
+        </button>
     </div>
+</form>
+
+<form id="delete-form" method="POST" action="{{ route('admin.projects.destroy', $project) }}" class="hidden"
+      onsubmit="return confirm('Hapus project ini secara permanen?')">
+    @csrf
+    @method('DELETE')
 </form>
 @endsection

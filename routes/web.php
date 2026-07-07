@@ -1,12 +1,10 @@
 <?php
 
-use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\ActivityController as AdminActivityController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\AspirationController as AdminAspirationController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\ResearchCommunitySyncController as AdminResearchCommunitySyncController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
@@ -39,8 +37,6 @@ Route::get('/project-mahasiswa', [PublicPageController::class, 'projects'])->nam
 Route::get('/project-mahasiswa/{project}', [PublicPageController::class, 'projectShow'])->name('public.projects.show');
 Route::get('/capaian-pembelajaran', [PublicPageController::class, 'learningOutcomes'])->name('public.learning-outcomes');
 Route::get('/tracer-alumni', [PublicPageController::class, 'tracerAlumni'])->name('public.tracer-alumni');
-Route::get('/pengumuman', [PublicPageController::class, 'announcements'])->name('public.announcements');
-Route::get('/pengumuman/sync', [PublicPageController::class, 'announcementsSync'])->name('public.announcements.sync');
 
 Route::prefix('adminit')->name('admin.')->group(function (): void {
     Route::middleware('guest')->group(function (): void {
@@ -55,7 +51,6 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
     Route::middleware(['auth', 'admin', 'admin.session'])->group(function (): void {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        Route::resource('announcements', AdminAnnouncementController::class)->except(['show']);
         Route::resource('academic-events', AdminAcademicEventController::class)->except(['show']);
 
         // Hero Slides (Mapped to Banner Model internally)
@@ -69,7 +64,6 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
         Route::resource('galleries', AdminGalleryController::class)->only(['index', 'store', 'update', 'destroy']);
 
         Route::resource('lecturer-staff', AdminLecturerStaffController::class)->except(['show']);
-        Route::resource('documents', AdminDocumentController::class)->except(['show']);
         Route::get('courses', [AdminCourseController::class, 'index'])->name('courses.index');
         Route::post('courses/sync', [AdminCourseController::class, 'sync'])->name('courses.sync');
         Route::get('research-community', [AdminResearchCommunitySyncController::class, 'index'])->name('research-community.index');

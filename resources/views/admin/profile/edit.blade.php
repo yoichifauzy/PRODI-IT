@@ -29,69 +29,70 @@
                     </div>
                 </div>
 
-                <div class="grid gap-4 md:grid-cols-3">
+    <div class="grid gap-4 md:grid-cols-3">
+    {{-- GAMBAR 1 --}}
     <div>
         <span class="mb-2 block text-sm font-medium text-slate-700">Gambar 1</span>
         <label for="image_one_path" class="group relative flex h-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 transition-all hover:bg-slate-100 hover:border-slate-400">
-            <input id="image_one_path" type="file" name="image_one_path" accept="image/*" class="sr-only" />
+            <input id="image_one_path" type="file" name="image_one_path" accept="image/*" class="sr-only" onchange="previewMedia(this, 'preview-img-1', 'placeholder-1', 'overlay-1')" />
             
-            @if ($profile->image_one_path)
-                <img src="{{ asset('storage/' . $profile->image_one_path) }}" alt="Gambar 1" class="h-full w-full object-cover" />
-                <div class="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span class="rounded-lg bg-white/20 px-3 py-1.5 text-sm font-medium text-white shadow-sm backdrop-blur-sm">Ganti Gambar</span>
-                </div>
-            @else
-                <div class="flex flex-col items-center justify-center text-slate-400 group-hover:text-slate-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mb-2 h-8 w-8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                    </svg>
-                    <span class="text-xs font-medium">Klik untuk upload</span>
-                </div>
-            @endif
+            {{-- Preview Image --}}
+            <img id="preview-img-1" src="{{ $profile->image_one_path ? asset('storage/' . $profile->image_one_path) : '' }}" class="h-full w-full object-cover {{ $profile->image_one_path ? '' : 'hidden' }}" />
+            
+            {{-- Overlay Ganti --}}
+            <div id="overlay-1" class="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100 {{ $profile->image_one_path ? '' : 'hidden' }}">
+                <span class="rounded-lg bg-white/20 px-3 py-1.5 text-sm font-medium text-white shadow-sm backdrop-blur-sm">Ganti Gambar</span>
+            </div>
+            
+            {{-- Placeholder Upload --}}
+            <div id="placeholder-1" class="flex flex-col items-center justify-center text-slate-400 group-hover:text-slate-600 {{ $profile->image_one_path ? 'hidden' : '' }}">
+                <i class="fa-solid fa-cloud-arrow-up mb-2 text-2xl"></i>
+                <span class="text-xs font-medium">Klik untuk upload</span>
+            </div>
         </label>
     </div>
 
+    {{-- GAMBAR 2 --}}
     <div>
         <span class="mb-2 block text-sm font-medium text-slate-700">Gambar 2</span>
         <label for="image_two_path" class="group relative flex h-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 transition-all hover:bg-slate-100 hover:border-slate-400">
-            <input id="image_two_path" type="file" name="image_two_path" accept="image/*" class="sr-only" />
+            <input id="image_two_path" type="file" name="image_two_path" accept="image/*" class="sr-only" onchange="previewMedia(this, 'preview-img-2', 'placeholder-2', 'overlay-2')" />
             
-            @if ($profile->image_two_path)
-                <img src="{{ asset('storage/' . $profile->image_two_path) }}" alt="Gambar 2" class="h-full w-full object-cover" />
-                <div class="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span class="rounded-lg bg-white/20 px-3 py-1.5 text-sm font-medium text-white shadow-sm backdrop-blur-sm">Ganti Gambar</span>
-                </div>
-            @else
-                <div class="flex flex-col items-center justify-center text-slate-400 group-hover:text-slate-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mb-2 h-8 w-8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                    </svg>
-                    <span class="text-xs font-medium">Klik untuk upload</span>
-                </div>
-            @endif
+            {{-- Preview Image --}}
+            <img id="preview-img-2" src="{{ $profile->image_two_path ? asset('storage/' . $profile->image_two_path) : '' }}" class="h-full w-full object-cover {{ $profile->image_two_path ? '' : 'hidden' }}" />
+            
+            {{-- Overlay Ganti --}}
+            <div id="overlay-2" class="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100 {{ $profile->image_two_path ? '' : 'hidden' }}">
+                <span class="rounded-lg bg-white/20 px-3 py-1.5 text-sm font-medium text-white shadow-sm backdrop-blur-sm">Ganti Gambar</span>
+            </div>
+            
+            {{-- Placeholder Upload --}}
+            <div id="placeholder-2" class="flex flex-col items-center justify-center text-slate-400 group-hover:text-slate-600 {{ $profile->image_two_path ? 'hidden' : '' }}">
+                <i class="fa-solid fa-cloud-arrow-up mb-2 text-2xl"></i>
+                <span class="text-xs font-medium">Klik untuk upload</span>
+            </div>
         </label>
     </div>
 
+    {{-- VIDEO SINGKAT --}}
     <div>
         <span class="mb-2 block text-sm font-medium text-slate-700">Video Singkat (Opsional)</span>
         <label for="video_path" class="group relative flex h-40 cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 transition-all hover:bg-slate-100 hover:border-slate-400">
-            <input id="video_path" type="file" name="video_path" accept="video/mp4,video/webm" class="sr-only" />
+            <input id="video_path" type="file" name="video_path" accept="video/mp4,video/webm" class="sr-only" onchange="previewMedia(this, 'preview-video', 'placeholder-video', 'overlay-video', true)" />
             
-            @if ($profile->video_path)
-                <video class="pointer-events-none h-full w-full object-cover" preload="metadata">
-                    <source src="{{ asset('storage/' . $profile->video_path) }}#t=0.1" type="video/mp4">
-                </video>
-                <div class="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span class="rounded-lg bg-white/20 px-3 py-1.5 text-sm font-medium text-white shadow-sm backdrop-blur-sm">Ganti Video</span>
-                </div>
-            @else
-                <div class="flex flex-col items-center justify-center text-slate-400 group-hover:text-slate-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mb-2 h-8 w-8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
-                    </svg>
-                    <span class="text-xs font-medium">Klik untuk upload</span>
-                </div>
-            @endif
+            {{-- Preview Video --}}
+            <video id="preview-video" src="{{ $profile->video_path ? asset('storage/' . $profile->video_path) . '#t=0.1' : '' }}" class="pointer-events-none h-full w-full object-cover {{ $profile->video_path ? '' : 'hidden' }}" preload="metadata" muted></video>
+            
+            {{-- Overlay Ganti --}}
+            <div id="overlay-video" class="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100 {{ $profile->video_path ? '' : 'hidden' }}">
+                <span class="rounded-lg bg-white/20 px-3 py-1.5 text-sm font-medium text-white shadow-sm backdrop-blur-sm">Ganti Video</span>
+            </div>
+            
+            {{-- Placeholder Upload --}}
+            <div id="placeholder-video" class="flex flex-col items-center justify-center text-slate-400 group-hover:text-slate-600 {{ $profile->video_path ? 'hidden' : '' }}">
+                <i class="fa-solid fa-film mb-2 text-2xl"></i>
+                <span class="text-xs font-medium">Klik untuk upload</span>
+            </div>
         </label>
     </div>
 </div>
@@ -123,4 +124,37 @@
             </button>
         </div>
     </form>
+
+    @push('scripts')
+<script>
+    function previewMedia(input, previewId, placeholderId, overlayId, isVideo = false) {
+        // Cek apakah user benar-benar memilih file
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            
+            // Buat URL sementara (lokal) untuk file yang di-upload
+            const mediaUrl = URL.createObjectURL(file);
+            
+            // Ambil elemen HTML yang dibutuhkan
+            const previewEl = document.getElementById(previewId);
+            const placeholderEl = document.getElementById(placeholderId);
+            const overlayEl = document.getElementById(overlayId);
+
+            // Set URL sementara ke tag img / video
+            previewEl.src = mediaUrl;
+
+            // Jika itu video, kita paksa load ulang agar thumbnail barunya ter-render
+            if (isVideo) {
+                previewEl.load();
+            }
+
+            // Munculkan gambar/video dan hapus tulisan "Klik untuk upload"
+            previewEl.classList.remove('hidden');
+            if (overlayEl) overlayEl.classList.remove('hidden');
+            if (placeholderEl) placeholderEl.classList.add('hidden');
+        }
+    }
+</script>
+@endpush
+
 @endsection

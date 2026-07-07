@@ -47,7 +47,7 @@ class LearningOutcomeController extends Controller
 
         DB::beginTransaction();
         try {
-            LearningOutcome::truncate();
+            LearningOutcome::query()->delete();
 
             $now    = now();
             $userId = Auth::id();

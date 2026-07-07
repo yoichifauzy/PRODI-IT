@@ -261,11 +261,15 @@ async function doUpload() {
         btn.disabled = false;
         try {
             const data = JSON.parse(xhr.responseText);
-            if (data.success) {
+            if (xhr.status === 200 && data.success) {
                 showAlert(data.message, 'success');
                 prependCards(data.images);
                 closeUploadModal();
                 updateCount(data.images.length, 'add');
+            } else if (xhr.status === 422) {
+                let msgs = Object.values(data.errors || {}).flat();
+                let alertMsg = msgs.length > 0 ? msgs.join(', ') : (data.message || 'Data tidak valid.');
+                showAlert(alertMsg, 'error');
             } else {
                 showAlert(data.message || 'Upload gagal.', 'error');
             }
@@ -275,6 +279,7 @@ async function doUpload() {
     };
     xhr.onerror = () => { btn.disabled = false; showAlert('Gagal terhubung ke server.', 'error'); };
     xhr.open('POST', '{{ route("admin.galleries.store") }}');
+    xhr.setRequestHeader('Accept', 'application/json');
     xhr.send(fd);
 }
 

@@ -30,15 +30,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function createdAnnouncements(): HasMany
-    {
-        return $this->hasMany(Announcement::class, 'created_by');
-    }
 
-    public function updatedAnnouncements(): HasMany
-    {
-        return $this->hasMany(Announcement::class, 'updated_by');
-    }
 
     public function readAspirations(): HasMany
     {
@@ -75,10 +67,7 @@ class User extends Authenticatable
         return $this->hasMany(Gallery::class, 'created_by');
     }
 
-    public function createdDocuments(): HasMany
-    {
-        return $this->hasMany(Document::class, 'created_by');
-    }
+
 
     public function createdTracerAlumnis(): HasMany
     {

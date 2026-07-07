@@ -174,7 +174,7 @@
                             <p class="text-sm text-slate-500"><span class="font-semibold">Pilih gambar pengganti</span></p>
                             <p id="file-name-edit" class="mt-2 text-sm font-medium text-slate-600 hidden"></p>
                         </div>
-                        <input id="dropzone-file-edit" type="file" name="image" class="hidden" accept="image/*" required onchange="updateFileName(this, 'file-name-edit')" />
+                        <input id="dropzone-file-edit" type="file" name="image" class="hidden" accept="image/*" onchange="updateFileName(this, 'file-name-edit')" />
                     </label>
                 </div>
             </div>

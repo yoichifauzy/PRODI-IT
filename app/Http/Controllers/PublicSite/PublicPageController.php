@@ -4,8 +4,7 @@ namespace App\Http\Controllers\PublicSite;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
-use App\Models\Announcement;
-use App\Models\Curriculum;
+use App\Models\Course;
 use App\Models\Gallery;
 use App\Models\LearningOutcome;
 use App\Models\LecturerStaff;
@@ -51,7 +50,7 @@ class PublicPageController extends Controller
 
     public function curriculum(Request $request): View
     {
-        $courses = \App\Models\Course::query()
+        $courses = Course::query()
             ->orderBy('semester')
             ->orderBy('major_selection')
             ->orderBy('code')
@@ -233,31 +232,6 @@ class PublicPageController extends Controller
             'rows' => $rows,
             'visibleRows' => $visibleRows,
         ]);
-    }
-
-    public function announcements(): View
-    {
-        $announcements = Announcement::query()
-            ->published()
-            ->latest('published_at')
-            ->latest('id')
-            ->take(20)
-            ->get();
-
-        $announcementSync = Announcement::publishedSyncPayload();
-
-        return view('public.announcements', [
-            'announcements' => $announcements,
-            'announcementSync' => $announcementSync,
-        ]);
-    }
-
-    public function announcementsSync(): JsonResponse
-    {
-        return response()
-            ->json(Announcement::publishedSyncPayload())
-            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-            ->header('Pragma', 'no-cache');
     }
 
     public function research(Request $request): View

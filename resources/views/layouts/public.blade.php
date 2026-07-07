@@ -67,7 +67,7 @@
                         <a href="{{ route('public.lecturer-staff') }}" class="dropdown-item" data-i18n="nav.lecturer_staff">{{ __('public.nav.lecturer_staff') }}</a>
                         <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.accreditation">{{ __('public.nav.accreditation') }}</a>
                         <a href="{{ route('home') }}#kontak" class="dropdown-item" data-i18n="nav.contact">{{ __('public.nav.contact') }}</a>
-                        <a href="{{ route('public.announcements') }}" class="dropdown-item" data-i18n="nav.announcements">{{ __('public.nav.announcements') }}</a>
+                        <!-- <a href="{{ route('public.announcements') }}" class="dropdown-item" data-i18n="nav.announcements">{{ __('public.nav.announcements') }}</a> -->
                     </div>
                 </div>
 

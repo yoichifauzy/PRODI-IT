@@ -5,7 +5,6 @@ namespace App\Http\Controllers\PublicSite;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Gallery;
-use App\Models\GalleryItem;
 use App\Models\Banner;
 use App\Models\Profile;
 use Illuminate\Contracts\View\View;
@@ -33,44 +32,24 @@ class HomeController extends Controller
             ->upcomingRunningCard()
             ->get();
 
-        $galleries = Gallery::query()
-            ->where('status', 'published')
-            ->where(function ($query): void {
-                $query->whereNull('published_at')->orWhere('published_at', '<=', now());
-            })
-            ->orderBy('name')
-            ->get();
-
-        $galleryItems = GalleryItem::query()
-            ->with('gallery:id,name,slug,status,published_at')
-            ->visibleOnPublic()
-            ->whereHas('gallery', function ($query): void {
-                $query
-                    ->where('status', 'published')
-                    ->where(function ($inner): void {
-                        $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
-                    });
-            })
-            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
-            ->orderByDesc('taken_at')
+        // Galeri: ambil dari model baru (tanpa gallery_items)
+        $galleryItems = Gallery::query()
+            ->orderByDesc('year')
             ->orderByDesc('id')
+            ->take(12)
             ->get()
-            ->map(function (GalleryItem $item): array {
-                $gallery = $item->gallery;
-
-                return [
-                    'category' => $gallery?->slug ?? 'all',
-                    'category_label' => $gallery?->name ?? 'Galeri',
-                    'title' => $item->title ?: ($gallery?->name ?? 'Galeri'),
-                    'caption' => $item->caption,
-                    'image' => asset('storage/' . $item->image_path),
-                ];
-            })
+            ->map(fn($item) => [
+                'category'       => $item->category,
+                'category_label' => $item->category,
+                'title'          => $item->title,
+                'caption'        => null,
+                'image'          => asset('storage/' . $item->image_path),
+            ])
             ->values();
 
         $galleryCategories = ['all' => 'Semua'];
-        foreach ($galleries as $gallery) {
-            $galleryCategories[$gallery->slug] = $gallery->name;
+        foreach ($galleryItems->pluck('category')->unique() as $cat) {
+            $galleryCategories[$cat] = $cat;
         }
 
 

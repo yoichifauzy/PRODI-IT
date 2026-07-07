@@ -43,11 +43,11 @@
                 <a href="{{ route('admin.documents.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.documents.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dokumen</a>
                 <a href="{{ route('admin.activities.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.activities.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kegiatan</a>
                 <!-- <a href="{{ route('admin.galleries.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.galleries.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Filter Galeri</a> -->
-                <a href="{{ route('admin.gallery-items.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.gallery-items.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Galeri</a>
+                <a href="{{ route('admin.galleries.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.galleries.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Galeri</a>
                 <a href="{{ route('admin.lecturer-staff.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.lecturer-staff.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dosen & Staff</a>
                 <a href="{{ route('admin.courses.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.courses.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kurikulum</a>
+                <a href="{{ route('admin.learning-outcomes.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.learning-outcomes.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">CPL</a>
                 <a href="{{ route('admin.research-community.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.research-community.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Penelitian & Pengabdian</a>
-                <a href="{{ route('admin.research-community.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.research-community.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Capaian Pembelajaran</a>
                 <a href="{{ route('admin.tracer-alumni.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.tracer-alumni.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Tracer Alumni</a>
                 <a href="{{ route('admin.projects.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.projects.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Project Mahasiswa</a>
                 <!-- <a href="{{ route('admin.announcements.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Pengumuman</a> -->
@@ -58,11 +58,11 @@
         </aside>
 
         <main>
-            @if (session('success'))
+            <!-- @if (session('success'))
                 <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
                     {{ session('success') }}
                 </div>
-            @endif
+            @endif -->
 
             @if ($errors->any())
                 <div class="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">

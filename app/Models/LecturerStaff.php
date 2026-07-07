@@ -20,7 +20,6 @@ class LecturerStaff extends Model
         'bio',
         'photo_path',
         'sort_order',
-        'is_active',
         'created_by',
         'updated_by',
     ];
@@ -28,8 +27,7 @@ class LecturerStaff extends Model
     protected function casts(): array
     {
         return [
-            'sort_order' => 'integer',
-            'is_active' => 'boolean',
+            'sort_order' => 'integer'
         ];
     }
 

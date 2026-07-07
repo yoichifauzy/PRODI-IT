@@ -11,11 +11,11 @@
     <div class="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <div class="rounded-xl border border-slate-200 bg-white p-4">
             <p class="text-sm text-slate-500">Total Pengumuman</p>
-            <p class="mt-2 text-2xl font-bold">{{ $stats['announcement_total'] }}</p>
+            
         </div>
         <div class="rounded-xl border border-slate-200 bg-white p-4">
             <p class="text-sm text-slate-500">Pengumuman Publish</p>
-            <p class="mt-2 text-2xl font-bold">{{ $stats['announcement_published'] }}</p>
+           
         </div>
         <div class="rounded-xl border border-slate-200 bg-white p-4">
             <p class="text-sm text-slate-500">Total Aspirasi</p>
@@ -27,11 +27,11 @@
         </div>
         <div class="rounded-xl border border-slate-200 bg-white p-4">
             <p class="text-sm text-slate-500">Total Event Akademik</p>
-            <p class="mt-2 text-2xl font-bold">{{ $stats['event_total'] }}</p>
+            
         </div>
         <div class="rounded-xl border border-slate-200 bg-white p-4">
             <p class="text-sm text-slate-500">Event Publish</p>
-            <p class="mt-2 text-2xl font-bold">{{ $stats['event_published'] }}</p>
+            
         </div>
     </div>
 

@@ -20,10 +20,10 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->string('photo_path')->nullable();
             $table->unsignedSmallInteger('sort_order')->default(0);
-            $table->boolean('is_active')->default(true);
+             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
 
-            $table->index(['type', 'is_active', 'sort_order']);
+            $table->index(['type', 'sort_order']);
         });
     }
 

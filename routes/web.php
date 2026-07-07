@@ -10,7 +10,6 @@ use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\ResearchCommunitySyncController as AdminResearchCommunitySyncController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
-use App\Http\Controllers\Admin\GalleryItemController as AdminGalleryItemController;
 use App\Http\Controllers\Admin\HeroSlideController as AdminHeroSlideController;
 use App\Http\Controllers\Admin\LecturerStaffController as AdminLecturerStaffController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
@@ -30,7 +29,6 @@ Route::get('/kalender-akademik/event/{academicEvent:slug}', [AcademicCalendarCon
 Route::post('/aspirations', [PublicAspirationController::class, 'store'])->name('aspirations.store');
 Route::get('/kegiatan', [PublicPageController::class, 'activities'])->name('public.activities');
 Route::get('/galeri', [PublicPageController::class, 'galleries'])->name('public.galleries');
-Route::get('/galeri/{galleryItem}', [PublicPageController::class, 'galleryShow'])->name('public.galleries.show');
 Route::get('/kegiatan/{activity}', [PublicPageController::class, 'activityShow'])->name('public.activities.show');
 Route::get('/dosen-dan-staff', [PublicPageController::class, 'lecturerStaff'])->name('public.lecturer-staff');
 Route::get('/kurikulum', [PublicPageController::class, 'curriculum'])->name('public.curriculum');
@@ -38,7 +36,7 @@ Route::get('/penelitian', [PublicPageController::class, 'research'])->name('publ
 Route::get('/api/research/suggestions', [PublicPageController::class, 'researchSuggestions'])->name('public.research.suggestions');
 Route::get('/pengabdian-masyarakat', [PublicPageController::class, 'communityService'])->name('public.community-service');
 Route::get('/project-mahasiswa', [PublicPageController::class, 'projects'])->name('public.projects');
-Route::get('/project-mahasiswa/{project:slug}', [PublicPageController::class, 'projectShow'])->name('public.projects.show');
+Route::get('/project-mahasiswa/{project}', [PublicPageController::class, 'projectShow'])->name('public.projects.show');
 Route::get('/capaian-pembelajaran', [PublicPageController::class, 'learningOutcomes'])->name('public.learning-outcomes');
 Route::get('/tracer-alumni', [PublicPageController::class, 'tracerAlumni'])->name('public.tracer-alumni');
 Route::get('/pengumuman', [PublicPageController::class, 'announcements'])->name('public.announcements');
@@ -66,15 +64,20 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
 
 
         Route::resource('activities', AdminActivityController::class)->except(['show']);
-        Route::resource('galleries', AdminGalleryController::class)->except(['show']);
-        Route::resource('gallery-items', AdminGalleryItemController::class)->except(['show']);
+        // Galleries (AJAX-based, no separate create/edit pages)
+        Route::post('galleries/reorder', [App\Http\Controllers\Admin\GalleryController::class, 'reorder'])->name('galleries.reorder');
+        Route::resource('galleries', AdminGalleryController::class)->only(['index', 'store', 'update', 'destroy']);
+
         Route::resource('lecturer-staff', AdminLecturerStaffController::class)->except(['show']);
         Route::resource('documents', AdminDocumentController::class)->except(['show']);
         Route::get('courses', [AdminCourseController::class, 'index'])->name('courses.index');
         Route::post('courses/sync', [AdminCourseController::class, 'sync'])->name('courses.sync');
         Route::get('research-community', [AdminResearchCommunitySyncController::class, 'index'])->name('research-community.index');
         Route::post('research-community/sync', [AdminResearchCommunitySyncController::class, 'sync'])->name('research-community.sync');
+        Route::get('learning-outcomes', [App\Http\Controllers\Admin\LearningOutcomeController::class, 'index'])->name('learning-outcomes.index');
+        Route::post('learning-outcomes/sync', [App\Http\Controllers\Admin\LearningOutcomeController::class, 'sync'])->name('learning-outcomes.sync');
         Route::resource('projects', AdminProjectController::class)->except(['show']);
+        Route::post('projects/{project}/toggle-feature', [AdminProjectController::class, 'toggleFeature'])->name('projects.toggle-feature');
         Route::resource('tracer-alumni', AdminTracerAlumniController::class)
             ->parameters(['tracer-alumni' => 'tracerAlumni'])
             ->only(['index', 'destroy']);

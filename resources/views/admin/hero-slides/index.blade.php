@@ -3,13 +3,22 @@
 @section('title', 'Kelola Hero Section (Banner)')
 
 @section('content')
+<style>
+    /* Drag handle cursor */
+    .banner-card[draggable="true"] { cursor: grab; }
+    .banner-card[draggable="true"]:active { cursor: grabbing; }
+    /* Dragging ghost */
+    .banner-card.is-dragging { opacity: 0.4; }
+    /* Drop zone active */
+    .banner-card.drag-over { outline: 2px dashed #708090; outline-offset: 2px; }
+</style>
 <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
         <h1 class="text-2xl font-bold text-slate-800">Kelola Hero Section</h1>
         <p class="text-sm text-slate-500">Atur gambar hero slide yang muncul di halaman utama.</p>
     </div>
     <div class="flex gap-2">
-        <button type="button" onclick="openCreateModal()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-700">
+        <button type="button" onclick="openCreateModal()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
             <i class="fa-solid fa-plus"></i>
             <span>+ Tambah Banner</span>
         </button>
@@ -49,7 +58,7 @@
         
         <div id="banner-grid" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
     @foreach ($heroSlides as $banner)
-        <div class="banner-card group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-lg hover:border-slate-300 cursor-move"
+        <div class="banner-card group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-lg hover:border-slate-300"
              data-id="{{ $banner->id }}"
              draggable="true">
             
@@ -86,7 +95,7 @@
             {{-- Footer with Position Number --}}
             <!-- <div class="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50 group-hover:bg-slate-100 transition">
                 <div class="flex items-center gap-2">
-                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-orange-600 text-xs font-bold text-white shadow-sm">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-slate-400 to-slate-600 text-xs font-bold text-white shadow-sm">
                         {{ $loop->iteration }}
                     </span>
                     <span class="text-xs text-slate-600 font-semibold">Posisi {{ $loop->iteration }}</span>
@@ -120,7 +129,7 @@
                             <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 mb-3"></i>
                             <p class="mb-2 text-sm text-slate-500"><span class="font-semibold">Klik untuk upload</span></p>
                             <p class="text-xs text-slate-500">JPG, PNG atau WEBP (Max. 10MB)</p>
-                            <p id="file-name-create" class="mt-2 text-sm font-medium text-orange-600 hidden"></p>
+                            <p id="file-name-create" class="mt-2 text-sm font-medium text-slate-600 hidden"></p>
                         </div>
                         <input id="dropzone-file-create" type="file" name="image" class="hidden" accept="image/*" required onchange="updateFileName(this, 'file-name-create')" />
                     </label>
@@ -129,7 +138,7 @@
             
             <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
                 <button type="button" onclick="closeModal('createModal')" class="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">Batal</button>
-                <button type="submit" class="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700">Simpan Banner</button>
+                <button type="submit" class="rounded-lg bg-slate-600 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">Simpan Banner</button>
             </div>
         </form>
     </div>
@@ -163,7 +172,7 @@
                         <div class="flex flex-col items-center justify-center">
                             <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 mb-2"></i>
                             <p class="text-sm text-slate-500"><span class="font-semibold">Pilih gambar pengganti</span></p>
-                            <p id="file-name-edit" class="mt-2 text-sm font-medium text-orange-600 hidden"></p>
+                            <p id="file-name-edit" class="mt-2 text-sm font-medium text-slate-600 hidden"></p>
                         </div>
                         <input id="dropzone-file-edit" type="file" name="image" class="hidden" accept="image/*" required onchange="updateFileName(this, 'file-name-edit')" />
                     </label>
@@ -232,96 +241,85 @@
         });
     });
 
-    // Drag and Drop Logic
-    document.addEventListener('DOMContentLoaded', () => {
-        const grid = document.getElementById('banner-grid');
-        if (!grid) return;
+    // ── Drag & Drop Reorder (Diadaptasi dari Galeri) ─────────────────────────
+    let dragSrc = null;
 
-        let draggedItem = null;
-
-        grid.addEventListener('dragstart', function (e) {
-            draggedItem = e.target.closest('.banner-card');
-            if(!draggedItem) return;
+    function initBannerDrag(card) {
+        card.addEventListener('dragstart', function(e) {
+            dragSrc = this;
+            setTimeout(() => this.classList.add('is-dragging'), 0);
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', draggedItem.innerHTML);
-            setTimeout(() => {
-                draggedItem.classList.add('opacity-50');
-            }, 0);
+            e.dataTransfer.setData('text/plain', this.dataset.id);
         });
 
-        grid.addEventListener('dragover', function (e) {
+        card.addEventListener('dragend', function() {
+            this.classList.remove('is-dragging');
+            document.querySelectorAll('.banner-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+            dragSrc = null;
+            saveNewOrder();
+        });
+
+        card.addEventListener('dragover', function(e) {
             e.preventDefault();
-            const afterElement = getDragAfterElement(grid, e.clientX, e.clientY);
-            const currentHover = e.target.closest('.banner-card');
-            
-            if (currentHover && currentHover !== draggedItem) {
-                if (afterElement == null) {
-                    grid.appendChild(draggedItem);
-                } else {
-                    grid.insertBefore(draggedItem, afterElement);
-                }
+            e.dataTransfer.dropEffect = 'move';
+            if (dragSrc && dragSrc !== this) {
+                document.querySelectorAll('.banner-card.drag-over').forEach(c => c.classList.remove('drag-over'));
+                this.classList.add('drag-over');
             }
         });
 
-        grid.addEventListener('dragenter', function (e) {
-            e.preventDefault();
+        card.addEventListener('dragleave', function() {
+            this.classList.remove('drag-over');
         });
 
-        grid.addEventListener('dragend', function (e) {
-            if(draggedItem) {
-                draggedItem.classList.remove('opacity-50');
-                draggedItem = null;
-                saveNewOrder();
+        card.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            if (!dragSrc || dragSrc === this) return;
+
+            const grid = document.getElementById('banner-grid');
+            const cards = Array.from(grid.querySelectorAll('.banner-card'));
+            const srcIdx  = cards.indexOf(dragSrc);
+            const destIdx = cards.indexOf(this);
+
+            if (srcIdx < destIdx) {
+                grid.insertBefore(dragSrc, this.nextSibling);
+            } else {
+                grid.insertBefore(dragSrc, this);
             }
         });
+    }
 
-        function getDragAfterElement(container, x, y) {
-            const draggableElements = [...container.querySelectorAll('.banner-card:not(.opacity-50)')];
-
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                const offset = y - box.top - box.height / 2;
-                
-                // For a grid, we also consider X axis, but simple Y/X combined offset works well enough
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                } else {
-                    return closest;
-                }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-
-        function saveNewOrder() {
-            const items = [...grid.querySelectorAll('.banner-card')];
-            const orderedIds = items.map(item => item.getAttribute('data-id'));
-
-            // Update visible numbers
-            items.forEach((item, index) => {
-                item.querySelector('.rounded-full').textContent = index + 1;
-            });
-
-            // Send to server
-            fetch('{{ route("admin.hero-slides.reorder") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ ordered_ids: orderedIds })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(!data.success) {
-                    alert('Gagal memperbarui posisi');
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Terjadi kesalahan jaringan saat menyimpan posisi.');
-            });
-        }
+    // Inisialisasi drag untuk semua banner card saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.banner-card').forEach(card => initBannerDrag(card));
     });
 
+    function saveNewOrder() {
+        const grid = document.getElementById('banner-grid');
+        const items = [...grid.querySelectorAll('.banner-card')];
+        const orderedIds = items.map(item => item.getAttribute('data-id'));
+
+        // Kirim ke server
+        fetch('{{ route("admin.hero-slides.reorder") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ ordered_ids: orderedIds })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(!data.success) {
+                alert('Gagal memperbarui posisi');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan jaringan saat menyimpan posisi.');
+        });
+    }
     function deleteWithConfirm(bannerId) {
     if (confirm('Apakah Anda yakin ingin menghapus banner ini? Tindakan ini tidak dapat dibatalkan.')) {
         const form = document.createElement('form');
@@ -335,6 +333,7 @@
         form.submit();
     }
 }
+
 
 </script>
 @endpush

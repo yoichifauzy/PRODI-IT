@@ -6,31 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gallery extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory;
-
     protected $fillable = [
-        'name',
-        'slug',
-        'description',
-        'status',
-        'published_at',
+        'title',
+        'category',
+        'year',
+        'image_path',
+        'position',
         'created_by',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'published_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'year' => 'integer',
+    ];
 
-    public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    /**
+     * URL lengkap ke gambar dari storage.
+     */
+    public function getImageUrlAttribute(): string
     {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function items(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(GalleryItem::class)->orderBy('sort_order');
+        return asset('storage/' . $this->image_path);
     }
 }

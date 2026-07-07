@@ -7,7 +7,7 @@ use App\Models\Activity;
 use App\Models\Announcement;
 use App\Models\Curriculum;
 use App\Models\Gallery;
-use App\Models\GalleryItem;
+use App\Models\LearningOutcome;
 use App\Models\LecturerStaff;
 use App\Models\Profile;
 use App\Models\Project;
@@ -140,135 +140,63 @@ class PublicPageController extends Controller
 
     public function galleries(Request $request): View
     {
-        $selectedGallery = trim((string) $request->query('gallery', ''));
-
         $galleries = Gallery::query()
-            ->where('status', 'published')
-            ->where(function ($query): void {
-                $query->whereNull('published_at')->orWhere('published_at', '<=', now());
-            })
-            ->orderBy('name')
-            ->get(['id', 'name', 'slug']);
-
-        if ($selectedGallery !== '' && !$galleries->contains('slug', $selectedGallery)) {
-            $selectedGallery = '';
-        }
-
-        $galleryItems = GalleryItem::query()
-            ->with('gallery:id,name,slug,status,published_at')
-            ->visibleOnPublic()
-            ->whereHas('gallery', function ($query): void {
-                $query
-                    ->where('status', 'published')
-                    ->where(function ($inner): void {
-                        $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
-                    });
-            })
-            ->when($selectedGallery !== '', function ($query) use ($selectedGallery): void {
-                $query->whereHas('gallery', fn($gallery) => $gallery->where('slug', $selectedGallery));
-            })
-            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
-            ->orderByDesc('taken_at')
+            ->orderBy('position')
             ->orderByDesc('id')
-            ->paginate(12)
-            ->withQueryString();
-
-        return view('public.galleries', [
-            'galleryItems' => $galleryItems,
-            'galleries' => $galleries,
-            'selectedGallery' => $selectedGallery,
-        ]);
-    }
-
-    public function galleryShow(GalleryItem $galleryItem): View
-    {
-        $isVisible = GalleryItem::query()
-            ->with('gallery:id,name,slug,status,published_at')
-            ->visibleOnPublic()
-            ->whereKey($galleryItem->id)
-            ->whereHas('gallery', function ($query): void {
-                $query
-                    ->where('status', 'published')
-                    ->where(function ($inner): void {
-                        $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
-                    });
-            })
-            ->exists();
-
-        abort_unless($isVisible, 404);
-
-        $relatedGalleryItems = GalleryItem::query()
-            ->with('gallery:id,name,slug,status,published_at')
-            ->visibleOnPublic()
-            ->where('gallery_id', $galleryItem->gallery_id)
-            ->whereKeyNot($galleryItem->id)
-            ->whereHas('gallery', function ($query): void {
-                $query
-                    ->where('status', 'published')
-                    ->where(function ($inner): void {
-                        $inner->whereNull('published_at')->orWhere('published_at', '<=', now());
-                    });
-            })
-            ->orderByRaw('CASE WHEN sort_order IS NULL OR sort_order = 0 THEN 9999 ELSE sort_order END')
-            ->orderByDesc('taken_at')
-            ->orderByDesc('id')
-            ->take(6)
             ->get();
 
-        return view('public.gallery-detail', [
-            'galleryItem' => $galleryItem,
-            'relatedGalleryItems' => $relatedGalleryItems,
+        $categories = $galleries->pluck('category')->filter()->unique()->sort()->values();
+        $years      = $galleries->pluck('year')->filter()->unique()->sortDesc()->values();
+
+        return view('public.galleries', [
+            'galleries'  => $galleries,
+            'categories' => $categories,
+            'years'      => $years,
         ]);
     }
+
 
     public function projects(): View
     {
-        $featured = Project::query()
-            ->visibleOnPublic()
-            ->orderByDesc('is_featured')
-            ->latest('published_at')
-            ->latest('id')
-            ->take(9)
+        // Pilihan (unggulan) — horizontal scroll, maks 12
+        $featuredProjects = Project::query()
+            ->where('is_feature', true)
+            ->orderByDesc('year')
+            ->orderByDesc('id')
+            ->take(12)
             ->get();
 
+        // Reguler — semua project non-unggulan, tampilkan semuanya (JS paginasi)
         $regularProjects = Project::query()
-            ->visibleOnPublic()
-            ->when($featured->isNotEmpty(), fn($query) => $query->whereNotIn('id', $featured->pluck('id')->all()))
-            ->latest('published_at')
-            ->latest('id')
+            ->where('is_feature', false)
+            ->orderByDesc('year')
+            ->orderByDesc('id')
             ->get();
 
         return view('public.projects', [
-            'featuredProjects' => $featured,
-            'regularProjects' => $regularProjects,
+            'featuredProjects' => $featuredProjects,
+            'regularProjects'  => $regularProjects,
         ]);
     }
 
     public function learningOutcomes(): View
     {
-        // Placeholder content for learning outcomes page. Content will be updated periodically.
-        return view('public.learning-outcomes');
+        $outcomes = LearningOutcome::orderBy('code')->get();
+        return view('public.learning-outcomes', compact('outcomes'));
     }
 
     public function projectShow(Project $project): View
     {
-        $isVisible = Project::query()
-            ->visibleOnPublic()
-            ->whereKey($project->id)
-            ->exists();
-
-        abort_unless($isVisible, 404);
-
         $relatedProjects = Project::query()
-            ->visibleOnPublic()
             ->where('id', '!=', $project->id)
-            ->latest('published_at')
-            ->latest('id')
-            ->take(6)
+            ->orderByDesc('is_feature')
+            ->orderByDesc('year')
+            ->orderByDesc('id')
+            ->take(3)
             ->get();
 
         return view('public.project-detail', [
-            'project' => $project,
+            'project'         => $project,
             'relatedProjects' => $relatedProjects,
         ]);
     }

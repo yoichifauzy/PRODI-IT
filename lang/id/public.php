@@ -64,7 +64,7 @@ return [
         'intro_copy' => 'Klik setiap kartu project untuk membuka halaman detail lengkap pada halaman baru.',
         'meta_featured' => 'Unggulan',
         'meta_regular' => 'Reguler',
-        'featured_title' => '9 Project Pilihan',
+        'featured_title' => 'Project Pilihan',
         'featured_empty' => 'Belum ada project unggulan.',
         'regular_title' => 'Project Reguler',
         'regular_empty' => 'Belum ada project reguler.',

@@ -12,45 +12,29 @@ class Project extends Model
 
     protected $fillable = [
         'title',
-        'slug',
         'student_name',
         'student_nim',
         'year',
-        'summary',
-        'thumbnail',
-        'status',
-        'is_featured',
-        'published_at',
+        'description',
+        'image_path',
+        'is_feature',
         'created_by',
     ];
 
     protected function casts(): array
     {
         return [
-            'year' => 'integer',
-            'is_featured' => 'boolean',
-            'published_at' => 'datetime',
+            'year'       => 'integer',
+            'is_feature' => 'boolean',
         ];
     }
 
-    public function scopeVisibleOnPublic(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    /**
+     * Scope: only featured projects.
+     */
+    public function scopeFeatured(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
     {
-        return $query->where(function (\Illuminate\Database\Eloquent\Builder $visible): void {
-            $visible
-                ->where(function (\Illuminate\Database\Eloquent\Builder $published): void {
-                    $published
-                        ->where('status', 'published')
-                        ->where(function (\Illuminate\Database\Eloquent\Builder $q): void {
-                            $q->whereNull('published_at')->orWhere('published_at', '<=', now());
-                        });
-                })
-                ->orWhere(function (\Illuminate\Database\Eloquent\Builder $scheduledDraft): void {
-                    $scheduledDraft
-                        ->where('status', 'draft')
-                        ->whereNotNull('published_at')
-                        ->where('published_at', '<=', now());
-                });
-        });
+        return $query->where('is_feature', true);
     }
 
     public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo

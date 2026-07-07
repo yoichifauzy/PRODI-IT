@@ -4,45 +4,44 @@
 
 @section('content')
     @include('public.partials.page-hero', [
-        'title' => __('public.lecturer_staff.hero_title'),
+        'title'    => __('public.lecturer_staff.hero_title'),
         'subtitle' => __('public.lecturer_staff.hero_subtitle'),
     ])
 
     <section class="section-wrap public-page-shell">
-        <!-- <header class="public-page-intro">
-            <h2 class="public-page-title">{{ __('public.lecturer_staff.intro_title') }}</h2>
-            <p class="public-page-copy">{{ __('public.lecturer_staff.intro_copy') }}</p>
-            <div class="public-page-meta">
-                <span class="meta-pill">{{ __('public.lecturer_staff.meta_total_personnel') }}: {{ $members->count() }}</span>
-                @if ($type !== '')
-                    <span class="meta-pill">{{ __('public.lecturer_staff.meta_category') }}: {{ strtoupper($type) }}</span>
-                @endif
-                @if ($search !== '')
-                    <span class="meta-pill">{{ __('public.lecturer_staff.meta_search') }}: {{ $search }}</span>
-                @endif
-            </div>
-        </header> -->
 
-        <form method="GET" action="{{ route('public.lecturer-staff') }}" class="staff-search-wrap public-panel mb-8 grid gap-3 rounded-2xl border border-[var(--border-soft)] bg-white p-4 shadow-sm md:grid-cols-[1fr_220px_auto]">
-            <input type="text" name="q" value="{{ $search }}" placeholder="{{ __('public.lecturer_staff.search_placeholder') }}" class="form-input" />
-            <select name="type" class="form-input">
+        {{-- Filter Bar — real-time, no submit --}}
+        <div class="mb-8 flex flex-wrap items-center gap-3">
+            <input type="text" id="staff-search" placeholder="{{ __('public.lecturer_staff.search_placeholder') }}"
+                   class="w-full sm:w-72 rounded-xl border border-[var(--border-soft)] bg-white px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
+
+            <select id="staff-type-filter"
+                    class="rounded-xl border border-[var(--border-soft)] bg-white px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]">
                 <option value="">{{ __('public.lecturer_staff.filter_all_types') }}</option>
                 @foreach ($types as $itemType)
-                    <option value="{{ $itemType }}" @selected($type === $itemType)>{{ strtoupper($itemType) }}</option>
+                    <option value="{{ strtolower($itemType) }}">{{ strtoupper($itemType) }}</option>
                 @endforeach
             </select>
-            <button type="submit" class="solid-cta">{{ __('public.lecturer_staff.search_button') }}</button>
-        </form>
 
-        <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <span class="ml-auto text-xs text-[var(--text-soft)]">
+                <span id="staff-count">{{ $members->count() }}</span> orang
+            </span>
+        </div>
+
+        {{-- Card Grid --}}
+        <div id="staff-grid" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             @forelse ($members as $member)
-                <article class="staff-card staff-card-enter" style="animation-delay: {{ ($loop->index % 9) * 90 }}ms;">
+                @php
+                    $photo = $member->photo_path ? asset('storage/' . $member->photo_path) : asset('logo/logo_prodi_it.png');
+                @endphp
+                <article class="staff-card staff-card-enter staff-pub-card"
+                         data-name="{{ strtolower($member->name) }}"
+                         data-position="{{ strtolower($member->position) }}"
+                         data-type="{{ strtolower($member->type) }}"
+                         style="animation-delay: {{ ($loop->index % 9) * 90 }}ms;">
                     <div class="staff-card-glow"></div>
                     <div class="staff-card-content">
                         <div class="mb-4 flex items-center gap-4">
-                            @php
-                                $photo = $member->photo_path ? asset('storage/' . $member->photo_path) : asset('logo/logo_prodi_it.png');
-                            @endphp
                             <img src="{{ $photo }}" alt="{{ $member->name }}" class="staff-avatar" />
                             <div>
                                 <h3 class="text-xl font-bold text-[var(--text-main)]">{{ $member->name }}</h3>
@@ -59,10 +58,51 @@
                     </div>
                 </article>
             @empty
-                <div class="rounded-xl border border-dashed border-[var(--border-soft)] bg-white p-8 text-center text-[var(--text-soft)] md:col-span-2 xl:col-span-3">
+                <div id="staff-empty-db" class="rounded-xl border border-dashed border-[var(--border-soft)] bg-white p-8 text-center text-[var(--text-soft)] md:col-span-2 xl:col-span-3">
                     {{ __('public.lecturer_staff.empty') }}
                 </div>
             @endforelse
         </div>
+
+        {{-- No result after filter --}}
+        <div id="staff-no-result" class="hidden py-16 text-center text-[var(--text-soft)]">
+            <i class="fa-solid fa-magnifying-glass text-3xl mb-3 block opacity-30"></i>
+            <p class="text-sm">Tidak ada dosen/staff yang cocok.</p>
+        </div>
+
     </section>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const searchEl  = document.getElementById('staff-search');
+    const typeEl    = document.getElementById('staff-type-filter');
+    const countEl   = document.getElementById('staff-count');
+    const noResult  = document.getElementById('staff-no-result');
+    const cards     = Array.from(document.querySelectorAll('.staff-pub-card'));
+    let timer = null;
+
+    function filter() {
+        const q    = searchEl.value.toLowerCase().trim();
+        const type = typeEl.value.toLowerCase();
+        let shown  = 0;
+
+        cards.forEach(card => {
+            const matchQ    = q    === '' || card.dataset.name.includes(q) || card.dataset.position.includes(q);
+            const matchType = type === '' || card.dataset.type === type;
+            const ok = matchQ && matchType;
+            card.classList.toggle('hidden', !ok);
+            if (ok) shown++;
+        });
+
+        countEl.textContent = shown;
+        if (noResult) noResult.classList.toggle('hidden', shown > 0);
+    }
+
+    [searchEl, typeEl].forEach(el => {
+        el.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(filter, 150); });
+    });
+})();
+</script>
+@endpush

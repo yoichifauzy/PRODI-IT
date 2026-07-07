@@ -1,31 +1,40 @@
 @extends('layouts.public')
 
-@section('title', __('public.learning_outcomes.page_title'))
+@section('title', 'Capaian Pembelajaran — ' . config('app.name'))
 
 @section('content')
-    <!-- Hero -->
-    <section class="page-hero relative overflow-hidden py-20">
-        <div class="page-hero-overlay absolute inset-0"></div>
-        <span class="page-hero-orb page-hero-orb-left" aria-hidden="true"></span>
-        <span class="page-hero-orb page-hero-orb-right" aria-hidden="true"></span>
-        <div class="relative z-10 mx-auto max-w-6xl px-4 text-center text-white">
-            <p class="page-hero-kicker">{{ __('public.hero.kicker') }}</p>
-            <h1 class="page-hero-title mb-4">{{ __('public.learning_outcomes.hero_title') }}</h1>
-            <p class="page-hero-subtitle mx-auto max-w-3xl">{{ __('public.learning_outcomes.hero_subtitle') }}</p>
-            <div class="page-hero-divider mx-auto mt-6 h-1 w-24 rounded-full bg-[var(--accent)]"></div>
-        </div>
-    </section>
+    @include('public.partials.page-hero', [
+        'title'    => 'Capaian Pembelajaran Lulusan',
+        'subtitle' => 'Standar kompetensi yang harus dicapai oleh setiap lulusan Program Studi Teknologi Informasi.',
+    ])
 
-    <!-- Content -->
-    <section class="py-16 md:py-24 px-4 md:px-8 bg-white">
-        <div class="max-w-5xl mx-auto">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2">Capaian Pembelajaran Program Studi Teknologi Informasi</h2>
-                <p class="text-gray-600">Daftar capaian pembelajaran Prodi TI akan diperbarui secara berkala di halaman ini.</p>
-            </div>
-
-            <div class="rounded-lg border border-[var(--border-soft)] bg-[var(--surface)] p-6">
-                <p class="text-[var(--text-soft)]">Konten capaian pembelajaran masih kosong. Tim Prodi akan menambahkan daftar capaian pembelajaran di halaman ini dalam pembaruan berikutnya.</p>
+    <section class="section-wrap public-page-shell">
+        <div class="public-panel rounded-2xl border border-[var(--border-soft)] bg-white shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="curriculum-table min-w-full text-sm">
+                    <thead class="curriculum-table-head text-left">
+                        <tr>
+                            <th class="px-4 py-3 w-10 text-center">No</th>
+                            <th class="px-4 py-3 w-28">Kode</th>
+                            <th class="px-4 py-3">Deskripsi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cpl-tbody">
+                        @forelse($outcomes as $i => $o)
+                            <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
+                                <td class="px-4 py-3 text-center text-slate-400 text-xs">{{ $i + 1 }}</td>
+                                <td class="px-4 py-3 font-mono font-semibold text-slate-700 text-xs">{{ $o->code }}</td>
+                                <td class="px-4 py-3 text-slate-700 leading-relaxed">{{ $o->description }}</td>
+                            </tr>
+                        @empty
+                            <tr class="border-t border-slate-100">
+                                <td class="px-4 py-12 text-center text-slate-500" colspan="3">
+                                    Data capaian pembelajaran belum tersedia.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>

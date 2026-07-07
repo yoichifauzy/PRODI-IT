@@ -79,15 +79,6 @@ class LecturerStaffController extends Controller
             Storage::disk('public')->delete($lecturerStaff->photo_path);
         }
 
-        $lecturerStaff->blogs()
-            ->whereNotNull('cover_image')
-            ->pluck('cover_image')
-            ->each(function ($coverImage): void {
-                if (Storage::disk('public')->exists((string) $coverImage)) {
-                    Storage::disk('public')->delete((string) $coverImage);
-                }
-            });
-
         $lecturerStaff->delete();
 
         return redirect()
@@ -108,7 +99,7 @@ class LecturerStaffController extends Controller
             'bio' => ['nullable', 'string'],
             'photo' => ['nullable', 'image', 'max:5120'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
-            'is_active' => ['nullable', 'boolean'],
+            // 'is_active' => ['nullable', 'boolean'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -122,7 +113,7 @@ class LecturerStaffController extends Controller
         unset($validated['photo']);
 
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
-        $validated['is_active'] = (bool) ($validated['is_active'] ?? false);
+        // $validated['is_active'] = (bool) ($validated['is_active'] ?? false);
 
         return $validated;
     }

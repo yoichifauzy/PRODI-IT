@@ -5,17 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 class ProjectController extends Controller
 {
     public function index(Request $request): View
     {
-        $search = (string) $request->query('q', '');
+        $search = trim((string) $request->query('q', ''));
 
         $projects = Project::query()
             ->when($search !== '', function ($query) use ($search): void {
@@ -26,14 +26,15 @@ class ProjectController extends Controller
                         ->orWhere('student_nim', 'like', "%{$search}%");
                 });
             })
-            ->latest('published_at')
-            ->latest('id')
-            ->paginate(12)
+            ->orderByDesc('is_feature')
+            ->orderByDesc('year')
+            ->orderByDesc('id')
+            ->paginate(20)
             ->withQueryString();
 
         return view('admin.projects.index', [
             'projects' => $projects,
-            'search' => $search,
+            'search'   => $search,
         ]);
     }
 
@@ -45,14 +46,7 @@ class ProjectController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $payload = $this->validatePayload($request);
-        $payload['slug'] = $this->generateUniqueSlug((string) ($payload['slug'] ?? $payload['title']));
-        $payload['created_by'] = $request->user()?->id;
-
-        $this->enforcePublishRules($payload);
-
-        if (($payload['status'] ?? 'draft') === 'published' && empty($payload['published_at'])) {
-            $payload['published_at'] = now();
-        }
+        $payload['created_by'] = Auth::id();
 
         Project::query()->create($payload);
 
@@ -68,25 +62,12 @@ class ProjectController extends Controller
 
     public function edit(Project $project): View
     {
-        return view('admin.projects.edit', [
-            'project' => $project,
-        ]);
+        return view('admin.projects.edit', ['project' => $project]);
     }
 
     public function update(Request $request, Project $project): RedirectResponse
     {
         $payload = $this->validatePayload($request, $project);
-        $payload['slug'] = $this->generateUniqueSlug(
-            (string) ($payload['slug'] ?? $payload['title']),
-            $project->id
-        );
-
-        $this->enforcePublishRules($payload);
-
-        if (($payload['status'] ?? 'draft') === 'published' && empty($payload['published_at'])) {
-            $payload['published_at'] = now();
-        }
-
         $project->update($payload);
 
         return redirect()
@@ -94,10 +75,23 @@ class ProjectController extends Controller
             ->with('success', 'Project mahasiswa berhasil diperbarui.');
     }
 
+    /**
+     * Toggle is_feature via AJAX — dipanggil dari tombol bintang di card.
+     */
+    public function toggleFeature(Project $project): JsonResponse
+    {
+        $project->update(['is_feature' => !$project->is_feature]);
+
+        return response()->json([
+            'success'    => true,
+            'is_feature' => $project->is_feature,
+        ]);
+    }
+
     public function destroy(Project $project): RedirectResponse
     {
-        if ($project->thumbnail !== null && Storage::disk('public')->exists($project->thumbnail)) {
-            Storage::disk('public')->delete($project->thumbnail);
+        if ($project->image_path !== null && Storage::disk('public')->exists($project->image_path)) {
+            Storage::disk('public')->delete($project->image_path);
         }
 
         $project->delete();
@@ -107,74 +101,29 @@ class ProjectController extends Controller
             ->with('success', 'Project mahasiswa berhasil dihapus.');
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     private function validatePayload(Request $request, ?Project $project = null): array
     {
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'alpha_dash'],
+            'title'        => ['required', 'string', 'max:255'],
             'student_name' => ['required', 'string', 'max:255'],
-            'student_nim' => ['nullable', 'string', 'max:30'],
-            'year' => ['nullable', 'integer', 'min:2000', 'max:2100'],
-            'summary' => ['nullable', 'string'],
-            'thumbnail_file' => ['nullable', 'image', 'max:5120'],
-            'status' => ['required', 'in:draft,published'],
-            'is_featured' => ['nullable', 'boolean'],
-            'published_at' => ['nullable', 'date'],
+            'student_nim'  => ['nullable', 'string', 'max:30'],
+            'year'         => ['nullable', 'integer', 'min:2000', 'max:2100'],
+            'description'  => ['nullable', 'string'],
+            'image_file'   => ['nullable', 'image', 'max:5120'],
+            'is_feature'   => ['nullable', 'boolean'],
         ]);
 
-        if ($request->hasFile('thumbnail_file')) {
-            if ($project?->thumbnail !== null && Storage::disk('public')->exists($project->thumbnail)) {
-                Storage::disk('public')->delete($project->thumbnail);
+        if ($request->hasFile('image_file')) {
+            if ($project?->image_path !== null && Storage::disk('public')->exists($project->image_path)) {
+                Storage::disk('public')->delete($project->image_path);
             }
-
-            $validated['thumbnail'] = $request->file('thumbnail_file')?->store('projects', 'public');
+            $validated['image_path'] = $request->file('image_file')?->store('projects', 'public');
         }
 
-        unset($validated['thumbnail_file']);
-
-        $validated['is_featured'] = (bool) ($validated['is_featured'] ?? false);
+        unset($validated['image_file']);
+        $validated['is_feature'] = (bool) ($validated['is_feature'] ?? false);
 
         return $validated;
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     */
-    private function enforcePublishRules(array $payload): void
-    {
-        $status = (string) ($payload['status'] ?? 'draft');
-        $hasPublishAt = !empty($payload['published_at']);
-
-        if ($status === 'draft' && !$hasPublishAt) {
-            throw ValidationException::withMessages([
-                'published_at' => 'Waktu publish wajib diisi ketika status Draft.',
-            ]);
-        }
-    }
-
-    private function generateUniqueSlug(string $value, ?int $ignoreId = null): string
-    {
-        $base = Str::slug($value);
-        if ($base === '') {
-            $base = 'project-mahasiswa';
-        }
-
-        $slug = $base;
-        $counter = 1;
-
-        while (
-            Project::query()
-            ->when($ignoreId !== null, fn($query) => $query->where('id', '!=', $ignoreId))
-            ->where('slug', $slug)
-            ->exists()
-        ) {
-            $slug = $base . '-' . $counter;
-            $counter++;
-        }
-
-        return $slug;
     }
 }

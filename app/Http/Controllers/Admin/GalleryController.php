@@ -4,134 +4,138 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gallery;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
-    public function index(): View
+    /**
+     * Tampilkan halaman admin galeri dengan card grid.
+     * Diurutkan berdasarkan position ASC, lalu id DESC.
+     */
+    public function index()
     {
         $galleries = Gallery::query()
-            ->withCount('items')
-            ->latest()
-            ->paginate(12)
-            ->withQueryString();
+            ->orderBy('position')
+            ->orderByDesc('id')
+            ->paginate(48);
+
+        $categories = Gallery::query()
+            ->select('category')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category');
+
+        $years = Gallery::query()
+            ->select('year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
 
         return view('admin.galleries.index', [
-            'galleries' => $galleries,
+            'galleries'  => $galleries,
+            'categories' => $categories,
+            'years'      => $years,
         ]);
-    }
-
-    public function create(): View
-    {
-        return view('admin.galleries.create');
-    }
-
-    public function store(Request $request): RedirectResponse
-    {
-        $payload = $this->validatePayload($request);
-        $payload['slug'] = $this->generateUniqueSlug(
-            (string) ($payload['slug'] ?? $payload['name'])
-        );
-        $payload['created_by'] = $request->user()?->id;
-
-        if (($payload['status'] ?? 'draft') === 'published' && empty($payload['published_at'])) {
-            $payload['published_at'] = now();
-        }
-
-        if (($payload['status'] ?? 'draft') !== 'published') {
-            $payload['published_at'] = null;
-        }
-
-        Gallery::query()->create($payload);
-
-        return redirect()
-            ->route('admin.galleries.index')
-            ->with('success', 'Filter galeri berhasil ditambahkan.');
-    }
-
-    public function show(Gallery $gallery): RedirectResponse
-    {
-        return redirect()->route('admin.galleries.edit', $gallery);
-    }
-
-    public function edit(Gallery $gallery): View
-    {
-        $gallery->load(['items' => fn($query) => $query->orderBy('sort_order')->latest('id')]);
-
-        return view('admin.galleries.edit', [
-            'gallery' => $gallery,
-        ]);
-    }
-
-    public function update(Request $request, Gallery $gallery): RedirectResponse
-    {
-        $payload = $this->validatePayload($request, $gallery);
-        $payload['slug'] = $this->generateUniqueSlug(
-            (string) ($payload['slug'] ?? $payload['name']),
-            $gallery->id
-        );
-
-        if (($payload['status'] ?? 'draft') === 'published' && empty($payload['published_at'])) {
-            $payload['published_at'] = now();
-        }
-
-        if (($payload['status'] ?? 'draft') !== 'published') {
-            $payload['published_at'] = null;
-        }
-
-        $gallery->update($payload);
-
-        return redirect()
-            ->route('admin.galleries.index')
-            ->with('success', 'Filter galeri berhasil diperbarui.');
-    }
-
-    public function destroy(Gallery $gallery): RedirectResponse
-    {
-        $gallery->delete();
-
-        return redirect()
-            ->route('admin.galleries.index')
-            ->with('success', 'Filter galeri berhasil dihapus.');
     }
 
     /**
-     * @return array<string, mixed>
+     * Upload satu atau banyak gambar sekaligus — response JSON (AJAX).
+     * Semua gambar dalam satu batch berbagi judul yang sama (tanpa suffix nomor).
      */
-    private function validatePayload(Request $request, ?Gallery $gallery = null): array
+    public function store(Request $request): JsonResponse
     {
-        return $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'alpha_dash'],
-            'description' => ['nullable', 'string'],
-            'status' => ['required', 'in:draft,published'],
-            'published_at' => ['nullable', 'date'],
+        $request->validate([
+            'images'   => ['required', 'array', 'max:30'],
+            'images.*' => ['required', 'image', 'max:10240'],
+            'category' => ['required', 'string', 'max:100'],
+            'title'    => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $category  = $request->input('category');
+        $title     = $request->input('title') ?: $category;  // Judul sama untuk semua, tanpa suffix (2),(3)
+        $year      = (int) now()->year;
+        $userId    = Auth::id();
+        $created   = [];
+
+        // Ambil position maksimum yang ada, tambahkan dari sana
+        $maxPos = Gallery::max('position') ?? 0;
+
+        foreach ($request->file('images') as $i => $file) {
+            $path = $file->store('galleries', 'public');
+
+            $gallery = Gallery::create([
+                'title'      => $title,          // Semua pakai judul yang sama
+                'category'   => $category,
+                'year'       => $year,
+                'image_path' => $path,
+                'position'   => $maxPos + $i + 1,
+                'created_by' => $userId,
+            ]);
+
+            $created[] = [
+                'id'        => $gallery->id,
+                'title'     => $gallery->title,
+                'category'  => $gallery->category,
+                'year'      => $gallery->year,
+                'position'  => $gallery->position,
+                'image_url' => asset('storage/' . $gallery->image_path),
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => count($created) . ' gambar berhasil diunggah.',
+            'images'  => $created,
         ]);
     }
 
-    private function generateUniqueSlug(string $value, ?int $ignoreId = null): string
+    /**
+     * Update judul/kategori/tahun satu item — response JSON (AJAX dari inline card).
+     */
+    public function update(Request $request, Gallery $gallery): JsonResponse
     {
-        $base = Str::slug($value);
-        if ($base === '') {
-            $base = 'galeri';
+        $data = $request->validate([
+            'title'    => ['sometimes', 'string', 'max:255'],
+            'category' => ['sometimes', 'string', 'max:100'],
+            'year'     => ['sometimes', 'integer', 'min:2000', 'max:2099'],
+        ]);
+
+        $gallery->update($data);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Simpan urutan baru setelah drag & drop — response JSON (AJAX).
+     */
+    public function reorder(Request $request): JsonResponse
+    {
+        $request->validate([
+            'ordered_ids'   => ['required', 'array'],
+            'ordered_ids.*' => ['integer', 'exists:galleries,id'],
+        ]);
+
+        foreach ($request->input('ordered_ids') as $pos => $id) {
+            Gallery::where('id', $id)->update(['position' => $pos + 1]);
         }
 
-        $slug = $base;
-        $counter = 1;
+        return response()->json(['success' => true, 'message' => 'Urutan berhasil disimpan.']);
+    }
 
-        while (
-            Gallery::query()
-            ->when($ignoreId !== null, fn($query) => $query->where('id', '!=', $ignoreId))
-            ->where('slug', $slug)
-            ->exists()
-        ) {
-            $slug = $base . '-' . $counter;
-            $counter++;
+    /**
+     * Hapus satu item — response JSON (AJAX).
+     */
+    public function destroy(Gallery $gallery): JsonResponse
+    {
+        if ($gallery->image_path && Storage::disk('public')->exists($gallery->image_path)) {
+            Storage::disk('public')->delete($gallery->image_path);
         }
 
-        return $slug;
+        $gallery->delete();
+
+        return response()->json(['success' => true, 'message' => 'Gambar berhasil dihapus.']);
     }
 }

@@ -44,7 +44,7 @@
         @endif
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2">
+    <!-- <div class="grid gap-4 md:grid-cols-2">
         <div>
             <label for="sort_order" class="mb-2 block text-sm font-medium text-slate-700">Urutan</label>
             <input id="sort_order" type="number" min="0" name="sort_order" value="{{ old('sort_order', $lecturerStaff->sort_order ?? 0) }}" class="w-full rounded-md border border-slate-300 px-3 py-2" />
@@ -55,5 +55,5 @@
             <input type="checkbox" name="is_active" value="1" @checked((string) $isActive === '1' || $isActive === true || $isActive === 1) />
             Aktif ditampilkan
         </label>
-    </div>
+    </div> -->
 </div>

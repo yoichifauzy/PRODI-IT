@@ -4,7 +4,6 @@
     $endAt      = old('end_at',   isset($activity) && $activity->end_at   ? $activity->end_at->format('H:i')   : '');
 @endphp
 
-{{-- Info: google_event_url diisi otomatis oleh sistem --}}
 @if(isset($activity) && $activity->google_event_url)
     <div class="mb-4 flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
         <i class="fa-brands fa-google mt-0.5 text-base"></i>
@@ -13,15 +12,10 @@
             <a href="{{ $activity->google_event_url }}" target="_blank" class="mt-0.5 block truncate text-xs text-emerald-600 underline">{{ $activity->google_event_url }}</a>
         </div>
     </div>
-@else
-    <!-- <div class="mb-4 flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-        <i class="fa-regular fa-calendar mt-0.5 text-base"></i>
-        <p>Link Google Calendar akan diisi <strong>otomatis</strong> oleh sistem setelah kegiatan disimpan.</p>
-    </div> -->
 @endif
 
-{{-- Judul --}}
 <div class="grid gap-5">
+    {{-- Judul --}}
     <div>
         <label for="title" class="mb-1.5 block text-sm font-medium text-slate-700">
             Judul Kegiatan <span class="text-rose-500">*</span>
@@ -36,8 +30,6 @@
         />
     </div>
 
-
-<div class="grid gap-5">
     {{-- Baris 1: Kategori & Tanggal --}}
     <div class="grid gap-4 md:grid-cols-2">
         <div>
@@ -53,7 +45,6 @@
                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                 placeholder="Contoh: Lomba, Seminar, Pelatihan…"
             />
-            {{-- Datalist: opsi kategori dari DB yang sudah pernah dipakai --}}
             <datalist id="category-suggestions">
                 @foreach ($existingCategories ?? [] as $cat)
                     <option value="{{ $cat }}"></option>
@@ -103,8 +94,6 @@
         </div>
     </div>
 
-    
-
     {{-- Deskripsi --}}
     <div>
         <label for="description" class="mb-1.5 block text-sm font-medium text-slate-700">Deskripsi</label>
@@ -130,73 +119,64 @@
     </div>
 
     {{-- Upload Gambar --}}
-    <div>
-        <label class="mb-1.5 block text-sm font-medium text-slate-700">
-            Gambar Cover {{ isset($activity) ? '' : '*' }}
-        </label>
+    <div class="mb-5">
+        <label class="mb-2 block text-sm font-semibold text-slate-700">Gambar Cover</label>
+        
+        <label for="image-upload" class="group relative flex h-64 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 transition-all hover:border-slate-400">
+            
+            @php
+                $hasImage = isset($activity) && $activity->image_path;
+            @endphp
+            <img id="image-preview" 
+                 src="{{ $hasImage ? asset('storage/' . $activity->image_path) : '' }}" 
+                 class="absolute inset-0 h-full w-full object-cover {{ $hasImage ? '' : 'hidden' }}" 
+                 alt="Preview">
 
-        {{-- Area klik untuk upload --}}
-        <label
-            for="image-upload"
-            id="image-drop-zone"
-            class="relative flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center transition hover:border-slate-400 hover:bg-slate-100"
-        >
-            {{-- Preview (tersembunyi dulu) --}}
-            <img id="image-preview" src="" alt="Preview" class="hidden h-40 w-full rounded-lg object-cover" />
-
-            {{-- Ikon cloud upload (akan hilang ketika ada preview) --}}
-            <div id="image-upload-placeholder">
-                <svg class="mx-auto h-12 w-12 text-slate-300" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M11.47 2.47a.75.75 0 011.06 0l4.5 4.5a.75.75 0 01-1.06 1.06l-3.22-3.22V16.5a.75.75 0 01-1.5 0V4.81L8.03 8.03a.75.75 0 01-1.06-1.06l4.5-4.5zM3 15.75a.75.75 0 01.75.75v2.25a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5V16.5a.75.75 0 011.5 0v2.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V16.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
-                </svg>
-                <p class="mt-3 text-sm font-semibold text-slate-600">
-                    Klik untuk upload gambar
+            <div id="upload-overlay" 
+                class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 
+                {{ $hasImage ? 'bg-black/50 opacity-100' : 'bg-transparent opacity-100' }}">
+                
+                <i id="upload-icon" class="fa-solid fa-cloud-arrow-up text-3xl mb-2 {{ $hasImage ? 'text-white' : 'text-slate-400' }}"></i>
+                
+                <p id="upload-text" class="text-sm font-medium {{ $hasImage ? 'text-white' : 'text-slate-500' }}">
+                    <span class="font-bold">Klik</span> untuk {{ $hasImage ? 'upload gambar pengganti' : 'upload gambar' }}
                 </p>
-                <p class="mt-1 text-xs text-slate-400">atau seret & lepas file ke sini</p>
-                <p class="mt-1 text-xs text-slate-400">PNG, JPG hingga 5 MB</p>
+                
+                <p id="upload-subtext" class="mt-1 text-xs {{ $hasImage ? 'text-white/80' : 'text-slate-400' }}">
+                    JPG, PNG, atau WEBP (Max 2MB)
+                </p>
             </div>
 
-            <input id="image-upload" name="image" type="file" accept="image/*" class="sr-only" {{ isset($activity) ? '' : 'required' }} />
+            <input id="image-upload" type="file" name="image" accept="image/*" class="hidden" onchange="previewImage(this)">
         </label>
-
-        {{-- Gambar aktif (edit mode) --}}
-        @if (isset($activity) && $activity->image_path)
-            <div class="mt-3">
-                <p class="mb-1 text-xs text-slate-500">Gambar saat ini:</p>
-                <img
-                    id="current-image"
-                    src="{{ asset('storage/' . $activity->image_path) }}"
-                    alt="{{ $activity->title }}"
-                    class="h-40 w-full rounded-lg object-cover"
-                />
-            </div>
-        @endif
     </div>
-
 </div>
 
-{{-- JavaScript: preview gambar setelah dipilih --}}
+@push('scripts')
 <script>
-    (function () {
-        const input       = document.getElementById('image-upload');
-        const preview     = document.getElementById('image-preview');
-        const placeholder = document.getElementById('image-upload-placeholder');
-        const currentImg  = document.getElementById('current-image');
+    function previewImage(input) {
+        const preview = document.getElementById('image-preview');
+        const overlay = document.getElementById('upload-overlay');
+        const icon = document.getElementById('upload-icon');
+        const text = document.getElementById('upload-text');
+        const subtext = document.getElementById('upload-subtext');
 
-        if (!input || !preview || !placeholder) return;
-
-        input.addEventListener('change', function () {
-            const file = this.files?.[0];
-            if (!file) return;
-
+        if (input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = function (e) {
+
+            reader.onload = function(e) {
                 preview.src = e.target.result;
                 preview.classList.remove('hidden');
-                placeholder.classList.add('hidden');
-                if (currentImg) currentImg.classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
-        });
-    })();
+
+                overlay.className = 'absolute inset-0 flex flex-col items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300';
+                
+                icon.className = 'fa-solid fa-cloud-arrow-up text-3xl mb-2 text-white';
+                text.className = 'text-sm font-medium text-white';
+                subtext.className = 'mt-1 text-xs text-white/80';
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 </script>
+@endpush

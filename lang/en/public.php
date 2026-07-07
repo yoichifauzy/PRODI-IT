@@ -213,6 +213,7 @@ return [
         'toggle_show' => 'Show Graduates',
         'toggle_hide' => 'Hide Graduates',
         'table_nim' => 'Student ID',
+        'table_name' => 'Name',
         'table_graduation' => 'Graduates',
         'table_company' => 'Company',
         'table_level' => 'Level/Scale',

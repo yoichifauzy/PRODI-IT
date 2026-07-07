@@ -25,12 +25,12 @@
                         @forelse ($services as $index => $service)
                             <tr class="border-t border-slate-100 hover:bg-slate-50/50 transition-colors"
                                 data-service-row
-                                data-year="{{ $service->activity_date?->format('Y') ?? '-' }}"
+                                data-year="{{ $service->year }}"
                                 data-title="{{ $service->title }}"
                                 data-location="{{ $service->location }}">
                                 <td class="px-4 py-3 text-center text-slate-400">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3 text-center font-medium">
-                                    {{ $service->activity_date?->format('Y') }}
+                                    {{ $service->year }}
                                 </td>
                                 <td class="px-4 py-3 font-semibold text-slate-700">{{ $service->title }}</td>
                                 <td class="px-4 py-3 text-slate-600">{{ $service->location }}</td>
@@ -54,7 +54,7 @@
 @push('scripts')
 <script>
 (function() {
-    const PER_PAGE = 5;
+    const PER_PAGE = 10;
     let currentPage = 1;
 
     const tbody = document.getElementById('communityTbody');

@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('galleries', function (Blueprint $table) {
+        Schema::create('asset_links', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('category'); // Sipisahkan string (misal: 'stok-opname')
-            $table->integer('year'); // Tahun kegiatan (misal: 2026)
-            $table->string('image_path');
-            $table->unsignedBigInteger('created_by');
+            $table->string('name');
+            $table->text('url');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('galleries');
+        Schema::dropIfExists('asset_links');
     }
 };

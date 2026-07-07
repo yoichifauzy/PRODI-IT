@@ -40,15 +40,16 @@
                 <a href="{{ route('admin.dashboard') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dashboard</a>
                 <a href="{{ route('admin.hero-slides.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.hero-slides.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Hero Section</a>
                 <a href="{{ route('admin.profile.edit') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.profile.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Profile</a>
-                <a href="{{ route('admin.profile.edit') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.document.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dokumen</a>
+                <a href="{{ route('admin.documents.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.documents.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dokumen</a>
                 <a href="{{ route('admin.activities.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.activities.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kegiatan</a>
                 <!-- <a href="{{ route('admin.galleries.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.galleries.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Filter Galeri</a> -->
                 <a href="{{ route('admin.gallery-items.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.gallery-items.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Galeri</a>
                 <a href="{{ route('admin.lecturer-staff.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.lecturer-staff.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dosen & Staff</a>
-                <a href="{{ route('admin.curricula.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.curricula.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kurikulum & Matakuliah</a>
+                <a href="{{ route('admin.courses.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.courses.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kurikulum</a>
                 <a href="{{ route('admin.research-community.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.research-community.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Penelitian & Pengabdian</a>
-                <a href="{{ route('admin.projects.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.projects.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Project Mahasiswa</a>
+                <a href="{{ route('admin.research-community.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.research-community.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Capaian Pembelajaran</a>
                 <a href="{{ route('admin.tracer-alumni.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.tracer-alumni.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Tracer Alumni</a>
+                <a href="{{ route('admin.projects.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.projects.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Project Mahasiswa</a>
                 <!-- <a href="{{ route('admin.announcements.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Pengumuman</a> -->
                 <!-- <a href="{{ route('admin.academic-events.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.academic-events.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kalender Akademik</a> -->
                
@@ -79,5 +80,4 @@
 </body>
 
 @stack('scripts')
-</html>
 </html>

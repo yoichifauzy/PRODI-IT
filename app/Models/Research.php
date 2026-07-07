@@ -11,14 +11,10 @@ class Research extends Model
     protected $table = 'researches';
 
     protected $fillable = [
+        'document_id',
         'title',
         'researcher_name',
-        'researcher_role',
         'year',
-        'publication',
-        'link',
-        'abstract',
-        'status',
         'created_by',
     ];
 

@@ -51,36 +51,45 @@ class PublicPageController extends Controller
 
     public function curriculum(Request $request): View
     {
-        $allCurricula = Curriculum::query()
-            ->with(['courses' => function ($query) {
-                $query->orderBy('sort_order')->orderBy('code');
-            }])
-            ->orderBy('name')
-            ->orderBy('id')
+        $courses = \App\Models\Course::query()
+            ->orderBy('semester')
+            ->orderBy('major_selection')
+            ->orderBy('code')
             ->get();
 
-        // Tombol filter utama hanya menampilkan nama yang unik
-        $uniqueCurricula = $allCurricula->unique('name');
+        $semesters = $courses->pluck('semester')->filter()->unique()->sort()->values();
 
-        $selectedCurriculumId = $request->integer('curriculum');
-        $selectedCurriculum = $selectedCurriculumId > 0
-            ? $allCurricula->firstWhere('id', $selectedCurriculumId)
-            : $allCurricula->first();
-
-        if ($selectedCurriculum === null) {
-            $selectedCurriculum = $allCurricula->first();
+        $selectedSemester = $request->query('semester');
+        if (!$selectedSemester || !$semesters->contains($selectedSemester)) {
+            $selectedSemester = $semesters->first();
         }
 
-        $majorOptions = collect();
-        if ($selectedCurriculum) {
-            $majorOptions = $allCurricula->where('name', $selectedCurriculum->name);
+        $semesterCourses = $courses->where('semester', $selectedSemester);
+        
+        $majorOptions = $semesterCourses->pluck('major_selection')->filter()->unique()->sort()->values();
+        
+        $selectedMajor = $request->query('major');
+        if (!$selectedMajor || !$majorOptions->contains($selectedMajor)) {
+            $selectedMajor = $majorOptions->first() ?? null;
+        }
+
+        $visibleCourses = $semesterCourses;
+        if ($selectedMajor) {
+            $visibleCourses = $semesterCourses->where('major_selection', $selectedMajor);
+        } else if ($majorOptions->isEmpty()) {
+            // No major options, show all in semester (which means they don't have major or are all null)
+        } else {
+            // Show courses where major is null or match selected
+            $visibleCourses = $semesterCourses->whereNull('major_selection'); 
         }
 
         return view('public.curriculum', [
-            'curricula' => $uniqueCurricula,
-            'allCurricula' => $allCurricula,
-            'selectedCurriculum' => $selectedCurriculum,
+            'semesters' => $semesters,
+            'selectedSemester' => $selectedSemester,
             'majorOptions' => $majorOptions,
+            'selectedMajor' => $selectedMajor,
+            'courses' => $courses,
+            'visibleCourses' => $visibleCourses
         ]);
     }
 
@@ -267,7 +276,6 @@ class PublicPageController extends Controller
     public function tracerAlumni(Request $request): View
     {
         $graduationYears = TracerAlumni::query()
-            ->where('is_active', true)
             ->whereNotNull('graduation_year')
             ->distinct()
             ->orderByDesc('graduation_year')
@@ -283,7 +291,6 @@ class PublicPageController extends Controller
         }
 
         $rows = TracerAlumni::query()
-            ->where('is_active', true)
             ->orderByDesc('graduation_year')
             ->orderBy('nim')
             ->get();
@@ -331,7 +338,7 @@ class PublicPageController extends Controller
         $searchTerm = trim((string) $request->query('q', ''));
 
         $researches = Research::query()
-            ->where('status', 'published')
+            // ->where('status', 'published')
             ->orderByDesc('year')
             ->orderBy('title')
             ->get();
@@ -364,7 +371,7 @@ class PublicPageController extends Controller
         }
 
         $suggestions = Research::query()
-            ->where('status', 'published')
+            // ->where('status', 'published')
             ->where(function ($q) use ($query): void {
                 $q->where('title', 'like', "%{$query}%")
                     ->orWhere('researcher_name', 'like', "%{$query}%");
@@ -398,8 +405,8 @@ class PublicPageController extends Controller
     public function communityService(): View
     {
         $services = CommunityService::query()
-            ->where('status', 'published')
-            ->orderByDesc('activity_date')
+            // ->where('status', 'published')
+            ->orderByDesc('year')
             ->orderBy('title')
             ->get();
 

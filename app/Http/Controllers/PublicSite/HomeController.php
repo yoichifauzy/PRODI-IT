@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Gallery;
 use App\Models\GalleryItem;
-use App\Models\HeroSlide;
+use App\Models\Banner;
 use App\Models\Profile;
 use Illuminate\Contracts\View\View;
 
@@ -16,15 +16,9 @@ class HomeController extends Controller
     {
         $profile = Profile::first();
 
-        $heroSlides = HeroSlide::query()
-            ->where('is_active', true)
-            ->where(function ($query): void {
-                $query->whereNull('start_at')->orWhere('start_at', '<=', now());
-            })
-            ->where(function ($query): void {
-                $query->whereNull('end_at')->orWhere('end_at', '>=', now());
-            })
-            ->orderBy('sort_order')
+        $heroSlides = Banner::query()
+            ->where('category', 'hero')
+            ->orderBy('position')
             ->orderByDesc('id')
             ->get();
 

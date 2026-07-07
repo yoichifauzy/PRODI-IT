@@ -10,20 +10,20 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class HeroSlideController extends Controller
+class BannerController extends Controller
 {
     /**
      * Tampilkan daftar banner hero.
      */
     public function index(): View
     {
-        $heroSlides = Banner::where('category', 'hero')
+        $banners = Banner::where('category', 'hero')
             ->orderBy('position', 'asc')
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('admin.hero-slides.index', [
-            'heroSlides' => $heroSlides,
+        return view('admin.banners.index', [
+            'banners' => $banners,
         ]);
     }
 
@@ -36,7 +36,7 @@ class HeroSlideController extends Controller
             'image' => ['required', 'image', 'max:10240'],
         ]);
 
-        $imagePath = $request->file('image')?->store('banners/hero', 'public');
+        $imagePath = $request->file('image')?->store('banners', 'public');
         
         $maxPosition = Banner::where('category', 'hero')->max('position') ?? 0;
 
@@ -48,53 +48,49 @@ class HeroSlideController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.hero-slides.index')
-            ->with('success', 'Slide Hero berhasil ditambahkan.');
+            ->route('admin.banners.index')
+            ->with('success', 'Banner berhasil ditambahkan.');
     }
 
     /**
      * Update banner yang ada (hanya ganti gambar).
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, Banner $banner): RedirectResponse
     {
-        $hero_slide = Banner::findOrFail($id);
-        
         $request->validate([
             'image' => ['required', 'image', 'max:10240'],
         ]);
 
         if ($request->hasFile('image')) {
-            if ($hero_slide->image_path && Storage::disk('public')->exists($hero_slide->image_path)) {
-                Storage::disk('public')->delete($hero_slide->image_path);
+            if ($banner->image_path && Storage::disk('public')->exists($banner->image_path)) {
+                Storage::disk('public')->delete($banner->image_path);
             }
 
-            $imagePath = $request->file('image')?->store('banners/hero', 'public');
-            $hero_slide->update([
+            $imagePath = $request->file('image')?->store('banners', 'public');
+            $banner->update([
                 'image_path' => $imagePath,
             ]);
         }
 
         return redirect()
-            ->route('admin.hero-slides.index')
-            ->with('success', 'Slide Hero berhasil diperbarui.');
+            ->route('admin.banners.index')
+            ->with('success', 'Banner berhasil diperbarui.');
     }
 
     /**
      * Hapus banner.
      */
-    public function destroy($id): RedirectResponse
+    public function destroy(Banner $banner): RedirectResponse
     {
-        $hero_slide = Banner::findOrFail($id);
-
-        if ($hero_slide->image_path && Storage::disk('public')->exists($hero_slide->image_path)) {
-            Storage::disk('public')->delete($hero_slide->image_path);
+        if ($banner->image_path && Storage::disk('public')->exists($banner->image_path)) {
+            Storage::disk('public')->delete($banner->image_path);
         }
 
-        $hero_slide->delete();
+        $banner->delete();
 
         return redirect()
-            ->route('admin.hero-slides.index')
-            ->with('success', 'Slide Hero berhasil dihapus.');
+            ->route('admin.banners.index')
+            ->with('success', 'Banner berhasil dihapus.');
     }
 
     /**
@@ -110,7 +106,7 @@ class HeroSlideController extends Controller
         $orderedIds = $request->input('ordered_ids');
         
         foreach ($orderedIds as $index => $id) {
-            Banner::where('id', $id)->where('category', 'hero')->update(['position' => $index + 1]);
+            Banner::where('id', $id)->update(['position' => $index + 1]);
         }
 
         return response()->json(['success' => true, 'message' => 'Posisi berhasil diperbarui.']);

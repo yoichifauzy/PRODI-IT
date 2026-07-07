@@ -1,15 +1,15 @@
 @extends('layouts.admin')
 
-@section('title', 'Penelitian & Pengabdian')
+@section('title', 'Capaian Pembelajaran Lulusan')
 
 @section('content')
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
     <div>
-        <h1 class="text-lg font-bold text-slate-800">Penelitian & Pengabdian</h1>
-        <p class="text-sm text-slate-400">Sync dari sheet penelitian-pengabdian.</p>
+        <h1 class="text-lg font-bold text-slate-800">Capaian Pembelajaran Lulusan</h1>
+        <p class="text-sm text-slate-400">Sync dari sheet CPL.</p>
     </div>
 
-    <form action="{{ route('admin.research-community.sync') }}" method="POST" class="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <form action="{{ route('admin.learning-outcomes.sync') }}" method="POST" class="flex flex-col gap-3 sm:flex-row sm:items-center">
             @csrf
             {{-- Dropdown (Style disamakan dengan input search Kegiatan) --}}
             <select name="document_id" id="document_id" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 sm:w-64">
@@ -38,7 +38,7 @@
         <input type="text" name="q" id="search-input" value="{{ $search }}" placeholder="Cari judul / nama..."
                class="w-full sm:w-80 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500">
         @if($search)
-            <a href="{{ route('admin.research-community.index') }}" class="inline-flex items-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-500 hover:bg-slate-50 transition">Reset</a>
+            <a href="{{ route('admin.learning-outcomes.index') }}" class="inline-flex items-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-500 hover:bg-slate-50 transition">Reset</a>
         @endif
     </form>
 </div>
@@ -56,22 +56,20 @@
                 <thead class="bg-white">
                     <tr>
                         <th class="px-4 py-2.5 text-center text-xs font-semibold text-slate-500 w-12">No</th>
-                        <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 w-24">Tahun</th>
-                        <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-500">Judul</th>
-                        <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 w-1/4">Peneliti</th>
+                        <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 w-24">Kode</th>
+                        <th class="px-4 py-2.5 text-left text-xs font-semibold text-slate-500">Deskripsi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100" id="table-research">
                     @forelse($researches as $r)
                     <tr class="hover:bg-slate-50 js-row-research" data-title="{{ strtolower($r->title) }}" data-researcher="{{ strtolower($r->researcher_name) }}">
                         <td class="px-4 py-2.5 text-center text-slate-400 text-xs js-row-number"></td>
-                        <td class="px-4 py-2.5 text-slate-400 text-xs">{{ $r->year }}</td>
-                        <td class="px-4 py-2.5 text-slate-800">{{ $r->title }}</td>
-                        <td class="px-4 py-2.5 text-slate-500 text-xs">{{ $r->researcher_name }}</td>
+                        <td class="px-4 py-2.5 text-slate-400 text-xs">{{ $r->code }}</td>
+                        <td class="px-4 py-2.5 text-slate-800">{{ $r->description }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="px-4 py-10 text-center text-slate-400 text-sm">Belum ada data penelitian.</td>
+                        <td colspan="4" class="px-4 py-10 text-center text-slate-400 text-sm">Belum ada data capaian pembelajaran lulusan.</td>
                     </tr>
                     @endforelse
                 </tbody>

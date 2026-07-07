@@ -7,16 +7,16 @@
         'title' => __('public.activities.hero_title'),
         'subtitle' => __('public.activities.hero_subtitle'),
     ])
-    
+
     <section class="section-wrap public-page-shell">
-        <header class="public-page-intro">
+        <!-- <header class="public-page-intro">
             <h2 class="public-page-title">{{ __('public.activities.intro_title') }}</h2>
             <p class="public-page-copy">{{ __('public.activities.intro_copy') }}</p>
             <div class="public-page-meta">
                 <span class="meta-pill">{{ __('public.activities.meta_total') }}: {{ $activities->total() }}</span>
                 <span class="meta-pill">{{ __('public.activities.meta_page') }}: {{ $activities->currentPage() }} / {{ $activities->lastPage() }}</span>
             </div>
-        </header>
+        </header> -->
         <div class="mb-8">
             @include('public.partials._running-card', ['runningActivities' => $runningActivities])
         </div>

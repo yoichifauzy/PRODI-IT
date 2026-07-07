@@ -9,22 +9,21 @@ class TracerAlumni extends Model
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
 
     protected $fillable = [
-        'nim',
+        'document_id',
         'graduation_year',
+        'nim',
+        'name',
         'company_name',
-        'company_level',
         'department',
         'relevance',
-        'notes',
-        'is_active',
+        'contact',
         'created_by',
     ];
 
     protected function casts(): array
     {
         return [
-            'graduation_year' => 'integer',
-            'is_active' => 'boolean',
+            'graduation_year' => 'integer'
         ];
     }
 

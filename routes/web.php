@@ -5,9 +5,9 @@ use App\Http\Controllers\Admin\ActivityController as AdminActivityController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\AspirationController as AdminAspirationController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
-use App\Http\Controllers\Admin\CurriculumController as AdminCurriculumController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\CurriculumImportController as AdminCurriculumImportController;
+use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
+use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\ResearchCommunitySyncController as AdminResearchCommunitySyncController;
 use App\Http\Controllers\Admin\GalleryController as AdminGalleryController;
 use App\Http\Controllers\Admin\GalleryItemController as AdminGalleryItemController;
@@ -60,29 +60,26 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
         Route::resource('announcements', AdminAnnouncementController::class)->except(['show']);
         Route::resource('academic-events', AdminAcademicEventController::class)->except(['show']);
 
-        Route::resource('hero-slides', AdminHeroSlideController::class)->except(['show']);
+        // Hero Slides (Mapped to Banner Model internally)
+        Route::post('hero-slides/reorder', [App\Http\Controllers\Admin\HeroSlideController::class, 'reorder'])->name('hero-slides.reorder');
+        Route::resource('hero-slides', AdminHeroSlideController::class)->except(['show', 'create', 'edit']);
+
+
         Route::resource('activities', AdminActivityController::class)->except(['show']);
         Route::resource('galleries', AdminGalleryController::class)->except(['show']);
         Route::resource('gallery-items', AdminGalleryItemController::class)->except(['show']);
         Route::resource('lecturer-staff', AdminLecturerStaffController::class)->except(['show']);
-        Route::get('curricula', [AdminCurriculumController::class, 'index'])->name('curricula.index');
-        Route::post('curricula/link', [AdminCurriculumImportController::class, 'updateLink'])->name('curricula.link.update');
-        Route::post('curricula/upload', [AdminCurriculumImportController::class, 'upload'])->name('curricula.upload');
-        Route::post('curricula/sync', [AdminCurriculumImportController::class, 'syncNow'])->name('curricula.sync');
-        Route::post('curricula/sync/validate', [AdminCurriculumImportController::class, 'syncValidate'])->name('curricula.sync.validate');
-        Route::post('curricula/sync/discard', [AdminCurriculumImportController::class, 'syncDiscard'])->name('curricula.sync.discard');
-        Route::get('curricula/download', [AdminCurriculumImportController::class, 'download'])->name('curricula.download');
+        Route::resource('documents', AdminDocumentController::class)->except(['show']);
+        Route::get('courses', [AdminCourseController::class, 'index'])->name('courses.index');
+        Route::post('courses/sync', [AdminCourseController::class, 'sync'])->name('courses.sync');
         Route::get('research-community', [AdminResearchCommunitySyncController::class, 'index'])->name('research-community.index');
-        Route::post('research-community/link', [AdminResearchCommunitySyncController::class, 'updateLink'])->name('research-community.link.update');
-        Route::post('research-community/upload', [AdminResearchCommunitySyncController::class, 'upload'])->name('research-community.upload');
-        Route::post('research-community/sync', [AdminResearchCommunitySyncController::class, 'syncNow'])->name('research-community.sync');
-        Route::post('research-community/sync/validate', [AdminResearchCommunitySyncController::class, 'syncValidate'])->name('research-community.sync.validate');
-        Route::post('research-community/sync/discard', [AdminResearchCommunitySyncController::class, 'syncDiscard'])->name('research-community.sync.discard');
-        Route::get('research-community/download', [AdminResearchCommunitySyncController::class, 'download'])->name('research-community.download');
+        Route::post('research-community/sync', [AdminResearchCommunitySyncController::class, 'sync'])->name('research-community.sync');
         Route::resource('projects', AdminProjectController::class)->except(['show']);
         Route::resource('tracer-alumni', AdminTracerAlumniController::class)
             ->parameters(['tracer-alumni' => 'tracerAlumni'])
-            ->except(['show']);
+            ->only(['index', 'destroy']);
+        Route::post('tracer-alumni/sync', [AdminTracerAlumniController::class, 'sync'])->name('tracer-alumni.sync');
+        Route::post('tracer-alumni/banner', [AdminTracerAlumniController::class, 'updateBanner'])->name('tracer-alumni.banner.update');
 
         Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');

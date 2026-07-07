@@ -11,20 +11,17 @@ class CommunityService extends Model
     protected $table = 'community_services';
 
     protected $fillable = [
+        'document_id',
         'title',
-        'activity_date',
         'location',
-        'organizer',
-        'summary',
-        'documentation_cover',
-        'status',
+        'year',
         'created_by',
     ];
 
     protected function casts(): array
     {
         return [
-            'activity_date' => 'date',
+            'year' => 'integer',
         ];
     }
 

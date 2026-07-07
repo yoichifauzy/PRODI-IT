@@ -9,7 +9,7 @@
     ])
 
     <section class="section-wrap public-page-shell">
-        <header class="public-page-intro">
+        <!-- <header class="public-page-intro">
             <h2 class="public-page-title">{{ __('public.lecturer_staff.intro_title') }}</h2>
             <p class="public-page-copy">{{ __('public.lecturer_staff.intro_copy') }}</p>
             <div class="public-page-meta">
@@ -21,7 +21,7 @@
                     <span class="meta-pill">{{ __('public.lecturer_staff.meta_search') }}: {{ $search }}</span>
                 @endif
             </div>
-        </header>
+        </header> -->
 
         <form method="GET" action="{{ route('public.lecturer-staff') }}" class="staff-search-wrap public-panel mb-8 grid gap-3 rounded-2xl border border-[var(--border-soft)] bg-white p-4 shadow-sm md:grid-cols-[1fr_220px_auto]">
             <input type="text" name="q" value="{{ $search }}" placeholder="{{ __('public.lecturer_staff.search_placeholder') }}" class="form-input" />

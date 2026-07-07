@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+<!-- @extends('layouts.admin')
 
 @section('title', 'Edit Slide Hero')
 
@@ -18,4 +18,4 @@
             <a href="{{ route('admin.hero-slides.index') }}" class="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">Batal</a>
         </div>
     </form>
-@endsection
+@endsection -->

@@ -30,21 +30,34 @@
             data-summary-all-id="{{ trans('public.tracer.summary_all', [], 'id') }}"
             data-summary-all-en="{{ trans('public.tracer.summary_all', [], 'en') }}"
         >
-            <div class="tracer-hero-image-wrap">
-                @php
-                    $alumniBanner = $banner ?? \App\Models\Banner::where('category', 'alumni')->first();
-                @endphp
-
-                @if($alumniBanner && $alumniBanner->image_path)
-                    <!-- Ambil gambar kategori alumni dari database -->
-                    <img src="{{ asset('storage/' . $alumniBanner->image_path) }}" 
-                        alt="{{ __('public.tracer.hero_title') }}" 
-                        class="h-80 w-full rounded-xl object-cover" />
+            <div class="tracer-hero-image-wrap relative overflow-hidden rounded-xl h-80 isolate">
+                @if(isset($alumniBanners) && $alumniBanners->isNotEmpty())
+                    <div class="absolute inset-0">
+                        @foreach ($alumniBanners as $banner)
+                            <div
+                                data-hero-slide
+                                class="absolute inset-0 bg-cover bg-center transition-opacity duration-700 {{ $loop->first ? 'opacity-100' : 'opacity-0' }}"
+                                style="background-image: url('{{ asset('storage/' . $banner->image_path) }}');"
+                            ></div>
+                        @endforeach
+                    </div>
+                    @if($alumniBanners->count() > 1)
+                        <div class="absolute bottom-4 left-1/2 flex -translate-x-1/2 transform space-x-2 z-10">
+                            @foreach ($alumniBanners as $banner)
+                                <button
+                                    data-hero-dot
+                                    data-index="{{ $loop->index }}"
+                                    class="h-2 w-2 rounded-full transition-colors {{ $loop->first ? 'bg-orange-500 w-4' : 'bg-white/70 hover:bg-white' }}"
+                                    aria-label="Slide {{ $loop->iteration }}"
+                                ></button>
+                            @endforeach
+                        </div>
+                    @endif
                 @else
                     <!-- Fallback ke gambar default jika database kosong/belum diupload -->
                     <img src="{{ asset('image/galeri/image3.jpeg') }}" 
                         alt="{{ __('public.tracer.hero_title') }}" 
-                        class="h-80 w-full rounded-xl object-cover" />
+                        class="h-full w-full object-cover" />
                 @endif
             </div>
 

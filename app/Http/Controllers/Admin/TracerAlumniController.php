@@ -24,7 +24,7 @@ class TracerAlumniController extends Controller
         ->orderBy('name')
         ->get();
 
-    $banner = Banner::where('category', 'alumni')->first();
+    $banners = Banner::where('category', 'alumni')->orderBy('position')->get();
 
     $years = TracerAlumni::query()
         ->select('graduation_year')
@@ -32,7 +32,7 @@ class TracerAlumniController extends Controller
         ->orderByDesc('graduation_year')
         ->pluck('graduation_year');
 
-    return view('admin.tracer-alumni.index', compact('docs', 'defaultDoc', 'alumni', 'years', 'banner'));
+    return view('admin.tracer-alumni.index', compact('docs', 'defaultDoc', 'alumni', 'years', 'banners'));
 }
 
     public function sync(Request $request)
@@ -106,25 +106,32 @@ class TracerAlumniController extends Controller
             'image' => ['required', 'image', 'max:10240'],
         ]);
 
-        $banner = Banner::where('category', 'alumni')->first();
+        $imagePath = $request->file('image')->store('banners/alumni', 'public');
+        
+        $maxPosition = Banner::where('category', 'alumni')->max('position') ?? 0;
 
-        if ($banner && $banner->image_path && Storage::disk('public')->exists($banner->image_path)) {
+        Banner::create([
+            'category' => 'alumni',
+            'image_path' => $imagePath,
+            'position' => $maxPosition + 1,
+            'created_by' => Auth::id(),
+        ]);
+
+        return back()->with('success', 'Banner Alumni berhasil ditambahkan.');
+    }
+
+    public function destroyBanner(Banner $banner)
+    {
+        if ($banner->category !== 'alumni') {
+            abort(403);
+        }
+
+        if ($banner->image_path && Storage::disk('public')->exists($banner->image_path)) {
             Storage::disk('public')->delete($banner->image_path);
         }
 
-        $imagePath = $request->file('image')->store('banners/alumni', 'public');
+        $banner->delete();
 
-        if ($banner) {
-            $banner->update(['image_path' => $imagePath, 'updated_by' => Auth::id()]);
-        } else {
-            Banner::create([
-                'category' => 'alumni',
-                'image_path' => $imagePath,
-                'position' => 1,
-                'created_by' => Auth::id(),
-            ]);
-        }
-
-        return back()->with('success', 'Banner Alumni berhasil diperbarui.');
+        return back()->with('success', 'Banner Alumni berhasil dihapus.');
     }
 }

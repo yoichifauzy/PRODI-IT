@@ -15,6 +15,17 @@ class AspirationController extends Controller
         $payload['ip_address'] = $request->ip();
         $payload['user_agent'] = (string) $request->userAgent();
 
+    
+        $dailyCount = Aspiration::query()
+            ->where('ip_address', $payload['ip_address'])
+            ->whereDate('created_at', today())
+            ->count();
+
+        if ($dailyCount >= 5) {
+            return redirect()->to(route('home') . '#aspirasi')
+                ->withErrors(['limit' => 'Anda telah mencapai batas maksimal pengiriman aspirasi (5 pesan) untuk hari ini. Silakan coba lagi besok.']);
+        }
+
         // Prevent duplicate submissions using the message content plus optional
         // identifiers within a short window (likely caused by double-click or reload).
         $existsQuery = Aspiration::query()

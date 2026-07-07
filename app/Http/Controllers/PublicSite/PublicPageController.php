@@ -226,11 +226,14 @@ class PublicPageController extends Controller
             ? $rows->where('graduation_year', $selectedYear)
             : $rows;
 
+        $alumniBanners = \App\Models\Banner::where('category', 'alumni')->orderBy('position')->get();
+
         return view('public.tracer-alumni', [
             'graduationYears' => $graduationYears,
             'selectedYear' => $selectedYear,
             'rows' => $rows,
             'visibleRows' => $visibleRows,
+            'alumniBanners' => $alumniBanners,
         ]);
     }
 

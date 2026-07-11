@@ -35,32 +35,42 @@
     
 {{-- Tracer Alumni Banner Section --}}
 <div class="mb-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm relative overflow-hidden">
-    
-    
-    <div class="w-full relative group">
-        @if(isset($banner) && $banner->image_path)
-            <div class="w-full aspect-[4/1] rounded-xl overflow-hidden border border-slate-200 relative bg-slate-100">
-                <img src="{{ asset('storage/' . $banner->image_path) }}" alt="Banner Alumni" class="w-full h-full object-cover">
-                
-                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
-                    <button type="button" onclick="document.getElementById('banner-upload-input').click()" class="bg-white text-slate-800 px-6 py-2 rounded-lg font-semibold shadow-lg hover:bg-slate-100 transition">
-                        Ganti Gambar Banner
-                    </button>
-                </div>
-            </div>
-        @else
-            <button type="button" onclick="document.getElementById('banner-upload-input').click()" class="w-full aspect-[4/1] rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 transition flex flex-col items-center justify-center text-slate-500">
-                <i class="fa-solid fa-cloud-arrow-up text-4xl mb-3 text-slate-400"></i>
-                <span class="font-semibold text-slate-700">Klik untuk upload Banner</span>
-                <span class="text-sm mt-1 text-slate-400">Direkomendasikan ukuran landscape/panjang. (Max 10MB)</span>
-            </button>
-        @endif
-        
-        <form action="{{ route('admin.tracer-alumni.banner.update') }}" method="POST" enctype="multipart/form-data" id="banner-form" class="hidden">
-            @csrf
-            <input type="file" name="image" id="banner-upload-input" accept="image/*" onchange="document.getElementById('banner-form').submit()">
-        </form>
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-base font-bold text-slate-800">Foto / Banner Alumni (Marquee)</h2>
+        <button type="button" onclick="document.getElementById('banner-upload-input').click()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition">
+            <i class="fa-solid fa-plus"></i> Tambah Foto
+        </button>
     </div>
+
+    @if($banners->count() > 0)
+        <div id="banner-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            @foreach($banners as $b)
+                <div data-id="{{ $b->id }}" class="relative group aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 bg-slate-100 cursor-move">
+                    <img src="{{ asset('storage/' . $b->image_path) }}" alt="Banner Alumni" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center">
+                        <form action="{{ route('admin.tracer-alumni.banner.destroy', $b) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold shadow-lg hover:bg-red-600 transition text-sm">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="text-center py-10 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl">
+            <i class="fa-solid fa-image text-4xl mb-3 text-slate-300"></i>
+            <p class="text-slate-500 font-medium">Belum ada foto banner yang diunggah.</p>
+            <p class="text-sm text-slate-400 mt-1">Anda bisa memilih banyak file sekaligus saat mengunggah.</p>
+        </div>
+    @endif
+    
+    <form action="{{ route('admin.tracer-alumni.banner.update') }}" method="POST" enctype="multipart/form-data" id="banner-form" class="hidden">
+        @csrf
+        <input type="file" name="images[]" id="banner-upload-input" accept="image/*" multiple onchange="document.getElementById('banner-form').submit()">
+    </form>
 </div>
 {{-- Filter Bar --}}
 <div class="mb-4">
@@ -121,8 +131,31 @@
 </div>
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Inisialisasi SortableJS untuk Drag and Drop Banner
+    const bannerGrid = document.getElementById('banner-grid');
+    if (bannerGrid) {
+        new Sortable(bannerGrid, {
+            animation: 150,
+            ghostClass: 'opacity-50',
+            onEnd: function (evt) {
+                const order = Array.from(bannerGrid.children).map(item => item.dataset.id);
+                fetch("{{ route('admin.tracer-alumni.banner.reorder') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ order: order })
+                }).then(response => {
+                    if(!response.ok) alert('Gagal mengurutkan banner');
+                });
+            }
+        });
+    }
+
     const searchInput = document.getElementById('search-input');
     // Tambahkan pengecekan null untuk filter agar tidak crash kalau ID belum ada
     const yearFilter = document.getElementById('year-filter');

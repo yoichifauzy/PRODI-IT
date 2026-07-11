@@ -76,6 +76,7 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
             ->only(['index', 'destroy']);
         Route::post('tracer-alumni/sync', [AdminTracerAlumniController::class, 'sync'])->name('tracer-alumni.sync');
         Route::post('tracer-alumni/banner', [AdminTracerAlumniController::class, 'updateBanner'])->name('tracer-alumni.banner.update');
+        Route::post('tracer-alumni/banner/reorder', [AdminTracerAlumniController::class, 'reorderBanner'])->name('tracer-alumni.banner.reorder');
         Route::delete('tracer-alumni/banner/{banner}', [AdminTracerAlumniController::class, 'destroyBanner'])->name('tracer-alumni.banner.destroy');
 
         Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile.edit');

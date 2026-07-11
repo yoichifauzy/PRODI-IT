@@ -103,21 +103,39 @@ class TracerAlumniController extends Controller
     public function updateBanner(Request $request)
     {
         $request->validate([
-            'image' => ['required', 'image', 'max:10240'],
+            'images' => ['required', 'array'],
+            'images.*' => ['image', 'max:10240'],
         ]);
 
-        $imagePath = $request->file('image')->store('banners/alumni', 'public');
-        
         $maxPosition = Banner::where('category', 'alumni')->max('position') ?? 0;
 
-        Banner::create([
-            'category' => 'alumni',
-            'image_path' => $imagePath,
-            'position' => $maxPosition + 1,
-            'created_by' => Auth::id(),
-        ]);
+        foreach ($request->file('images') as $image) {
+            $imagePath = $image->store('banners/alumni', 'public');
+            $maxPosition++;
+
+            Banner::create([
+                'category' => 'alumni',
+                'image_path' => $imagePath,
+                'position' => $maxPosition,
+                'created_by' => Auth::id(),
+            ]);
+        }
 
         return back()->with('success', 'Banner Alumni berhasil ditambahkan.');
+    }
+
+    public function reorderBanner(Request $request)
+    {
+        $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:banners,id'],
+        ]);
+
+        foreach ($request->order as $index => $id) {
+            Banner::where('id', $id)->where('category', 'alumni')->update(['position' => $index + 1]);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function destroyBanner(Banner $banner)

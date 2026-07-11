@@ -8,6 +8,22 @@
         <p class="text-sm text-slate-600">Atur konten Tentang Kami dan Visi Misi pada halaman utama.</p>
     </div>
 
+    @if (session('success'))
+    <div class="mb-6 rounded-lg bg-emerald-50 p-4 text-emerald-700 border border-emerald-200">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if ($errors->any())
+    <div class="mb-6 rounded-lg bg-rose-50 p-4 text-rose-700 border border-rose-200">
+        <ul class="list-disc pl-5">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')

@@ -38,7 +38,7 @@
         <aside class="rounded-xl border border-slate-200 bg-white p-4">
             <nav class="space-y-2 text-sm">
                 <a href="{{ route('admin.dashboard') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dashboard</a>
-                <a href="{{ route('admin.hero-slides.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.hero-slides.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Hero Section</a>
+                <a href="{{ route('admin.hero-slides.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.hero-slides.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Banner</a>
                 <a href="{{ route('admin.profile.edit') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.profile.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Profile</a>
                 <a href="{{ route('admin.documents.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.documents.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Dokumen</a>
                 <a href="{{ route('admin.activities.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.activities.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kegiatan</a>

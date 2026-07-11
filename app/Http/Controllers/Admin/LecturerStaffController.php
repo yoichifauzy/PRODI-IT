@@ -20,7 +20,7 @@ class LecturerStaffController extends Controller
             ->orderBy('type')
             ->orderBy('sort_order')
             ->orderBy('name')
-            ->paginate(15)
+            ->paginate(8)
             ->withQueryString();
 
         return view('admin.lecturer-staff.index', [

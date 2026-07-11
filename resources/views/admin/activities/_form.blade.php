@@ -41,16 +41,21 @@
                 name="category"
                 list="category-suggestions"
                 required
+                autocomplete="off"
                 value="{{ old('category', $activity->category ?? '') }}"
                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                 placeholder="Contoh: Lomba, Seminar, Pelatihan…"
             />
             <datalist id="category-suggestions">
-                @foreach ($existingCategories ?? [] as $cat)
-                    <option value="{{ $cat }}"></option>
+                @php
+                    $defaults = ['Lomba', 'Pelatihan', 'Workshop', 'Kuliah Tamu', 'Nasional'];
+                    $mergedCategories = collect($defaults)->merge($existingCategories ?? [])->unique()->sort();
+                @endphp
+                @foreach ($mergedCategories as $cat)
+                    <option value="{{ $cat }}">{{ $cat }}</option>
                 @endforeach
             </datalist>
-            <p class="mt-1 text-xs text-slate-400">Ketik atau pilih dari saran kategori yang sudah ada.</p>
+            <p class="mt-1 text-xs text-slate-400">Klik dua kali pada kolom atau ketik untuk melihat saran kategori.</p>
         </div>
 
         <div>
@@ -63,6 +68,7 @@
                 name="event_date"
                 required
                 value="{{ $eventDate }}"
+                onclick="this.showPicker()"
                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
             />
         </div>
@@ -77,6 +83,7 @@
                 type="time"
                 name="start_at"
                 value="{{ $startAt }}"
+                onclick="this.showPicker()"
                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
             />
             <p class="mt-1 text-xs text-slate-400">Opsional — digunakan untuk Google Calendar.</p>
@@ -88,6 +95,7 @@
                 type="time"
                 name="end_at"
                 value="{{ $endAt }}"
+                onclick="this.showPicker()"
                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
             />
             <p class="mt-1 text-xs text-slate-400">Opsional — kosongkan jika tidak ada waktu selesai pasti.</p>
@@ -121,27 +129,27 @@
     {{-- Upload Gambar --}}
     <div class="mb-5">
         <label class="mb-2 block text-sm font-semibold text-slate-700">Gambar Cover</label>
-        
+
         <label for="image-upload" class="group relative flex h-64 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 transition-all hover:border-slate-400">
-            
+
             @php
                 $hasImage = isset($activity) && $activity->image_path;
             @endphp
-            <img id="image-preview" 
-                 src="{{ $hasImage ? asset('storage/' . $activity->image_path) : '' }}" 
-                 class="absolute inset-0 h-full w-full object-cover {{ $hasImage ? '' : 'hidden' }}" 
+            <img id="image-preview"
+                 src="{{ $hasImage ? asset('storage/' . $activity->image_path) : '' }}"
+                 class="absolute inset-0 h-full w-full object-cover {{ $hasImage ? '' : 'hidden' }}"
                  alt="Preview">
 
-            <div id="upload-overlay" 
-                class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 
+            <div id="upload-overlay"
+                class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-300
                 {{ $hasImage ? 'bg-black/50 opacity-100' : 'bg-transparent opacity-100' }}">
-                
+
                 <i id="upload-icon" class="fa-solid fa-cloud-arrow-up text-3xl mb-2 {{ $hasImage ? 'text-white' : 'text-slate-400' }}"></i>
-                
+
                 <p id="upload-text" class="text-sm font-medium {{ $hasImage ? 'text-white' : 'text-slate-500' }}">
                     <span class="font-bold">Klik</span> untuk {{ $hasImage ? 'upload gambar pengganti' : 'upload gambar' }}
                 </p>
-                
+
                 <p id="upload-subtext" class="mt-1 text-xs {{ $hasImage ? 'text-white/80' : 'text-slate-400' }}">
                     JPG, PNG, atau WEBP (Max 2MB)
                 </p>
@@ -169,7 +177,7 @@
                 preview.classList.remove('hidden');
 
                 overlay.className = 'absolute inset-0 flex flex-col items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300';
-                
+
                 icon.className = 'fa-solid fa-cloud-arrow-up text-3xl mb-2 text-white';
                 text.className = 'text-sm font-medium text-white';
                 subtext.className = 'mt-1 text-xs text-white/80';

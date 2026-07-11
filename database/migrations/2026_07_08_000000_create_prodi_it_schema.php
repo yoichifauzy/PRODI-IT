@@ -108,10 +108,9 @@ return new class extends Migration
             $table->date('event_date');
             $table->timestamp('start_at')->nullable();
             $table->timestamp('end_at')->nullable();
-            $table->timestamp('published_at')->nullable();
             $table->string('image_path')->nullable();
             $table->string('google_event_url')->nullable();
-            $table->boolean('is_published')->default(true);
+            $table->string('google_calendar_id')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
 

@@ -28,7 +28,19 @@
         </div>
     </div>
 
+    @if (session('success'))
+    <div class="mb-6 rounded-lg bg-emerald-50 p-4 text-emerald-700 border border-emerald-200">
+        {{ session('success') }}
+    </div>
+    @endif
+
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-200 bg-slate-50/50 px-5 py-4">
+            <h2 class="text-base font-semibold text-slate-800">Daftar Kegiatan</h2>
+            <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                Total: {{ $activities->total() }} Kegiatan
+            </span>
+        </div>
         <div class="flex flex-col">
             @forelse ($activities as $activity)
                 <div class="group flex flex-col gap-5 border-b border-slate-100 p-5 transition-colors last:border-b-0 hover:bg-slate-50 sm:flex-row sm:items-center">

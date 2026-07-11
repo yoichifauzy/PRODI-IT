@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Kelola Hero Section (Banner)')
+@section('title', 'Kelola Banner')
 
 @section('content')
 <style>
@@ -14,8 +14,8 @@
 </style>
 <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-        <h1 class="text-2xl font-bold text-slate-800">Kelola Hero Section</h1>
-        <p class="text-sm text-slate-500">Atur gambar hero slide yang muncul di halaman utama.</p>
+        <h1 class="text-2xl font-bold text-slate-800">Kelola Banner</h1>
+        <p class="text-sm text-slate-500">Atur gambar banner yang muncul di halaman utama.</p>
     </div>
     <div class="flex gap-2">
         <button type="button" onclick="openCreateModal()" class="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
@@ -112,7 +112,7 @@
 <div id="createModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm transition-opacity">
     <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl" onclick="event.stopPropagation()">
         <div class="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
-            <h3 class="text-lg font-bold text-slate-800">Tambah Banner Hero</h3>
+            <h3 class="text-lg font-bold text-slate-800">Tambah Banner</h3>
             <button type="button" onclick="closeModal('createModal')" class="text-slate-400 hover:text-slate-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>

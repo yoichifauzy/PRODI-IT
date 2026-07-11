@@ -20,6 +20,7 @@ class Activity extends Model
         'end_at',
         'image_path',
         'google_event_url',
+        'google_calendar_id',
         'created_by',
     ];
 

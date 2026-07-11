@@ -30,29 +30,37 @@
             data-summary-all-id="{{ trans('public.tracer.summary_all', [], 'id') }}"
             data-summary-all-en="{{ trans('public.tracer.summary_all', [], 'en') }}"
         >
-            <div class="tracer-hero-image-wrap relative overflow-hidden rounded-xl h-80 isolate">
+            <style>
+                @keyframes marquee {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                    animation: marquee 40s linear infinite;
+                    display: flex;
+                    width: max-content;
+                }
+                .animate-marquee:hover {
+                    animation-play-state: paused;
+                }
+                .marquee-item {
+                    height: 100%;
+                    aspect-ratio: 16/9;
+                    object-fit: cover;
+                }
+            </style>
+            <div class="tracer-hero-image-wrap relative overflow-hidden rounded-xl h-80 isolate bg-slate-900 flex">
                 @if(isset($alumniBanners) && $alumniBanners->isNotEmpty())
-                    <div class="absolute inset-0">
+                    <div class="animate-marquee h-full">
+                        {{-- First Set --}}
                         @foreach ($alumniBanners as $banner)
-                            <div
-                                data-hero-slide
-                                class="absolute inset-0 bg-cover bg-center transition-opacity duration-700 {{ $loop->first ? 'opacity-100' : 'opacity-0' }}"
-                                style="background-image: url('{{ asset('storage/' . $banner->image_path) }}');"
-                            ></div>
+                            <img src="{{ asset('storage/' . $banner->image_path) }}" class="marquee-item" alt="Banner Alumni">
+                        @endforeach
+                        {{-- Second Set for seamless looping --}}
+                        @foreach ($alumniBanners as $banner)
+                            <img src="{{ asset('storage/' . $banner->image_path) }}" class="marquee-item" alt="Banner Alumni">
                         @endforeach
                     </div>
-                    @if($alumniBanners->count() > 1)
-                        <div class="absolute bottom-4 left-1/2 flex -translate-x-1/2 transform space-x-2 z-10">
-                            @foreach ($alumniBanners as $banner)
-                                <button
-                                    data-hero-dot
-                                    data-index="{{ $loop->index }}"
-                                    class="h-2 w-2 rounded-full transition-colors {{ $loop->first ? 'bg-orange-500 w-4' : 'bg-white/70 hover:bg-white' }}"
-                                    aria-label="Slide {{ $loop->iteration }}"
-                                ></button>
-                            @endforeach
-                        </div>
-                    @endif
                 @else
                     <!-- Fallback ke gambar default jika database kosong/belum diupload -->
                     <img src="{{ asset('image/galeri/image3.jpeg') }}" 
@@ -60,7 +68,6 @@
                         class="h-full w-full object-cover" />
                 @endif
             </div>
-
         </div>
 
         {{-- AREA FILTER: Ditambahin mt-8 biar gak nempel panel atas --}}

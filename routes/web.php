@@ -12,7 +12,8 @@ use App\Http\Controllers\Admin\HeroSlideController as AdminHeroSlideController;
 use App\Http\Controllers\Admin\LecturerStaffController as AdminLecturerStaffController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\TracerAlumniController as AdminTracerAlumniController;
-use App\Http\Controllers\Admin\AcademicEventController as AdminAcademicEventController;
+use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
+use App\Http\Controllers\Admin\AcademicCalendarController as AdminAcademicCalendarController;
 
 use App\Http\Controllers\PublicSite\AcademicCalendarController;
 use App\Http\Controllers\PublicSite\AspirationController as PublicAspirationController;
@@ -22,8 +23,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/tentang-kami', [PublicPageController::class, 'profile'])->name('public.profile');
-Route::get('/kalender-akademik', [AcademicCalendarController::class, 'index'])->name('calendar.index');
-Route::get('/kalender-akademik/event/{academicEvent:slug}', [AcademicCalendarController::class, 'show'])->name('calendar.events.show');
 Route::post('/aspirations', [PublicAspirationController::class, 'store'])->name('aspirations.store');
 Route::get('/kegiatan', [PublicPageController::class, 'activities'])->name('public.activities');
 Route::get('/galeri', [PublicPageController::class, 'galleries'])->name('public.galleries');
@@ -51,7 +50,7 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
     Route::middleware(['auth', 'admin', 'admin.session'])->group(function (): void {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        Route::resource('academic-events', AdminAcademicEventController::class)->except(['show']);
+        Route::resource('academic-calendars', AdminAcademicCalendarController::class)->except(['show']);
 
         // Hero Slides (Mapped to Banner Model internally)
         Route::post('hero-slides/reorder', [App\Http\Controllers\Admin\HeroSlideController::class, 'reorder'])->name('hero-slides.reorder');
@@ -81,6 +80,8 @@ Route::prefix('adminit')->name('admin.')->group(function (): void {
 
         Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+
+        Route::resource('documents', \App\Http\Controllers\Admin\DocumentController::class)->except(['show']);
 
         Route::get('/aspirations', [AdminAspirationController::class, 'index'])->name('aspirations.index');
         Route::get('/aspirations/{aspiration}', [AdminAspirationController::class, 'show'])->name('aspirations.show');

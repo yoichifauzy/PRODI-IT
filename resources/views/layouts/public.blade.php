@@ -67,7 +67,7 @@
                         <a href="{{ route('public.lecturer-staff') }}" class="dropdown-item" data-i18n="nav.lecturer_staff">{{ __('public.nav.lecturer_staff') }}</a>
                         <a href="{{ route('home') }}#akreditasi" class="dropdown-item" data-i18n="nav.accreditation">{{ __('public.nav.accreditation') }}</a>
                         <a href="{{ route('home') }}#kontak" class="dropdown-item" data-i18n="nav.contact">{{ __('public.nav.contact') }}</a>
-                        <!-- <a href="{{ route('public.announcements') }}" class="dropdown-item" data-i18n="nav.announcements">{{ __('public.nav.announcements') }}</a> -->
+                        {{-- <a href="{{ route('public.announcements') }}" class="dropdown-item" data-i18n="nav.announcements">{{ __('public.nav.announcements') }}</a> --}}
                     </div>
                 </div>
 
@@ -148,7 +148,7 @@
                             <a href="{{ route('public.lecturer-staff') }}" data-i18n="nav.lecturer_staff">{{ __('public.nav.lecturer_staff') }}</a>
                             <a href="{{ route('home') }}#akreditasi" data-i18n="nav.accreditation">{{ __('public.nav.accreditation') }}</a>
                             <a href="{{ route('home') }}#kontak" data-i18n="nav.contact">{{ __('public.nav.contact') }}</a>
-                            <a href="{{ route('public.announcements') }}" data-i18n="nav.announcements">{{ __('public.nav.announcements') }}</a>
+                            {{-- <a href="{{ route('public.announcements') }}" data-i18n="nav.announcements">{{ __('public.nav.announcements') }}</a> --}}
                         </div>
                     </details>
 
@@ -217,7 +217,7 @@
                         <li><a href="{{ route('public.curriculum') }}" class="footer-link">{{ __('public.nav.curriculum') }}</a></li>
                         <li><a href="{{ route('public.projects') }}" class="footer-link">{{ __('public.nav.student_projects') }}</a></li>
                         <li><a href="{{ route('public.tracer-alumni') }}" class="footer-link">{{ __('public.nav.tracer_alumni') }}</a></li>
-                        <li><a href="{{ route('public.announcements') }}" class="footer-link">{{ __('public.nav.announcements') }}</a></li>
+                        {{-- <li><a href="{{ route('public.announcements') }}" class="footer-link">{{ __('public.nav.announcements') }}</a></li> --}}
                     </ul>
                 </div>
 

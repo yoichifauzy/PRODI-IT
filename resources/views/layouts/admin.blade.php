@@ -50,8 +50,8 @@
                 <a href="{{ route('admin.research-community.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.research-community.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Penelitian & Pengabdian</a>
                 <a href="{{ route('admin.tracer-alumni.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.tracer-alumni.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Tracer Alumni</a>
                 <a href="{{ route('admin.projects.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.projects.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Project Mahasiswa</a>
-                <!-- <a href="{{ route('admin.announcements.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Pengumuman</a> -->
-                <!-- <a href="{{ route('admin.academic-events.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.academic-events.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kalender Akademik</a> -->
+                {{-- <a href="{{ route('admin.announcements.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Pengumuman</a> --}}
+                <a href="{{ route('admin.academic-calendars.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.academic-calendars.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Kalender Akademik</a>
                
                 <a href="{{ route('admin.aspirations.index') }}" class="block rounded-md px-3 py-2 {{ request()->routeIs('admin.aspirations.*') ? 'bg-slate-900 text-white' : 'hover:bg-slate-100' }}">Aspirasi</a>
             </nav>

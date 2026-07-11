@@ -85,6 +85,20 @@ return new class extends Migration
         // ==========================================
         // 2. TABEL KONTEN PUBLIKASI & KEGIATAN
         // ==========================================
+        Schema::create('academic_calendars', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('category'); // UAS, UTS, Lainnya
+            $table->text('description')->nullable();
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->string('google_calendar_id')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->timestamps();
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
+        });
+
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->string('category', 120);
@@ -280,6 +294,7 @@ return new class extends Migration
         Schema::dropIfExists('galleries');
         Schema::dropIfExists('projects');
         Schema::dropIfExists('activities');
+        Schema::dropIfExists('academic_calendars');
 
         Schema::dropIfExists('vision_missions');
         Schema::dropIfExists('hero_slides');
